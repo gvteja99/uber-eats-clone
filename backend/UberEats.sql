@@ -74,6 +74,8 @@ INSERT INTO `customers` VALUES
 (0057,'ef', 'gh','ccd532@gmail.com','Test@123','6692885555', '09-20-1996', 'abc','','', NULL);
 UNLOCK TABLES;
 
+ALTER Table customers ADD token varchar(255);
+
 --
 -- Table structure for table `restaurants`
 --
@@ -102,6 +104,8 @@ INSERT INTO `restaurants` VALUES
 (014563,'dominos', 'abcdg123@gmail.com','T42word@123', 10, 1, '1111111111', 'descrp1...', '9.40', '21.00'),
 (016763,'subway', 'abyu3@gmail.com','dfgdgrd@123', 13, 2, '2222222222', 'descrp2...', '6.40', '20.00');
 UNLOCK TABLES;
+
+ALTER Table restaurants ADD token varchar(255);
 
 --
 -- Table structure for table `restaurant_menu`
