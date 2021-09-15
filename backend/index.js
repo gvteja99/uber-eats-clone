@@ -1,7 +1,27 @@
 import express from 'express';
 import pool from "./pool.js";
+import bcrypt from 'bcrypt';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+
+import signup from "./routes/signup.js";
+import login from "./routes/login.js";
+import restaurants from "./routes/restaurants.js";
+import customers from "./routes/customers.js";
 
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+app.use(cookieParser());
+
+
+app.use("/signup", signup);
+app.use("/login", login);
+app.use("/restaurants", restaurants);
+app.use("/customers", customers);
+
 const port = 3000;
 
 
@@ -30,3 +50,5 @@ app.get('/test_api', async (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`)
 });
+
+export default app;

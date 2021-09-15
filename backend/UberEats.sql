@@ -91,7 +91,7 @@ CREATE TABLE `restaurants`(
     `timing_open` varchar(30) DEFAULT NULL,
     `timing_close` varchar(30) DEFAULT NULL,
     PRIMARY KEY (`res_id`),
-    UNIQUE KEY `res_id_UNIQUE` (`res_id`),
+    UNIQUE KEY `res_id_UNIQUE` (`res_id`), `email_UNIQUE` (`email`),
     FOREIGN KEY (address_id)
         REFERENCES addresses (address_id)
         ON UPDATE CASCADE ON DELETE CASCADE
@@ -102,3 +102,30 @@ INSERT INTO `restaurants` VALUES
 (014563,'dominos', 'abcdg123@gmail.com','T42word@123', 10, 1, '1111111111', 'descrp1...', '9.40', '21.00'),
 (016763,'subway', 'abyu3@gmail.com','dfgdgrd@123', 13, 2, '2222222222', 'descrp2...', '6.40', '20.00');
 UNLOCK TABLES;
+
+--
+-- Table structure for table `restaurant_menu`
+--
+DROP TABLE IF EXISTS `restaurant_menu`;
+CREATE TABLE `restaurant_menu`(
+    `res_menu_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `res_id` int(10) unsigned NOT NULL,
+    `dish_name` varchar(60) NOT NULL,
+    `dish_image` varchar(255) DEFAULT NULL,
+    `dish_price` float(40) NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `main_ingredient` varchar(255) DEFAULT NULL,
+    `dish_category` varchar(20) DEFAULT 'appetizer',
+    `food_type` int(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (`res_menu_id`),
+    UNIQUE KEY `res_menu_id_UNIQUE` (`res_menu_id`), `res_id_UNIQUE` (`res_id`),
+    FOREIGN KEY (res_id)
+        REFERENCES restaurants (res_id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+)ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- LOCK TABLES `restaurant_menu` WRITE;
+INSERT INTO `restaurant_menu` VALUES 
+(014893,14563, 'sushi', '', 9.4, 'dish descrp1...', '', 'appetizer', 1),
+(0167883,16763,'seaweed', '', 7.0, 'dish descrp2...', 'fdf', 'main_course', 2);
+-- UNLOCK TABLES;
