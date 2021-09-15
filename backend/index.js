@@ -22,7 +22,7 @@ app.use("/login", login);
 app.use("/restaurants", restaurants);
 app.use("/customers", customers);
 
-const port = 3000;
+const port = 3001;
 
 
 // Use of another path to see results for js_refresher.js
@@ -46,7 +46,7 @@ app.get('/test_api', async (req, res) => {
   })
 })
 
-// To listen to port 3000
+// To listen to port 3001
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`)
 });
