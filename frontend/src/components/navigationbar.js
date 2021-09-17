@@ -46,24 +46,24 @@ const useStyles = makeStyles(theme=>({
 
 const menuItems = [
     {
-        listIcon: <Home />,
-        listText: 'Dashboard',
-        listPath: '/'
+        itemIcon: <Home />,
+        itemText: 'Dashboard',
+        itemPath: '/'
     },
     {
-        listIcon: <Home />,
-        listText: 'Orders',
-        listPath: '/'
+        itemIcon: <Home />,
+        itemText: 'Orders',
+        itemPath: '/'
     },
     {
-        listIcon: <Home />,
-        listText: 'Menu',
-        listPath: '/'
+        itemIcon: <Home />,
+        itemText: 'Menu',
+        itemPath: '/'
     },
     {
-        listIcon: <ConfirmationNumberIcon />,
-        listText: 'Tickets',
-        listPath: '/tickets'
+        itemIcon: <ConfirmationNumberIcon />,
+        itemText: 'Tickets',
+        itemPath: '/tickets'
     },
 ]
 
@@ -85,9 +85,9 @@ const Navigationbar = () => {
             <Divider />
             <List>
                 {menuItems.map((listItem, key) => (
-                    <ListItem button key={key} component={Link} to={listItem.listPath}>
-                        <ListItemIcon className={classes.listItemStyle}>{listItem.listIcon}</ListItemIcon>
-                        <ListItemText className={classes.listItemStyle} primary={listItem.listText} />
+                    <ListItem button key={key} component={Link} to={listItem.itemPath}>
+                        <ListItemIcon className={classes.listItemStyle}>{listItem.itemIcon}</ListItemIcon>
+                        <ListItemText className={classes.listItemStyle} primary={listItem.itemText} />
                     </ListItem>
                 ))}
             </List>
