@@ -71,6 +71,10 @@ const menuItems = [
         itemText: 'Login',
         itemPath: '/login'
     },
+    {
+        itemText: 'Profile',
+        itemPath: '/res_profile',
+    },
 ]
 
 const Navigationbar = () => {
@@ -92,7 +96,7 @@ const Navigationbar = () => {
             <List>
                 {menuItems.map((listItem, key) => (
                     <ListItem button key={key} component={Link} to={listItem.itemPath}>
-                        <ListItemIcon className={classes.listItemStyle}>{listItem.itemIcon}</ListItemIcon>
+                        {/* <ListItemIcon className={classes.listItemStyle}>{listItem.itemIcon}</ListItemIcon> */}
                         <ListItemText className={classes.listItemStyle} primary={listItem.itemText} />
                     </ListItem>
                 ))}

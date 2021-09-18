@@ -45,6 +45,10 @@ export const mainSlice = createSlice({
       state.customerProfile = data;
       console.log("action.payload==", action.payload);
     },
+    updateResProfile: (state, action) => {
+      console.log("action.payload", action.payload)
+      state.resProfile = action.payload;
+    },
     updateCustomerProfile: (state, action) => {
       state.customerProfile = action.payload;
     },
@@ -54,9 +58,6 @@ export const mainSlice = createSlice({
     updateCustomerOrders: (state, action) => {
         state.customerOrders= action.payload;
     },
-    updateResProfile: (state, action) => {
-      state.customerProfile = action.payload;
-  },
     updateResMenu: (state, action) => {
         state.customerMenu = action.payload;
     },

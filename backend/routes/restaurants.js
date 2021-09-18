@@ -16,11 +16,11 @@ router.put('/profile', auth, async (req, res) => {
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1, fields1)=>{
                 if(error1){
-                    console.log("error1:", error1);
+                    // console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
-                console.log("fields1:", fields1);
+                // console.log("result1:", result1);
+                // console.log("fields1:", fields1);
                 return resolve(result1);
             });
         });
@@ -33,17 +33,17 @@ router.put('/profile', auth, async (req, res) => {
         return new Promise((resolve, reject)=>{
             pool.query(sql2,  (error2, result2, fields2)=>{
                 if(error2){
-                    console.log("error2:", error2);
+                    // console.log("error2:", error2);
                     return reject(error2);
                 }
-                console.log("result2:", result2);
-                console.log("fields2:", fields2);
+                // console.log("result2:", result2);
+                // console.log("fields2:", fields2);
                 return resolve(result2);
             });
         });
     };
     const queryPromise3 = () => {
-        const sql3 = `select r.name, r.phone_number, r.delivery_option, r.description, r.timing_open, r.timing_close,
+        const sql3 = `select r.res_id, r.email, r.address_id, r.name, r.phone_number, r.delivery_option, r.description, r.timing_open, r.timing_close,
             a.street_address, a.apt_number, a.city, a.state, a.country, a.zipcode
             from restaurants as r INNER JOIN addresses as a ON r.address_id = a.address_id where r.res_id='${res_id}';`;
         console.log("sql3:", sql3);
@@ -53,8 +53,8 @@ router.put('/profile', auth, async (req, res) => {
                     console.log("error3:", error3);
                     return reject(error3);
                 }
-                console.log("result3:", result3);
-                console.log("fields3:", fields3);
+                // console.log("result3:", result3);
+                // console.log("fields3:", fields3);
                 return resolve(result3);
             });
         });
@@ -65,6 +65,7 @@ router.put('/profile', auth, async (req, res) => {
         }
         const result2 = await queryPromise2();
         const result3 = await queryPromise3();
+        console.log("update profile:", result3[0])
         // let res_body = { res_menu_id: result1.insertId};
         return res.status(200).json(result3[0]);
     } catch(error) {

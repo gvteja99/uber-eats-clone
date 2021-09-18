@@ -74,7 +74,6 @@ router.post('/restaurant', async (req, res) => {
         });
     };
     const queryPromise2 = (token) => {
-        
         const sql2 = `UPDATE restaurants SET token= '${token}' where email = '${email}' and password = '${password}';`;
         console.log("sql2:", sql2);
         return new Promise((resolve, reject)=>{
@@ -88,6 +87,20 @@ router.post('/restaurant', async (req, res) => {
             });
         });
     };
+    const queryPromise3 = (res) => {
+        const sql3 = `Select street_address, apt_number, city, state, country, zipcode from addresses where address_id = '${res?.address_id}';`;
+        console.log("sql3:", sql3);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql3,  (error3, result3)=>{
+                if(error3){
+                    console.log("error3:", error3);
+                    return reject(error3);
+                }
+                console.log("result3:", result3);
+                return resolve(result3);
+            });
+        });
+    };
     let token;
     try {
         const result1 = await queryPromise1();
@@ -98,7 +111,9 @@ router.post('/restaurant', async (req, res) => {
         token = jwt.sign({res_id, email}, config.token_key, {expiresIn: "2h"})
         const result2 = await queryPromise2(token);
         let res_body = {};
-        Object.assign(res_body, result1[0], { token });
+        const result3 = await queryPromise3(result1[0]);
+        console.log("result3[0]", result3);
+        Object.assign(res_body, result1[0], { token }, result3[0]);
         return res.status(200).json(res_body);
     } catch(error) {
         console.log(error);

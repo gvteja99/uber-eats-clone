@@ -42,7 +42,7 @@ router.put('/profile', auth, async (req, res) => {
         });
     };
     const queryPromise3 = () => {
-        const sql3 = `select c.email, c.first_name, c.last_name, c.phone_number, c.dob, c.nickname, c.profile_pic, c.about,
+        const sql3 = `select c.customer_id, c.customer_address_id, c. c.email, c.first_name, c.last_name, c.phone_number, c.dob, c.nickname, c.profile_pic, c.about,
             a.street_address, a.apt_number, a.city, a.state, a.country, a.zipcode
             from customers as c INNER JOIN addresses as a ON c.customer_address_id = a.address_id where c.customer_id='${customer_id}';`;
         console.log("sql3:", sql3);

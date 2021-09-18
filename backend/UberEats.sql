@@ -29,7 +29,7 @@ CREATE TABLE `addresses`(
     `apt_number` varchar(60) DEFAULT NULL,
     `city` varchar(24) DEFAULT NULL,
     `state` varchar(24) DEFAULT NULL,
-    `country` varchar(10) DEFAULT NULL,
+    `country` varchar(50) DEFAULT NULL,
     `zipcode` int(10) DEFAULT NULL,
     PRIMARY KEY (`address_id`)
     -- UNIQUE KEY `customer_id_UNIQUE` (`customer_id`)

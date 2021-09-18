@@ -79,27 +79,17 @@ export default function SignIn() {
             const res = await axios.post(url,body);
             console.log("response",res.data);
             userType === "2" ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
-
+            setTimeout(() => history.push("/res_profile"), 2000);
             
         }catch(err){
+            alert(err);
             console.log(err)
         }
 
     }
     const onClickSubmit = (data) => {
-        // <return Redirect to="/tickets" /> 
         console.log("calling")
         signInApi();
-        history.push("/tickets");
-        // let navigate = useNavigate();
-        // navigate('tickets');
-        // useHistory().push("/tickets");
-        // useRedirect('/login', '/tickets');
-        // useRoutes(routes);
-        // <Route exact path="/">
-        // </Route>
-        // console.log("===data", data);
-        // alert(JSON.stringify(data))
     }
     const onError = (errors, e) => {
         console.log("errors", errors, "e", e);
