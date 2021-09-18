@@ -48,6 +48,7 @@ export default function SignIn() {
     const dispatch = useDispatch()
     const classes = useStyles();
     const {register, handleSubmit, control} = useForm()
+    const history = useHistory();
     // console.log("EMail", email, "pwd", password, "usertype", userType);
     const url = userType == "1" ? "/login/customer" : "/login/restaurant";
     // const signInApi = async() => {
@@ -89,6 +90,7 @@ export default function SignIn() {
         // <return Redirect to="/tickets" /> 
         console.log("calling")
         signInApi();
+        history.push("/tickets");
         // let navigate = useNavigate();
         // navigate('tickets');
         // useHistory().push("/tickets");
