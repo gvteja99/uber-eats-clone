@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles'
 import {
     Grid,
@@ -7,7 +8,7 @@ import {
 import Carousel from 'react-bootstrap/Carousel';
 import Res1 from '../images/dish1.jpeg';
 import Res2 from '../images/dish2.jpeg';
-import Res3 from '../images/dish3.jpeg';
+import Res3 from '../images/dish3.jpeg'; 
 
 
 // CSS styles
@@ -41,6 +42,8 @@ const useStyles = makeStyles(theme => ({
 
 
 const Dashboard = () => {
+    const mainReducer = useSelector((state) => state.mainReducer)
+    console.log("")
     const [allResList, setAllResList] = useState([]);
     useEffect(() => {
         getAllRestaurants();

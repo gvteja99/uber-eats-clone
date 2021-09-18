@@ -4,10 +4,14 @@ import { fetchCount } from './counterAPI';
 const initialState = {
     allRestList: [],
     token: "",
-    // 1 for restaurant and 2 for customer
+    // 1 for customer and 2 for restaurant
     userType: undefined,
-//   value: 0,
-//   status: 'idle',
+    resProfile: {},
+    resMenu: [],
+    resOrders: [],
+    customerProfile: {},
+    customerMenu: [],
+    customerOrders: [],
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -29,6 +33,36 @@ export const mainSlice = createSlice({
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
+    onResLogin: (state, action) => {
+      const data = action.payload;
+      state.token= data.token;
+      state.resProfile = data;
+      console.log("action.payload==", action.payload);
+    },
+    onCustomerLogin: (state, action) => {
+      const data = action.payload;
+      state.token= data.token;
+      state.customerProfile = data;
+      console.log("action.payload==", action.payload);
+    },
+    updateCustomerProfile: (state, action) => {
+      state.customerProfile = action.payload;
+    },
+    updateCustomerMenu: (state, action) => {
+        state.customerMenu = action.payload;
+    },
+    updateCustomerOrders: (state, action) => {
+        state.customerOrders= action.payload;
+    },
+    updateResProfile: (state, action) => {
+      state.customerProfile = action.payload;
+  },
+    updateResMenu: (state, action) => {
+        state.customerMenu = action.payload;
+    },
+    updateResOrders: (state, action) => {
+        state.customerOrders= action.payload;
+    },
     // increment: (state) => {
     //   // Redux Toolkit allows us to write "mutating" logic in reducers. It
     //   // doesn't actually mutate the state because it uses the Immer library,
@@ -64,7 +98,13 @@ export const mainSlice = createSlice({
 //   },
 });
 
-export const { increment, decrement, incrementByAmount } = mainSlice.actions;
+export const {
+  onCustomerLogin,
+  onResLogin,
+  changeToken, selectUserType, updateCustomerProfile,
+  updateCustomerMenu, updateCustomerOrders, updateResProfile,
+  updateResMenu, updateResOrders
+ } = mainSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

@@ -19,6 +19,7 @@ import {
 } from '@material-ui/icons';
 import MobileeRightMenuSlider from '@material-ui/core/Drawer';
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
+
 import avatar from '../images/dish_icon.jpeg';
 import app_logo from '../images/logo_appbar.svg';
 
@@ -64,6 +65,11 @@ const menuItems = [
         itemIcon: <ConfirmationNumberIcon />,
         itemText: 'Tickets',
         itemPath: '/tickets'
+    },
+    {
+        itemIcon: <Home />,
+        itemText: 'Login',
+        itemPath: '/login'
     },
 ]
 
