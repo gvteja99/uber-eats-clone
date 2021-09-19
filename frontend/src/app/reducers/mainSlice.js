@@ -47,6 +47,15 @@ export const mainSlice = createSlice({
       state.userType = 1;
       console.log("action.payload==", action.payload);
     },
+    onCustomerLogout: (state, action) => {
+      state.token= '';
+      state.userType = undefined;
+      console.log("state.token", state.token)
+    },
+    onResLogout: (state, action) => {
+      state.token= '';
+      state.userType = undefined;
+    },
     updateResProfile: (state, action) => {
       console.log("action.payload", action.payload)
       state.resProfile = action.payload;
@@ -104,6 +113,7 @@ export const mainSlice = createSlice({
 export const {
   onCustomerLogin,
   onResLogin,
+  onCustomerLogout, onResLogout,
   changeToken, selectUserType, updateCustomerProfile,
   updateCustomerMenu, updateCustomerOrders, updateResProfile,
   updateResMenu, updateResOrders

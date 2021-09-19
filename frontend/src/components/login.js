@@ -51,7 +51,7 @@ export default function SignIn() {
     const {register, handleSubmit, control} = useForm()
     const history = useHistory();
     // console.log("EMail", email, "pwd", password, "usertype", userType);
-    const url = userType == "1" ? "/login/customer" : "/login/restaurant";
+    const url = userType == 1 ? "/login/customer" : "/login/restaurant";
     // const signInApi = async() => {
     //     const resp = await fetch(url, {
     //         method: "POST",
@@ -79,8 +79,8 @@ export default function SignIn() {
       try {
           const res = await axios.post(url, body);
           console.log("response",res.data);
-          userType === "2" ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
-          setTimeout(() => history.push("/res_profile"), 2000);
+          userType === 2 ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
+          setTimeout(() => userType == 2 ? history.push("/res_profile") : history.push("/"), 2000);
           
       }catch(err){
           alert(err);

@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {Link} from 'react-router-dom';
 import DehazeIcon from '@material-ui/icons/Dehaze';
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 import {
     ListItemText,
     Avatar,
@@ -24,6 +25,8 @@ import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
 
 import avatar from '../images/dish_icon.jpeg';
 import app_logo from '../images/logo_appbar.svg';
+import { onResLogout, onCustomerLogout } from '../app/reducers/mainSlice';
+import axios from 'axios';
 
 // CSS styles
 const useStyles = makeStyles(theme=>({
@@ -50,6 +53,9 @@ const useStyles = makeStyles(theme=>({
 const Navigationbar = () => {
     const classes = useStyles();
     const mainReducer = useSelector((state) => state.mainReducer);
+    useEffect(() => {}, [])
+    const history = useHistory();
+    const dispatch = useDispatch()
     const { userType, token } = mainReducer;
     console.log("userType", userType, ",t:",token)
 
@@ -58,9 +64,29 @@ const Navigationbar = () => {
     const toggleSlider = (slider, open) => () => {
         setState({...state, [slider]: open});
     };
+    console.log("token==", token);
+    const url =  "/restaurants/profile";
 
-    const logoutApi = () => {
-        
+    const logoutApi = async () => {
+        const { resProfile, token, customerProfile } = mainReducer;
+        const url = userType == "1" ? "/logout/customer" : "/logout/restaurant";
+        const headers = { 
+            'x-access-token': token,
+        };
+        const body = {
+            email: userType === 1 ? customerProfile?.email: resProfile?.email ,
+            token,
+        };
+        // console.log("body", body);
+        try {
+            const res = await axios.post(url,body, {headers});
+            console.log("response",res);
+            userType === 1 ? dispatch(onCustomerLogout(res.data)): dispatch(onResLogout(res.data)); 
+            setTimeout(() => history.push("/login"), 2000);
+            
+        }catch(err){
+            console.log(err)
+        }
     }
 
     const afterResLoginItems = [
@@ -159,17 +185,19 @@ const Navigationbar = () => {
                             {sidebarList('right')}
                         </MobileeRightMenuSlider>
                         <img src={app_logo} width={'124'} height={'82'} alt='' />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="outlined"
-                            color="primary"
-                            className={classes.submit}
-                            onClick={() => logoutApi()}
-                            style={{ position: 'absolute', right: '10%', width: 100}}
-                        >
-                            Logout
-                        </Button>
+                        {token &&
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="outlined"
+                                color="primary"
+                                className={classes.submit}
+                                onClick={() => logoutApi()}
+                                style={{ position: 'absolute', right: '10%', width: 100}}
+                            >
+                                Logout
+                            </Button>
+                        }
                         <IconButton onClick={toggleSlider('right', true)} style={{ position: 'absolute', right: '2%'}}>
                             <DehazeIcon style={{color: 'black'}} />
                         </IconButton>
