@@ -1,4 +1,5 @@
-import React, {useState} from 'react'
+import React, {useState} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {Link} from 'react-router-dom';
 import DehazeIcon from '@material-ui/icons/Dehaze';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,6 +14,7 @@ import {
     AppBar,
     ListItem,
     IconButton,
+    Button
 } from '@material-ui/core';
 import {
     Home
@@ -45,46 +47,89 @@ const useStyles = makeStyles(theme=>({
     }
 }));
 
-const menuItems = [
-    {
-        itemIcon: <Home />,
-        itemText: 'Dashboard',
-        itemPath: '/'
-    },
-    {
-        itemIcon: <Home />,
-        itemText: 'Orders',
-        itemPath: '/'
-    },
-    {
-        itemIcon: <Home />,
-        itemText: 'Menu',
-        itemPath: '/'
-    },
-    {
-        itemIcon: <ConfirmationNumberIcon />,
-        itemText: 'Tickets',
-        itemPath: '/tickets'
-    },
-    {
-        itemIcon: <Home />,
-        itemText: 'Login',
-        itemPath: '/login'
-    },
-    {
-        itemText: 'Profile',
-        itemPath: '/res_profile',
-    },
-]
-
 const Navigationbar = () => {
     const classes = useStyles();
+    const mainReducer = useSelector((state) => state.mainReducer);
+    const { userType, token } = mainReducer;
+    console.log("userType", userType, ",t:",token)
 
     const [state, setState] = useState({ right: false })
 
     const toggleSlider = (slider, open) => () => {
         setState({...state, [slider]: open});
     };
+
+    const logoutApi = () => {
+        
+    }
+
+    const afterResLoginItems = [
+        {
+            itemText: 'Restaurant Profile',
+            itemPath: '/res_profile',
+        },
+        {
+            itemIcon: <Home />,
+            itemText: 'Dashboard',
+            itemPath: '/'
+        },
+        {
+            itemIcon: <ConfirmationNumberIcon />,
+            itemText: 'Tickets',
+            itemPath: '/tickets'
+        },
+        // {
+        //     itemIcon: <Home />,
+        //     itemText: 'Login',
+        //     itemPath: '/login'
+        // },
+    ];
+
+    const afterCustomerLoginItems = [
+        // {
+        //     itemText: 'Restaurant Profile',
+        //     itemPath: '/res_profile',
+        // },
+        {
+            itemIcon: <Home />,
+            itemText: 'Dashboard',
+            itemPath: '/'
+        },
+        {
+            itemIcon: <ConfirmationNumberIcon />,
+            itemText: 'Tickets',
+            itemPath: '/tickets'
+        },
+        // {
+        //     itemIcon: <Home />,
+        //     itemText: 'Login',
+        //     itemPath: '/login'
+        // },
+    ];
+
+
+    const beforeLogin = [
+        {
+            itemIcon: <Home />,
+            itemText: 'Dashboard',
+            itemPath: '/',
+        },
+        {
+            itemText: 'Customer Signup',
+            itemPath: '/customer_signup',
+        },
+        {
+            itemText: 'Restaurant Signup',
+            itemPath: '/restaurant_signup',
+        },
+        {
+            itemIcon: <Home />,
+            itemText: 'Login',
+            itemPath: '/login'
+        },
+    ];
+
+    const menuItems = token ? (userType === 1 ? afterCustomerLoginItems : afterResLoginItems) : beforeLogin
 
     const sidebarList = slider => (
         <Box component='div'
@@ -114,6 +159,17 @@ const Navigationbar = () => {
                             {sidebarList('right')}
                         </MobileeRightMenuSlider>
                         <img src={app_logo} width={'124'} height={'82'} alt='' />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="outlined"
+                            color="primary"
+                            className={classes.submit}
+                            onClick={() => logoutApi()}
+                            style={{ position: 'absolute', right: '10%', width: 100}}
+                        >
+                            Logout
+                        </Button>
                         <IconButton onClick={toggleSlider('right', true)} style={{ position: 'absolute', right: '2%'}}>
                             <DehazeIcon style={{color: 'black'}} />
                         </IconButton>

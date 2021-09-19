@@ -1,5 +1,6 @@
 import express from "express";
 import pool from "../pool.js";
+import bcrypt from 'bcrypt';
 const router = express.Router();
 
 router.post('/customer', async (req, res) => {
@@ -34,20 +35,27 @@ router.post('/customer', async (req, res) => {
             });
         });
     };
-    const queryPromise3 = (address_id) => {
-        const sql3 = `INSERT INTO customers (first_name, last_name, email, password, customer_address_id)
-            VALUES ('${first_name}', '${last_name}', '${email}', '${password}', '${address_id}');`
-        console.log("sql3:", sql3);
-        return new Promise((resolve, reject)=>{
-            pool.query(sql3,  (error3, result3)=>{
-                if(error3){
-                    console.log("error3:", error3);
-                    return reject(error3);
-                }
-                console.log("result3:", result3);
-                return resolve(result3);
+    const queryPromise3 = async (address_id) => {
+        let sql3;
+        const result = await bcrypt.hash(password, 10, function(err, hash) {
+            // Store hash in your password DB. 
+            // console.log("hash", hash)
+            sql3 = `INSERT INTO customers (first_name, last_name, email, password, customer_address_id)
+            VALUES ('${first_name}', '${last_name}', '${email}', '${hash}', '${address_id}');`
+            // console.log("sql3:=======", sql3);
+            return new Promise((resolve, reject)=>{
+
+                pool.query(sql3,  (error3, result3)=>{
+                    if(error3){
+                        console.log("error3:", error3);
+                        return reject(error3);
+                    }
+                    // console.log("result3:", result3);
+                    return resolve(result3);
+                });
             });
         });
+        return result
     };
     try {
         const result1 = await queryPromise1();
@@ -99,20 +107,24 @@ router.post('/restaurant', async (req, res) => {
             });
         });
     };
-    const queryPromise3 = (address_id) => {
-        const sql3 = `INSERT INTO restaurants (name, email, password, address_id) 
-        VALUES ('${name}', '${email}', '${password}', '${address_id}');`
-        console.log("sql3:", sql3); 
-        return new Promise((resolve, reject)=>{
-            pool.query(sql3,  (error3, result3)=>{
-                if(error3){
-                    console.log("error3:", error3);
-                    return reject(error3);
-                }
-                console.log("result3:", result3);
-                return resolve(result3);
+    const queryPromise3 = async (address_id) => {
+        const result = await bcrypt.hash(password, 10, function(err, hash) {
+            // Store hash in your password DB.
+            const sql3 = `INSERT INTO restaurants (name, email, password, address_id) 
+            VALUES ('${name}', '${email}', '${hash}', '${address_id}');`
+            console.log("sql3:", sql3); 
+            return new Promise((resolve, reject)=>{
+                pool.query(sql3,  (error3, result3)=>{
+                    if(error3){
+                        console.log("error3:", error3);
+                        return reject(error3);
+                    }
+                    console.log("result3:", result3);
+                    return resolve(result3);
+                });
             });
-        });
+            });
+        return result
     };
     try {
         const result1 = await queryPromise1();

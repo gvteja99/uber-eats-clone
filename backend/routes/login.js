@@ -2,13 +2,14 @@ import express from "express";
 import pool from "../pool.js";
 import jwt from "jsonwebtoken";
 import config from "../config.js";
+import bcrypt from 'bcrypt';
 const router = express.Router();
 
 router.post('/customer', async (req, res) => {
     const { email, password } = req.body;
 
-    const queryPromise1 = () => {
-        const sql1 = `SELECT * from customers where email = '${email}' and password = '${password}';`;
+    const queryPromise1 = async () => {
+        const sql1 = `SELECT * from customers where email = '${email}';`;
         console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1)=>{
@@ -20,37 +21,50 @@ router.post('/customer', async (req, res) => {
                 return resolve(result1);
             });
         });
+            // return result;
+        // });
     };
-    const queryPromise2 = (token) => {
-        
-        const sql2 = `UPDATE customers SET token= '${token}' where email = '${email}' and password = '${password}';`;
-        console.log("sql2:", sql2);
-        return new Promise((resolve, reject)=>{
-            pool.query(sql2,  (error2, result2)=>{
-                if(error2){
-                    console.log("error2:", error2);
-                    return reject(error2);
-                }
-                console.log("result2:", result2);
-                return resolve(result2);
-            });
-        });
+    const queryPromise2 = async (token, hash, result1) => {
+            const sql2 = `UPDATE customers SET token= '${token}' where email = '${email}';`;
+            console.log("sql2:", sql2);
+            return new Promise((resolve, reject)=>{
+                pool.query(sql2,  (error2, result2)=>{
+                    if(error2){
+                        console.log("error2:", error2);
+                        return reject(error2);
+                    }
+                    console.log("result2:", result2);
+                    return resolve(result2);
+                });
+            })
     };
     let token;
     try {
         const result1 = await queryPromise1();
+
         if (!(result1 && result1.length > 0)) {
             return res.status(400).json("Invalid credentials");
         }
         const customer_id = result1[0]?.customer_id; 
-        console.log("result1[0]:", customer_id);
+        const hashPwd = result1[0]?.password;
         token = jwt.sign({customer_id, email}, config.token_key, {expiresIn: "2h"})
-        const result2 = await queryPromise2(token);
-        const res_body = {
-        }
-        Object.assign(res_body, result1[0], { token });
-        return res.status(200).json(res_body);
+        console.log("hashedpwwd", hashPwd);
+        const result2 = await queryPromise2(token, hashPwd, result1);
+        bcrypt.compare(password, hashPwd)
+            .then((isMatch) => {
+                if (!isMatch) {
+                    return res.status(400).json("Invalid password");
+                }
+                else {
+                     const res_body = {
+                     }
+                     Object.assign(res_body, result1[0], { token });
+                     return res.status(200).json(res_body);
+                }
+             }
+        )
     } catch(error) {
+        console.log("======inside catch:");
         console.log(error);
         return res.status(500).json(error);
     }
@@ -58,9 +72,8 @@ router.post('/customer', async (req, res) => {
 
 router.post('/restaurant', async (req, res) => {
     const { email, password } = req.body;
-
-    const queryPromise1 = () => {
-        const sql1 = `SELECT * from restaurants where email = '${email}' and password = '${password}';`;
+    const queryPromise1 = async () => {
+        const sql1 = `SELECT * from restaurants where email = '${email}';`;
         console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1)=>{
@@ -73,19 +86,20 @@ router.post('/restaurant', async (req, res) => {
             });
         });
     };
-    const queryPromise2 = (token) => {
-        const sql2 = `UPDATE restaurants SET token= '${token}' where email = '${email}' and password = '${password}';`;
-        console.log("sql2:", sql2);
-        return new Promise((resolve, reject)=>{
-            pool.query(sql2,  (error2, result2)=>{
-                if(error2){
-                    console.log("error2:", error2);
-                    return reject(error2);
-                }
-                console.log("result2:", result2);
-                return resolve(result2);
-            });
-        });
+    
+    const queryPromise2 = (token, hash) => {
+            const sql2 = `UPDATE restaurants SET token= '${token}' where email = '${email}';`;
+            console.log("sql2:", sql2);
+            return new Promise((resolve, reject)=>{
+                pool.query(sql2,  (error2, result2)=>{
+                    if(error2){
+                        console.log("error2:", error2);
+                        return reject(error2);
+                    }
+                    console.log("result2:", result2);
+                    return resolve(result2);
+                });
+        }) 
     };
     const queryPromise3 = (res) => {
         const sql3 = `Select street_address, apt_number, city, state, country, zipcode from addresses where address_id = '${res?.address_id}';`;
@@ -109,12 +123,21 @@ router.post('/restaurant', async (req, res) => {
         }
         const res_id = result1[0]?.res_id; 
         token = jwt.sign({res_id, email}, config.token_key, {expiresIn: "2h"})
-        const result2 = await queryPromise2(token);
+        const result2 = await queryPromise2(token, result1[0].password);
         let res_body = {};
         const result3 = await queryPromise3(result1[0]);
-        console.log("result3[0]", result3);
-        Object.assign(res_body, result1[0], { token }, result3[0]);
-        return res.status(200).json(res_body);
+        bcrypt.compare(password, result1[0].password)
+        .then((isMatch) => {
+            if (!isMatch) {
+                return res.status(400).json("Invalid password");
+            }
+            else {
+                 const res_body = {}
+                console.log("result3[0]", result3);
+                Object.assign(res_body, result1[0], { token }, result3[0]);
+                return res.status(200).json(res_body);
+            }
+        })
     } catch(error) {
         console.log(error);
         return res.status(500).json(error);

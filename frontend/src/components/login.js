@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect, Router} from 'react-router-dom';
-// import {useRoutes, useRedirect } from 'hookrouter';
+import Navigationbar from './navigationbar.js';
+
 import { useNavigate, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -73,18 +74,18 @@ export default function SignIn() {
     //     console.log("===loginresponse", resp);
     // }
     const signInApi = async () => {
-        const body = {email, password}
-        try {
-            // console.log("bo")
-            const res = await axios.post(url,body);
-            console.log("response",res.data);
-            userType === "2" ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
-            setTimeout(() => history.push("/res_profile"), 2000);
-            
-        }catch(err){
-            alert(err);
-            console.log(err)
-        }
+      const body = {email, password}
+      console.log("==loginbody", body);
+      try {
+          const res = await axios.post(url, body);
+          console.log("response",res.data);
+          userType === "2" ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
+          setTimeout(() => history.push("/res_profile"), 2000);
+          
+      }catch(err){
+          alert(err);
+          console.log(err)
+      }
 
     }
     const onClickSubmit = (data) => {
@@ -95,6 +96,8 @@ export default function SignIn() {
         console.log("errors", errors, "e", e);
     }
   return (
+    <>
+     <Navigationbar />
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
@@ -170,5 +173,6 @@ export default function SignIn() {
         </form>
       </div>
     </Container>
+    </>
   );
 }

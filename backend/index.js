@@ -9,6 +9,7 @@ import signup from "./routes/signup.js";
 import login from "./routes/login.js";
 import restaurants from "./routes/restaurants.js";
 import customers from "./routes/customers.js";
+import logout from './routes/logout.js';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/signup", signup);
 app.use("/login", login);
 app.use("/restaurants", restaurants);
 app.use("/customers", customers);
+app.use("/logout", logout);
 
 const port = 3001;
 

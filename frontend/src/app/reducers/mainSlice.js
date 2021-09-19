@@ -37,12 +37,14 @@ export const mainSlice = createSlice({
       const data = action.payload;
       state.token= data.token;
       state.resProfile = data;
+      state.userType = 2,
       console.log("action.payload==", action.payload);
     },
     onCustomerLogin: (state, action) => {
       const data = action.payload;
       state.token= data.token;
       state.customerProfile = data;
+      state.userType = 1;
       console.log("action.payload==", action.payload);
     },
     updateResProfile: (state, action) => {
