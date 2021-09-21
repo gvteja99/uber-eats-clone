@@ -43,26 +43,8 @@ const useStyles = makeStyles(theme => ({
 
 const Dashboard = () => {
     const mainReducer = useSelector((state) => state.mainReducer)
-    console.log("")
-    const [allResList, setAllResList] = useState([]);
     useEffect(() => {
-        getAllRestaurants();
     }, [])
-    const url = "/restaurants"
-    const getAllRestaurants = async() => {
-        const resp = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                "x-access-token": "",
-            },
-        }).then((response) => {
-            console.log("response:", JSON.stringify(response))
-            return response.json()
-        });
-        await setAllResList(resp);
-        console.log("===restList", resp);
-    }
     const classes = useStyles();
     // const resImgList = [
     //     {url: Res1},

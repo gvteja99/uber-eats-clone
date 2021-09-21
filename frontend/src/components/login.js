@@ -50,40 +50,19 @@ export default function SignIn() {
     const classes = useStyles();
     const {register, handleSubmit, control} = useForm()
     const history = useHistory();
-    // console.log("EMail", email, "pwd", password, "usertype", userType);
-    const url = userType == 1 ? "/login/customer" : "/login/restaurant";
-    // const signInApi = async() => {
-    //     const resp = await fetch(url, {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-type": "application/json; charset=UTF-8",
-    //             "x-access-token": "",
-    //         },
-    //         body: JSON.stringify({email, password})
-    //     }).then((response) => {
-    //         console.log("status code", response.status, typeof(response.status));
-    //         if (response.status === 200) {
-                
-    //             userType === "2" ? dispatch(onResLogin(JSON.parse(response.body))) : dispatch(onCustomerLogin(JSON.parse(response.body)))
-    //             console.log("===userType", userType);
-    //             // response.body.
-    //             return response.json()
-    //         } 
-    //         return 
-    //     }).catch((error)=> console.log(error));
-    //     console.log("===loginresponse", resp);
-    // }
+    const url = parseInt(userType) == 1 ? "/login/customer" : "/login/restaurant";
     const signInApi = async () => {
       const body = {email, password}
       console.log("==loginbody", body);
       try {
           const res = await axios.post(url, body);
           console.log("response",res.data);
-          userType === 2 ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
-          setTimeout(() => userType == 2 ? history.push("/res_profile") : history.push("/"), 2000);
+          console.log("userType", userType, "type", typeof(userType))
+          await parseInt(userType) === 2 ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
+          await setTimeout(() => parseInt(userType) == 2 ? history.push("/res_profile") : history.push("/"), 2000);
           
       }catch(err){
-          alert(err);
+          alert("Invalid Credentials");
           console.log(err)
       }
 
@@ -95,6 +74,7 @@ export default function SignIn() {
     const onError = (errors, e) => {
         console.log("errors", errors, "e", e);
     }
+  const signupPageUrl = parseInt(userType) == 2 ? "/res_signup" : "/customer_signup";
   return (
     <>
      <Navigationbar />
@@ -165,7 +145,7 @@ export default function SignIn() {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href={signupPageUrl} variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

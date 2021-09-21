@@ -105,7 +105,7 @@ export default function ResSignup() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Restaurant
+          Restaurant Signup
         </Typography>
         <form className={classes.form} noValidate  onSubmit={handleSubmit(onClickSubmit, onError)}>
         <TextField
@@ -146,7 +146,7 @@ export default function ResSignup() {
             // required
             fullWidth
             name="name"
-            label="name"
+            label="restaurant name"
             type="text"
             id="name"
             value={name}

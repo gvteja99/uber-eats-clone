@@ -42,22 +42,6 @@ export default function ResProfile() {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [password, setPassword] = useState("");
-    // const [aptNumber, setAptNumber] = useState(resProfile?.apt_number ||  "");
-    // const [city, setCity] = useState(resProfile?.city ||  "san jose");
-    // const [state, setState] = useState(resProfile?.state ||  "california");
-    // const [country, setCountry] = useState(resProfile?.country ||  "united states");
-    // const [zipcode, setZipcode] = useState(resProfile?.zipcode ||  "95111");
-
-    // const countries = [
-    //     {
-    //       value: 'united states',
-    //       label: 'United States',
-    //     },
-    //     {
-    //       value: 'india',
-    //       label: 'India',
-    //     },
-    //   ];
 
     useEffect(() => {}, [])
     const dispatch = useDispatch()

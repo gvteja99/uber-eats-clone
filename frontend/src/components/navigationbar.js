@@ -57,14 +57,14 @@ const Navigationbar = () => {
     const history = useHistory();
     const dispatch = useDispatch()
     const { userType, token } = mainReducer;
-    console.log("userType", userType, ",t:",token)
+    // console.log("userType", userType, ",t:",token)
 
     const [state, setState] = useState({ right: false })
 
     const toggleSlider = (slider, open) => () => {
         setState({...state, [slider]: open});
     };
-    console.log("token==", token);
+    // console.log("token==", token);
     const url =  "/restaurants/profile";
 
     const logoutApi = async () => {
@@ -100,37 +100,31 @@ const Navigationbar = () => {
             itemPath: '/'
         },
         {
+            itemText: 'Restaurant Menu',
+            itemPath: '/restaurant/menu',
+        },
+        {
             itemIcon: <ConfirmationNumberIcon />,
             itemText: 'Tickets',
             itemPath: '/tickets'
         },
-        // {
-        //     itemIcon: <Home />,
-        //     itemText: 'Login',
-        //     itemPath: '/login'
-        // },
     ];
 
     const afterCustomerLoginItems = [
-        // {
-        //     itemText: 'Restaurant Profile',
-        //     itemPath: '/res_profile',
-        // },
         {
             itemIcon: <Home />,
             itemText: 'Dashboard',
-            itemPath: '/'
+            itemPath: '/customer'
+        },
+        {
+            itemText: 'Profile',
+            itemPath: '/customer_profile'
         },
         {
             itemIcon: <ConfirmationNumberIcon />,
             itemText: 'Tickets',
             itemPath: '/tickets'
         },
-        // {
-        //     itemIcon: <Home />,
-        //     itemText: 'Login',
-        //     itemPath: '/login'
-        // },
     ];
 
 
@@ -141,17 +135,17 @@ const Navigationbar = () => {
             itemPath: '/',
         },
         {
+            itemIcon: <Home />,
+            itemText: 'Login',
+            itemPath: '/login'
+        },
+        {
             itemText: 'Customer Signup',
             itemPath: '/customer_signup',
         },
         {
             itemText: 'Restaurant Signup',
-            itemPath: '/restaurant_signup',
-        },
-        {
-            itemIcon: <Home />,
-            itemText: 'Login',
-            itemPath: '/login'
+            itemPath: '/res_signup',
         },
     ];
 
@@ -172,6 +166,19 @@ const Navigationbar = () => {
                     </ListItem>
                 ))}
             </List>
+            {token &&
+                <Button
+                    // type="submit"
+                    fullWidth
+                    // variant="outlined"
+                    color="black"
+                    className={classes.submit}
+                    onClick={() => logoutApi()}
+                    style={{  width: 100}}
+                >
+                    Logout
+                </Button>
+            }
         </Box>
     );
     return (
@@ -185,19 +192,6 @@ const Navigationbar = () => {
                             {sidebarList('right')}
                         </MobileeRightMenuSlider>
                         <img src={app_logo} width={'124'} height={'82'} alt='' />
-                        {token &&
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="outlined"
-                                color="primary"
-                                className={classes.submit}
-                                onClick={() => logoutApi()}
-                                style={{ position: 'absolute', right: '10%', width: 100}}
-                            >
-                                Logout
-                            </Button>
-                        }
                         <IconButton onClick={toggleSlider('right', true)} style={{ position: 'absolute', right: '2%'}}>
                             <DehazeIcon style={{color: 'black'}} />
                         </IconButton>

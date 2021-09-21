@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Navigationbar from './navigationbar.js';
-// import { Redirect, Router} from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -9,13 +8,13 @@ import {
     makeStyles, Link, Grid, Checkbox, Typography, TextField, Radio, RadioGroup, MenuItem,
 } from '@material-ui/core';
 
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { AccountCircle} from '@material-ui/icons';
 import {useForm, Controller} from 'react-hook-form'
-import { onResLogin, onCustomerLogin, updateResProfile } from '../app/reducers/mainSlice';
+import { updateCustomerProfile } from '../app/reducers/mainSlice';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(12),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -36,21 +35,24 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function ResProfile() {
+export default function CustomerProfile() {
     const mainReducer = useSelector((state) => state.mainReducer);
-    const { resProfile, token } = mainReducer;
-    console.log("resProfile", resProfile);
-    const [name, setName] = useState(resProfile && ( resProfile?.name ||  ""));
-    const [phone, setPhone] = useState(resProfile?.phone_number || "");
-    const [streetAddress, setStreetAddress] = useState(resProfile?.street_address ||  "");
-    const [aptNumber, setAptNumber] = useState(resProfile?.apt_number ||  "");
-    const [city, setCity] = useState(resProfile?.city ||  "san jose");
-    const [state, setState] = useState(resProfile?.state ||  "california");
-    const [country, setCountry] = useState(resProfile?.country ||  "united states");
-    const [zipcode, setZipcode] = useState(resProfile?.zipcode ||  "95111");
-    const [timingOpen, setTimingOpen] = useState(resProfile?.timing_open ||  "");
-    const [timingClose, setTimingClose] = useState(resProfile?.timing_close ||  "");
-    const [deliveryOptions, setDeliveryOptions] = useState((resProfile?.delivery_option));
+    const { customerProfile, token } = mainReducer;
+    console.log("customerProfile", customerProfile);
+    const [firstName, setFirstName] = useState(customerProfile && ( customerProfile?.first_name ||  ""));
+    const [lastName, setLastName] = useState(customerProfile && ( customerProfile?.last_name ||  ""));
+    const [dob, setDob] = useState(customerProfile?.dob || "");
+    const [email, setEmail] = useState(customerProfile?.email ||  "");
+    const [phone, setPhone] = useState(customerProfile?.phone_number || "");
+    const [nickName, setNickName]= useState(customerProfile?.nickname || "");
+    const [about, setAbout]= useState(customerProfile?.about || "");
+    const [profilePic, setProfilePic] = useState(customerProfile?.profile_pic ||  "");
+    const [streetAddress, setStreetAddress] = useState(customerProfile?.street_address ||  "");
+    const [aptNumber, setAptNumber] = useState(customerProfile?.apt_number ||  "");
+    const [city, setCity] = useState(customerProfile?.city ||  "san jose");
+    const [state, setState] = useState(customerProfile?.state ||  "california");
+    const [country, setCountry] = useState(customerProfile?.country ||  "united states");
+    const [zipcode, setZipcode] = useState(customerProfile?.zipcode ||  "95111");
 
     const countries = [
         {
@@ -63,38 +65,28 @@ export default function ResProfile() {
         },
       ];
     
-    const deliveryOptionList = [
-        {
-            value: 1,
-            label: 'Both delivery and pickup',
-        },
-        {
-            value: 2,
-            label: 'Only delivery',
-        },
-        {
-            value: 3,
-            label: 'Only pickup',
-        },
-    ];
 
     useEffect(() => {}, [])
     const dispatch = useDispatch()
     const classes = useStyles();
     const {register, handleSubmit, control} = useForm()
     const history = useHistory();
-    console.log("token==", token);
-    const url =  "/restaurants/profile";
-    const updateProfileApi = async () => {
+    // console.log("token==", token);
+    const url =  "/customers/profile";
+    // console.log("==customerProfileredux", customerProfile)
+    const updateCustomerProfileApi = async () => {
         const body = {
-            res_id: resProfile?.res_id,
-            name,
-            address_id: resProfile?.address_id,
-            delivery_option: deliveryOptions,
+            customer_id: customerProfile?.customer_id,
+            first_name: firstName,
+            last_name: lastName,
+            address_id: customerProfile?.customer_address_id,
+            email: customerProfile?.email,
             phone_number: phone,
-            description: `${name} is a good restaurant`,
-            timing_open: timingOpen,
-            timing_close: timingClose,
+            description: `${firstName} is a good customer`,
+            dob,
+            nickname: nickName,
+            about: about,
+            profile_pic: profilePic,
             street_address: streetAddress,
             apt_number: aptNumber,
             city: city,
@@ -110,8 +102,8 @@ export default function ResProfile() {
         try {
             const res = await axios.put(url,body, {headers});
             console.log("response",res);
-            dispatch(updateResProfile(res.data))
-            setTimeout(() => history.push("/"), 2000);
+            await dispatch(updateCustomerProfile(res.data))
+            setTimeout(() => history.push("/"), 500);
             
         }catch(err){
             console.log(err)
@@ -120,7 +112,7 @@ export default function ResProfile() {
     }
     const onClickSubmit = (data) => {
         console.log("calling")
-        updateProfileApi();
+        updateCustomerProfileApi();
     }
     const onError = (errors, e) => {
         console.log("errors", errors, "e", e);
@@ -132,34 +124,56 @@ export default function ResProfile() {
         <CssBaseline />
         <div className={classes.paper}>
           <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
+            <AccountCircle />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Restaurant Profile
+            Customer Profile
           </Typography>
           <form className={classes.form} noValidate  onSubmit={handleSubmit(onClickSubmit, onError)}>
             <TextField
               variant="outlined"
               margin="normal"
-              // , { required: true }
-              inputRef={{...register('name')}}
-              // required
+              inputRef={{...register('firstName')}}
               fullWidth
-              id="name"
-              label="name"
-              name="name"
+              id="firstName"
+              label="firstName"
+              name="firstName"
               type='text'
-              value={name}
-              onChange={e => setName(e.target.value)}
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
               autoFocus
               inputProps={{className: classes.textInput}}
             />
             <TextField
               variant="outlined"
               margin="normal"
-              // , { required: true }
+              inputRef={{...register('lastName')}}
+              fullWidth
+              id="lastName"
+              label="lastName"
+              name="lastName"
+              type='text'
+              value={lastName}
+              onChange={e => setLastName(e.target.value)}
+              autoFocus
+              inputProps={{className: classes.textInput}}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              inputRef={{...register('email')}}
+              fullWidth
+              name="email"
+              label="email"
+              type="email"
+              id="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
               inputRef={{...register('phone')}}
-              // required
               fullWidth
               name="phone"
               label="phone"
@@ -171,9 +185,35 @@ export default function ResProfile() {
             <TextField
               variant="outlined"
               margin="normal"
-              // , { required: true }
+              inputRef={{...register('nickName')}}
+              fullWidth
+              id="nickName"
+              label="nickName"
+              name="nickName"
+              type='text'
+              value={nickName}
+              onChange={e => setNickName(e.target.value)}
+              autoFocus
+              inputProps={{className: classes.textInput}}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              inputRef={{...register('dob')}}
+              fullWidth
+              id="dob"
+              helperText="Select date of birth"
+              name="dob"
+              type='date'
+              value={dob}
+              onChange={e => setDob(e.target.value)}
+              autoFocus
+              inputProps={{className: classes.textInput}}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
               inputRef={{...register('streetAddress')}}
-              // required
               fullWidth
               name="streetAddress"
               label="streetAddress"
@@ -185,7 +225,6 @@ export default function ResProfile() {
             <TextField
               variant="outlined"
               margin="normal"
-              // , { required: true }
               inputRef={{...register('aptNumber')}}
               // required
               fullWidth
@@ -224,20 +263,19 @@ export default function ResProfile() {
               value={state}
               onChange={e => setState(e.target.value)}
             />
-            {/* <TextField
-              variant="outlined"
-              margin="normal"
-              // , { required: true }
-              inputRef={{...register('country')}}
-              // required
-              fullWidth
-              name="country"
-              label="country"
-              type="text"
-              id="country"
-              value={country}
-              onChange={e => setCountry(e.target.value)}
-            /> */}
+            <TextField
+                id="country"
+                select
+                label="country"
+                value={country}
+                onChange={e => setCountry(e.target.value)}
+            >
+                {countries.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                </MenuItem>
+                ))}
+            </TextField>
             <TextField
               variant="outlined"
               margin="normal"
@@ -252,91 +290,29 @@ export default function ResProfile() {
               value={zipcode}
               onChange={e => setZipcode(e.target.value)}
             />
-          <TextField
+            <TextField
               variant="outlined"
               margin="normal"
-              // , { required: true }
-              inputRef={{...register('timingOpen')}}
-              // required
+              inputRef={{...register('about')}}
               fullWidth
-              name="timingOpen"
-              label="timingOpen"
-              type="text"
-              id="timingOpen"
-              value={timingOpen}
-              onChange={e => setTimingOpen(e.target.value)}
+              id="about"
+              label="about"
+              name="about"
+              type='text'
+              value={about}
+              onChange={e => setAbout(e.target.value)}
+              autoFocus
+              inputProps={{className: classes.textInput}}
             />
-          <TextField
-              variant="outlined"
-              margin="normal"
-              // , { required: true }
-              inputRef={{...register('timingClose')}}
-              // required
-              fullWidth
-              name="timingClose"
-              label="timingClose"
-              type="text"
-              id="timingClose"
-              value={timingClose}
-              onChange={e => setTimingClose(e.target.value)}
-            />
-          <TextField
-            id="outlined-select-currency"
-            select
-            label="country"
-            value={country}
-            onChange={e => setCountry(e.target.value)}
-          //   helperText="Please select your currency"
-          >
-            {countries.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            id="outlined-select-currency"
-            select
-            label="delivery options"
-            value={deliveryOptions}
-            onChange={e => setDeliveryOptions(e.target.value)}
-          //   helperText="Please select your currency"
-          >
-            {deliveryOptionList.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-            {/* <FormControl component="fieldset">
-              <RadioGroup
-                  // aria-label="gender"
-                  name="controlled-radio-buttons-group"
-                  defaultValue={"1"}
-                  value={userType}
-                  onChange={e => setUserType(e.target.value)}
-              >
-                  <FormControlLabel value="1" control={<Radio />} label="customer" />
-                  <FormControlLabel value="2" control={<Radio />} label="restaurant" />
-              </RadioGroup>
-              </FormControl> */}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              // onSubmit={() => onClickSubmit()}
             >
               Update Profile
             </Button>
-            {/* <Grid container>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid> */}
           </form>
         </div>
       </Container>

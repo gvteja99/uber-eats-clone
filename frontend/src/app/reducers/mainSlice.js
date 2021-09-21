@@ -12,6 +12,7 @@ const initialState = {
     customerProfile: {},
     customerMenu: [],
     customerOrders: [],
+    selectedRes: null,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -37,40 +38,41 @@ export const mainSlice = createSlice({
       const data = action.payload;
       state.token= data.token;
       state.resProfile = data;
-      state.userType = 2,
-      console.log("action.payload==", action.payload);
+      state.userType = 2;
     },
     onCustomerLogin: (state, action) => {
       const data = action.payload;
       state.token= data.token;
       state.customerProfile = data;
       state.userType = 1;
-      console.log("action.payload==", action.payload);
     },
     onCustomerLogout: (state, action) => {
       state.token= '';
       state.userType = undefined;
-      console.log("state.token", state.token)
     },
     onResLogout: (state, action) => {
       state.token= '';
       state.userType = undefined;
     },
     updateResProfile: (state, action) => {
-      console.log("action.payload", action.payload)
       state.resProfile = action.payload;
     },
     updateCustomerProfile: (state, action) => {
       state.customerProfile = action.payload;
+    },
+    getResMenu: (state, action) => {
+      console.log("action", action.payload);
+      state.resMenu = action.payload;
+    },
+    getAllResList: (state, action) => {
+      state.allRestList = action.payload;
+      console.log("========actionpayload", action.payload);
     },
     updateCustomerMenu: (state, action) => {
         state.customerMenu = action.payload;
     },
     updateCustomerOrders: (state, action) => {
         state.customerOrders= action.payload;
-    },
-    updateResMenu: (state, action) => {
-        state.customerMenu = action.payload;
     },
     updateResOrders: (state, action) => {
         state.customerOrders= action.payload;
@@ -111,12 +113,11 @@ export const mainSlice = createSlice({
 });
 
 export const {
-  onCustomerLogin,
-  onResLogin,
-  onCustomerLogout, onResLogout,
-  changeToken, selectUserType, updateCustomerProfile,
-  updateCustomerMenu, updateCustomerOrders, updateResProfile,
-  updateResMenu, updateResOrders
+  onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
+  updateResProfile, updateCustomerProfile, getResMenu, getAllResList,
+  changeToken, selectUserType,
+  updateCustomerMenu, updateCustomerOrders,
+  updateResOrders
  } = mainSlice.actions;
 
 // The function below is called a selector and allows us to select a value from

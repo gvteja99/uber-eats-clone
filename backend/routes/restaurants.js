@@ -79,7 +79,10 @@ router.put('/profile', auth, async (req, res) => {
 router.get('/', async (req, res) => {
     console.log("req==", req.user);
     const queryPromise1 = () => {
-        const sql1 = `SELECT * from restaurants;`;
+        // const sql1 = `SELECT * from restaurants;`;
+        const sql1 = `select r.res_id, r.email, r.address_id, r.name, r.phone_number, r.delivery_option, r.description, r.timing_open, r.timing_close,
+        a.street_address, a.apt_number, a.city, a.state, a.country, a.zipcode
+        from restaurants as r INNER JOIN addresses as a ON r.address_id = a.address_id;`;
         console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1)=>{
@@ -107,7 +110,8 @@ router.get('/', async (req, res) => {
 });
 
 // get restaurant dishes
-router.get('/:id/dishes', auth, async (req, res) => {
+// TODO auth
+router.get('/:id/dishes', async (req, res) => {
     const res_id = req.params.id;
     const queryPromise1 = () => {
         const sql1 = `SELECT * from restaurant_menu where res_id=${res_id};`;
