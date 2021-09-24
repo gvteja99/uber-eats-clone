@@ -133,3 +133,115 @@ INSERT INTO `restaurant_menu` VALUES
 (014893,14563, 'sushi', '', 9.4, 'dish descrp1...', '', 'appetizer', 1),
 (0167883,16763,'seaweed', '', 7.0, 'dish descrp2...', 'fdf', 'main_course', 2);
 -- UNLOCK TABLES;
+
+--
+-- Table structure for table `orders`
+--
+-- delivey status 1. recieved 2. preparing 3. on the way 4. delivered 5. pickup_ready 6. picked up 7. cancelled
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders`(
+    `order_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `res_id` int(10) unsigned NOT NULL,
+    `customer_id` int(10) unsigned NOT NULL,
+    `order_date_time` varchar(255) NOT NULL,
+    `delivery_date_time` varchar(255) NULL,
+    `delivery_address` varchar(500) NULL, 
+    `delivery_status` int(10)  DEFAULT 1,
+    `delivery_fee` float(40) DEFAULT 0,
+    `taxes` float(40) DEFAULT 0,
+    `tip` float(20) DEFAULT 0,
+    `instruction` varchar(255) DEFAULT NULL,
+    `total_amount` float(40) DEFAULT 0,
+
+    PRIMARY KEY (`order_id`),
+    UNIQUE KEY `order_id_UNIQUE` (`order_id`),
+    FOREIGN KEY (res_id)
+        REFERENCES restaurants (res_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (customer_id)
+        REFERENCES customers (customer_id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+)ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- -- LOCK TABLES `restaurant_menu` WRITE;
+-- INSERT INTO `orders` VALUES 
+-- (014893,14563, 'sushi', '', 9.4, 'dish descrp1...', '', 'appetizer', 1),
+-- (0167883,16763,'seaweed', '', 7.0, 'dish descrp2...', 'fdf', 'main_course', 2);
+-- -- UNLOCK TABLES;
+
+--
+-- Table structure for table `order_items`
+--
+DROP TABLE IF EXISTS `order_items`;
+CREATE TABLE `order_items`(
+    `order_item_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `order_id` int(10) unsigned NOT NULL,
+    `res_menu_id` int(10) unsigned NOT NULL,
+    `quantity` int(50) unsigned NOT NULL DEFAULT 1,
+
+    PRIMARY KEY (`order_item_id`),
+    UNIQUE KEY `order_item_id_UNIQUE` (`order_item_id`),
+    FOREIGN KEY (order_id)
+        REFERENCES orders (order_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (res_menu_id)
+        REFERENCES restaurant_menu (res_menu_id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+)ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- -- LOCK TABLES `restaurant_menu` WRITE;
+-- INSERT INTO `orders` VALUES 
+-- (014893,14563, 'sushi', '', 9.4, 'dish descrp1...', '', 'appetizer', 1),
+-- (0167883,16763,'seaweed', '', 7.0, 'dish descrp2...', 'fdf', 'main_course', 2);
+-- -- UNLOCK TABLES;
+
+
+--
+-- Table structure for table `favourites`
+--
+DROP TABLE IF EXISTS `favourites`;
+CREATE TABLE `favourites`(
+    `favourite_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `customer_id` int(10) unsigned NOT NULL,
+    `res_id` int(10) unsigned NOT NULL,
+
+    PRIMARY KEY (`favourite_id`),
+    UNIQUE KEY `favourite_id_UNIQUE` (`favourite_id`),
+    FOREIGN KEY (customer_id)
+        REFERENCES customers (customer_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (res_id)
+        REFERENCES restaurants (res_id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+)ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- -- LOCK TABLES `restaurant_menu` WRITE;
+-- INSERT INTO `orders` VALUES 
+-- (014893,14563, 'sushi', '', 9.4, 'dish descrp1...', '', 'appetizer', 1),
+-- (0167883,16763,'seaweed', '', 7.0, 'dish descrp2...', 'fdf', 'main_course', 2);
+-- -- UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `delivery_addresses`;
+CREATE TABLE `delivery_addresses`(
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `customer_id` int(10) unsigned NOT NULL,
+    `address_id` int(10) unsigned NOT NULL,
+    `is_default` boolean default FALSE,
+
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `id_UNIQUE` (`id`),
+    FOREIGN KEY (customer_id)
+        REFERENCES customers (customer_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (address_id)
+        REFERENCES addresses (address_id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+)ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- -- LOCK TABLES `restaurant_menu` WRITE;
+-- INSERT INTO `orders` VALUES 
+-- (014893,14563, 'sushi', '', 9.4, 'dish descrp1...', '', 'appetizer', 1),
+-- (0167883,16763,'seaweed', '', 7.0, 'dish descrp2...', 'fdf', 'main_course', 2);
+-- -- UNLOCK TABLES;
+
+

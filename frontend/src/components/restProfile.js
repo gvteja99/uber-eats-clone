@@ -111,7 +111,7 @@ export default function ResProfile() {
             const res = await axios.put(url,body, {headers});
             console.log("response",res);
             dispatch(updateResProfile(res.data))
-            setTimeout(() => history.push("/"), 2000);
+            setTimeout(() => history.push("/"), 500);
             
         }catch(err){
             console.log(err)

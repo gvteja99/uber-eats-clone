@@ -10,63 +10,89 @@ router.post('/customer', async (req, res) => {
     const sql2 = `INSERT INTO addresses (street_address, apt_number, city, state, country, zipcode) 
         VALUES ('${street_address}', '${apt_number}', '${city}', '${state}' , '${country}', '${zipcode}');`
     const queryPromise1 = () => {
-        console.log("sql1:", sql1);
+        // console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1)=>{
                 if(error1){
-                    console.log("error1:", error1);
+                    // console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 return resolve(result1);
             });
         });
     };
     const queryPromise2 = () => {
-        console.log("sql2:", sql2);
+        // console.log("sql2:", sql2);
         return new Promise((resolve, reject)=>{
             pool.query(sql2,  (error2, result2)=>{
                 if(error2){
                     console.log("error2:", error2);
                     return reject(error2);
                 }
-                console.log("result2:", result2);
+                // console.log("result2:", result2);
                 return resolve(result2);
             });
         });
     };
-    const queryPromise3 = async (address_id) => {
-        let sql3;
-        const result = await bcrypt.hash(password, 10, function(err, hash) {
+    
+    const addHashToken = async (address_id) => {
+        const result = await bcrypt.hash(password, 10, async function(err, hash) {
             // Store hash in your password DB. 
             // console.log("hash", hash)
-            sql3 = `INSERT INTO customers (first_name, last_name, email, password, customer_address_id)
-            VALUES ('${first_name}', '${last_name}', '${email}', '${hash}', '${address_id}');`
-            // console.log("sql3:=======", sql3);
-            return new Promise((resolve, reject)=>{
+            const queryPromise3 = () => (
+                    new Promise((resolve, reject)=>{
+                    const sql3 = `INSERT INTO customers (first_name, last_name, email, password, customer_address_id)
+                    VALUES ('${first_name}', '${last_name}', '${email}', '${hash}', '${address_id}');`
+                    // console.log("sql3:=======", sql3);
+                    pool.query(sql3,  (error3, result3)=>{
+                        if(error3){
+                            console.log("error3:", error3);
+                            return reject(error3);
+                        }
+                        // console.log("result3:", result3);
+                        return resolve(result3);
+                    });
+                }
+            ));
 
-                pool.query(sql3,  (error3, result3)=>{
-                    if(error3){
-                        console.log("error3:", error3);
-                        return reject(error3);
-                    }
-                    // console.log("result3:", result3);
-                    return resolve(result3);
+            const queryPromise4 = (customer_id, address_id) => {
+                const sql4 = `INSERT INTO delivery_addresses (customer_id, address_id, is_default)
+                VALUES ('${customer_id}', '${address_id}', TRUE);`;
+                // console.log("sql4:", sql4);
+                return new Promise((resolve, reject)=>{
+                    pool.query(sql4,  (error4, result4)=>{
+                        if(error4){
+                            console.log("error4:", error4);
+                            return reject(error4);
+                        }
+                        // console.log("result4:", result4);
+                        return resolve(result4);
+                    });
                 });
-            });
+            };
+
+            const result3 = await queryPromise3();
+            // console.log("========result3", result3);
+            const result4 = await queryPromise4(result3.insertId, address_id);
+            // console.log("=========result4", result4);
+            res.status(200).json("Signup Successful");
         });
         return result
     };
+
     try {
         const result1 = await queryPromise1();
         if (result1 && result1.length > 0) {
             return res.status(400).json("Email should be unique");
         }
         const result2 = await queryPromise2(result1);
-        console.log("insertID: ", result2.insertId);
-        const result3 = await queryPromise3(result2.insertId);
-        console.log("result3:", result3);
-        res.status(200).json("Signup Successful");
+        // console.log("insertId: ", result2.insertId);
+        const  result = await addHashToken(result2.insertId);
+        // console.log("===result=====:", result);
+        // const result4 = await queryPromise4(result3.insertId, result2.insertId);
+        // console.log("result4:", result4);
+        // res.status(200).json("Signup Successful");
     } catch(error) {
         console.log(error);
         return res.status(500).json(error);

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {Link} from 'react-router-dom';
@@ -50,7 +51,8 @@ const useStyles = makeStyles(theme=>({
     }
 }));
 
-const Navigationbar = () => {
+const Navigationbar = (props) => {
+    const { showCart=false } = props;
     const classes = useStyles();
     const mainReducer = useSelector((state) => state.mainReducer);
     useEffect(() => {}, [])
@@ -191,7 +193,22 @@ const Navigationbar = () => {
                             anchor='right'>
                             {sidebarList('right')}
                         </MobileeRightMenuSlider>
-                        <img src={app_logo} width={'124'} height={'82'} alt='' />
+                        {showCart && (
+                            <div style={{ display: "flex", flex: 1, justifyContent: 'space-between', color: 'yellow', marginRight: 100}}>
+                                <img src={app_logo} width={'124'} height={'82'} alt='' color={'red'} />
+                                <Button
+                                    // type="submit"
+                                    // fullWidth
+                                    variant="outlined"
+                                    color="black"
+                                    // className={classes.submit}
+                                    // onClick={() => logoutApi()}
+                                    style={{  width: 100, height: 40, alignSelf: 'center' }}
+                                >
+                                    Cart
+                                </Button>
+                         </div>
+                        )}
                         <IconButton onClick={toggleSlider('right', true)} style={{ position: 'absolute', right: '2%'}}>
                             <DehazeIcon style={{color: 'black'}} />
                         </IconButton>

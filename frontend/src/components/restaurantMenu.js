@@ -1,4 +1,7 @@
 import React, {useState, useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 import {makeStyles, withStyles } from '@material-ui/core/styles';
 import {
     Typography,
@@ -26,11 +29,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Navigationbar from './navigationbar';
 import Dish1 from "../images/dish1.jpeg";
+import { getResMenu } from '../app/reducers/mainSlice';
 
 // CSS styles
 const useStyles = makeStyles(theme=>({
     mainContainer: {
-        // background: '#233',
         height: '100%'
     },
     cardContainer: {
@@ -103,8 +106,10 @@ const ColorButton2 = withStyles((theme) => ({
 }))(Button);
 
 const Tickets = () => {
+    const mainReducer = useSelector((state) => state.mainReducer);
+    const { resProfile, token, resMenu } = mainReducer;
+    console.log("resProfile", resProfile);
     const classes = useStyles();
-    const url = 'https://60bf454597295a0017c42497.mockapi.io/tickets';
     const [tickets, setTickets] = useState([]);
     const [open, setOpen] = React.useState(false);
     const [status, setStatus] = React.useState('');
@@ -113,6 +118,33 @@ const Tickets = () => {
     const [desc, setDesc] = React.useState('');
     const [isEdit, setIsEdit] = React.useState(false);
     const [id, setId] = React.useState('');
+    useEffect(() => {
+        getTickets();
+        getResDishes();
+    }, [])
+    const dispatch = useDispatch()
+    // const classes = useStyles();
+    // const {register, handleSubmit, control} = useForm()
+    const history = useHistory();
+    console.log("token==", token);
+    const url =  `/restaurants/${resProfile?.res_id}/dishes`;
+    console.log("======url", url);
+    const getResDishes = async () => {
+        const headers = { 
+            'x-access-token': token,
+            // 'id': resProfile?.res_id,
+        };
+        try {
+            const res = await axios.get(url, {headers });
+            console.log("response",res);
+            await dispatch(getResMenu(res.data?.data))
+            // setTimeout(() => history.push("/"), 2000);
+            
+        }catch(err){
+            console.log(err)
+        }
+
+    }
 
     useEffect(() => {
         getTickets();
@@ -161,6 +193,7 @@ const Tickets = () => {
     }
 
     const getTickets = async () => {
+        const url = 'https://60bf454597295a0017c42497.mockapi.io/tickets';
         const resp = await fetch(url, {
             method: "GET",
             headers: {
@@ -169,6 +202,7 @@ const Tickets = () => {
         }).then((response) => {
             return response.json()
         });
+        console.log("=======resp", resp);
         setTickets(resp)
     }
 
@@ -232,40 +266,41 @@ const Tickets = () => {
                         onClick={function() {handleClickOpen(false)}}
                         className={classes.button}
                     >
-                        Add Tickets
+                        Add Dishes
                     </ColorButton2>
                 </div>
-                {tickets.map((ticket) => {
+                {console.log("============ResMenu", resMenu)}
+                {resMenu.length > 0  && resMenu.map((dish) => {
                     return (
                         <Grid item xs={12} sm={12} md={12} key={0}>
                     <Card className={classes.cardContainer}>
-                        <Hidden mdDown>
+                        {/* <Hidden mdDown> */}
                             <CardActionArea disableRipple style={{display: 'flex', justifyContent: 'start'}}>
-                                <CardContent style={{maxWidth: '150px', backgroundColor: 'white'}}>
+                                <CardContent style={{width: '150px', backgroundColor: 'white'}}>
                                     <img src={Dish1} alt="Avatar" style={{ width: '100px', backgroundColor: 'pink', height: '100px', textAlign: 'left'}} />
                                  </CardContent>
                                 <CardContent>
-                                    <Typography gutterBottom variant='h6' id={ticket.id}>
-                                        {ticket.title} <span style={{color: 'tomato'}}> #{ticket.id}</span>
+                                    <Typography gutterBottom variant='h6' id={dish.id}>
+                                        {dish.dish_name}
                                     </Typography>
                                     <Typography variant='body2' style={{color: '#6f7c87', padding: '0 0 10px 0'}} component='p'>
-                                        {ticket.description}
+                                        {dish.description}
                                     </Typography>
                                     <Typography variant='body2' component='p'>
-                                        <div className={classes.circle} style={{backgroundColor: ticket.status === 1 ? 'red' : ticket.status === 2 ? 'green' : 'orange'}}></div>
-                                        <span style={{marginLeft: '1rem'}}>{ticket.status === 1 ? 'Active' : ticket.status === 2 ? 'Resolved' : 'On Hold'}</span>
+                                        <div className={classes.circle} style={{backgroundColor: 'black'}}></div>
+                                        <span style={{marginLeft: '1rem'}}>$ {dish.dish_price} </span>
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
                                 <div style={{marginRight: '2rem'}}>
-                                <ColorButton onClick={function() {handleEdit(ticket)}} variant="contained" startIcon={<EditIcon />} color="primary" className={classes.button}>
+                                <ColorButton onClick={function() {handleEdit(dish)}} variant="contained" startIcon={<EditIcon />} color="primary" className={classes.button}>
                                     Edit
                                 </ColorButton>
                                     <Button
                                         variant="contained"
                                         color="secondary"
                                         className={classes.button}
-                                        onClick={function() {handleDelete(ticket.id)}}
+                                        onClick={function() {handleDelete(dish.id)}}
                                         startIcon={<DeleteIcon />}
                                     >
                                         Delete
@@ -273,31 +308,31 @@ const Tickets = () => {
                                 </div>
                                 </CardActions>
                             </CardActionArea>
-                        </Hidden>
-                        <Hidden mdUp>
+                        {/* </Hidden> */}
+                        {/* <Hidden mdUp>
                             <CardActionArea disableRipple>
                                 <CardContent>
-                                    <Typography gutterBottom variant='h6' id={ticket.id}>
-                                        {ticket.title}<span style={{color: 'tomato'}}> #{ticket.id}</span>
+                                    <Typography gutterBottom variant='h6' id={dish.id}>
+                                        {dish.dish_name}<span style={{color: 'tomato'}}> #{dish.id}</span>
                                     </Typography>
                                     <Typography variant='body2' style={{color: '#6f7c87', padding: '0 0 10px 0'}} component='p'>
-                                        {ticket.description}
+                                        {dish.description}
                                     </Typography>
                                     <Typography variant='body2' component='p'>
-                                        <div className={classes.circle} style={{backgroundColor: ticket.status === 1 ? 'red' : ticket.status === 2 ? 'green' : 'orange'}}></div>
-                                        <span style={{marginLeft: '1rem'}}>{ticket.status === 1 ? 'Active' : ticket.status === 2 ? 'Resolved' : 'On Hold'}</span>
+                                        <div className={classes.circle} style={{backgroundColor: 'blue'}}></div>
+                                        <span style={{marginLeft: '1rem'}}>{dish.dish_price}</span>
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
                                 <div style={{marginRight: '2rem'}}>
-                                <ColorButton onClick={function() {handleEdit(ticket)}} variant="contained" startIcon={<EditIcon />} color="primary" className={classes.button}>
+                                <ColorButton onClick={function() {handleEdit(dish)}} variant="contained" startIcon={<EditIcon />} color="primary" className={classes.button}>
                                     Edit
                                 </ColorButton>
                                     <Button
                                         variant="contained"
                                         color="secondary"
                                         className={classes.button}
-                                        onClick={function() {handleDelete(ticket.id)}}
+                                        onClick={function() {handleDelete(dish.id)}}
                                         startIcon={<DeleteIcon />}
                                     >
                                         Delete
@@ -305,12 +340,12 @@ const Tickets = () => {
                                 </div>
                                 </CardActions>
                             </CardActionArea>
-                        </Hidden>
+                        </Hidden> */}
                     </Card>
                 </Grid>)})}
                 <div>
                     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle id="form-dialog-title">Create Ticket</DialogTitle>
+                        <DialogTitle id="form-dialog-title">Dish Detail</DialogTitle>
                         <DialogContent>
                         <DialogContentText>
                             Enter query details to create a ticket.
