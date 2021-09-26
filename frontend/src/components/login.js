@@ -59,7 +59,7 @@ export default function SignIn() {
           console.log("response",res.data);
           console.log("userType", userType, "type", typeof(userType))
           await parseInt(userType) === 2 ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
-          await setTimeout(() => parseInt(userType) == 2 ? history.push("/res_profile") : history.push("/"), 2000);
+          await setTimeout(() => parseInt(userType) == 2 ? history.push("/res_profile") : history.push("/customer"), 2000);
           
       }catch(err){
           alert("Invalid Credentials");

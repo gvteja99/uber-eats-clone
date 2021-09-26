@@ -11,10 +11,10 @@ import Dish4 from "../images/dish4.jpeg";
 import { random } from '../utility';
 
 export default function MediaCard(props) {
-    const { dish, res } = props;
+    const { dish, res, onAddToCartClick= ()=> {} } = props;
 
     const imgList = [Dish1, Dish2, Dish3, Dish4]
-    console.log("====dish", dish)
+    // console.log("====dish", dish)
     return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -36,7 +36,7 @@ export default function MediaCard(props) {
             </Typography>
         </CardContent>
         <CardActions>
-            <Button size="small" variant="outlined">Add to Cart</Button>
+            <Button size="small" variant="outlined" onClick={() => onAddToCartClick(res, dish)}>Add to Cart</Button>
             {/* <Button size="small" variant="outlined">Check Menu</Button> */}
         </CardActions>
         </div>

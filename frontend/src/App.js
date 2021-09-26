@@ -14,6 +14,7 @@ import CustomerProfile from './components/customerProfile';
 import RestaurantMenu from './components/restaurantMenu';
 import CustomersLanding from './components/CustomersLanding';
 import ResLanding from './components/ResLanding';
+import CustomerCheckout from './components/customerCheckout';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
       <Route path="/restaurant/menu" component={RestaurantMenu} />
       <Route path="/customer" component={CustomersLanding} />
       <Route path="/restaurant/landing" component={ResLanding} />
+      <Route path="/customer_checkout" component={CustomerCheckout}/>
     </>
   );
 }

@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/prop-types */
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -16,7 +18,9 @@ import { blue } from '@material-ui/core/colors';
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
 export default function SimpleDialog(props) {
-  const { onClose, selectedValue, open } = props;
+  const { onClose, selectedValue, open, cart=[], onCartCheckout = () => {} } = props;
+
+  // const [error, setError] 
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -26,29 +30,57 @@ export default function SimpleDialog(props) {
     onClose(value);
   };
 
+  const reducer =(prev, current) => prev+ current?.dish?.dish_price
+
+  const totalAmount = cart.reduce(reducer, 0)
+
+            // key={email}
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Set backup account</DialogTitle>
+      <DialogTitle style={{alignSelf: "center", marginLeft: 100, marginRight: 100 }}>Cart</DialogTitle>
       <List sx={{ pt: 0 }}>
-        {emails.map((email) => (
-          <ListItem button onClick={() => handleListItemClick(email)} key={email}>
-            <ListItemAvatar>
-              <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
-                <PersonIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={email} />
-          </ListItem>
-        ))}
+        <div style={{ paddingLeft: 10, paddingBottom: 20}}>
+          {cart?.length >0 && cart.map((cartItem, index) => (
+            // <ListItem button onClick={() => handleListItemClick(email)}>
+            <ListItem key={index}>
+              <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
+                <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                    {`${cartItem?.quantity}  ${cartItem?.dish?.dish_name}`}
+                </Typography>
+                <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                    {`$ ${cartItem?.dish?.dish_price}`}
+                </Typography>
+              </div>
+            </ListItem>
+          ))}
 
-        <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
-          <ListItemAvatar>
+          <ListItem>
+              <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
+                <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                    {`Total Amount:`}
+                </Typography>
+                <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                    {`$ ${totalAmount}`}
+                </Typography>
+              </div>
+          </ListItem>
+        </div>
+        <div style={{width: '100%', display: "flex", justifyContent: "center"}}>
+          <Button size="small" onClick={() => onCartCheckout()} variant="outlined" color="primary" style={{alignSelf: 'center', width: 100, backgroundColor: "green", color: "white"}}>Checkout</Button>
+        </div>
+
+        {/* <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
+          <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "green", textAlign: "center"}}>
+                  {`Checkout`}
+          </Typography>
+        </ListItem> */}
+          {/* <ListItemAvatar>
             <Avatar>
               <AddIcon />
             </Avatar>
           </ListItemAvatar>
           <ListItemText primary="Add account" />
-        </ListItem>
+        </ListItem> */}
       </List>
     </Dialog>
   );

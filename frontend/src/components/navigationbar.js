@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme=>({
 }));
 
 const Navigationbar = (props) => {
-    const { showCart=false } = props;
+    const { showCart=false, onCartClick=()=> {} } = props;
     const classes = useStyles();
     const mainReducer = useSelector((state) => state.mainReducer);
     useEffect(() => {}, [])
@@ -115,7 +115,7 @@ const Navigationbar = (props) => {
     const afterCustomerLoginItems = [
         {
             itemIcon: <Home />,
-            itemText: 'Dashboard',
+            itemText: 'Restaurants',
             itemPath: '/customer'
         },
         {
@@ -202,7 +202,7 @@ const Navigationbar = (props) => {
                                     variant="outlined"
                                     color="black"
                                     // className={classes.submit}
-                                    // onClick={() => logoutApi()}
+                                    onClick={() => onCartClick()}
                                     style={{  width: 100, height: 40, alignSelf: 'center' }}
                                 >
                                     Cart
