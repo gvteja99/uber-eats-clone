@@ -32,7 +32,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Navigationbar from './navigationbar';
-import { getAllResList, getResMenu } from '../app/reducers/mainSlice';
+import { addDishToCart, getAllResList } from '../app/reducers/mainSlice';
 import { capsStrFirstChar } from "../utility";
 // import "./styles.css";
 import ResDishCard from './ResDishCard';
@@ -56,29 +56,54 @@ export default function ResLanding(props) {
     const mainReducer = useSelector((state) => state.mainReducer);
     const [selectedResMenu, setSelectedResMenu] = useState([]);
     const emails = ['username@gmail.com', 'user02@gmail.com'];
-    const [open, setOpen] = React.useState(false);
-    const [selectedValue, setSelectedValue] = React.useState(emails[1]);
-
+    const [open, setOpen] = useState(false);
+    const [selectedValue, setSelectedValue] = useState(emails[1]);
+    const dispatch = useDispatch()
+    useEffect(() => {
+      getRestMenu();
+      // console.log("=================20")
+      // dispatch(addDishToCart())
+    }, [dispatch])
+    const history = useHistory();
+    const classes = useStyles();
+    const { customerProfile, token, cart = [] } = mainReducer;
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    const handleClose = (value) => {
+    const handleClose = () => {
+      // value
         setOpen(false);
-        setSelectedValue(value);
+        // setSelectedValue(value);
     };
-    useEffect(() => {
-        getRestMenu();
-    }, [])
-    const dispatch = useDispatch()
-    const history = useHistory();
-    const classes = useStyles();
+
+    const onCartCheckout = (value) => {
+      history.push("/customer_checkout");
+      handleClose();
+    }
+
+    // console.log("=====props", props);
     const { selectedRes = {} } = props?.location?.state;
-    console.log("=====selectedres", selectedRes)
-    const { customerProfile, token } = mainReducer;
+    // console.log("=====selectedres", selectedRes)
     // props.location.state.detail
-    console.log("=====selectedRes", selectedRes);
-    console.log("customerProfile", customerProfile);
+    // console.log("=====selectedRes", selectedRes);
+    // console.log("customerProfile", customerProfile);
+
+    const onAddToCartClick = async (res, dish) => {
+      if (!token) {
+        return
+      }
+      // const found = cart.find(item => item?.dish?.res_menu_id === dish?.res_menu_id);
+      // console.log("===found", found);
+      // if (found) {
+      //   return
+      // }
+      await dispatch(addDishToCart({res, dish}))
+      // await dispatch(addDishToCart());
+
+
+    };
+
 
     const url =  `/restaurants/${selectedRes.res_id}/dishes`;
     // /:id/dishes
@@ -97,9 +122,11 @@ export default function ResLanding(props) {
         }
 
     }
+
+    // console.log("==cart", cart);
     return (
     <>
-      <Navigationbar  showCart={true}/>
+      <Navigationbar  showCart={true} onCartClick={handleClickOpen}/>
       <Box component="div" className={classes.container}>
         <h1 className={classes.Header} style={{marginLeft: '40px', marginBottom: '20px'}}>
                 {capsStrFirstChar(selectedRes.name || 'subway')}
@@ -110,10 +137,9 @@ export default function ResLanding(props) {
           className={classes.gridContainer}
           justifyContent="center"
         >
-            {console.log("========10")}
             {selectedResMenu?.length > 0 && selectedResMenu.map((dish, key) => (
                 <Grid item xs={12} sm={6} md={4}>
-                    <ResDishCard dish={dish} res={selectedRes}/>
+                    <ResDishCard dish={dish} res={selectedRes} onAddToCartClick={onAddToCartClick}/>
                 </Grid>
             ))
           }
@@ -123,6 +149,8 @@ export default function ResLanding(props) {
         selectedValue={selectedValue}
         open={open}
         onClose={handleClose}
+        cart={cart}
+        onCartCheckout={onCartCheckout}
       />
     </>
   );

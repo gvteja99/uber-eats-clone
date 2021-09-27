@@ -123,6 +123,10 @@ const Navigationbar = (props) => {
             itemPath: '/customer_profile'
         },
         {
+            itemText: 'Orders',
+            itemPath: '/customer_orders'
+        },
+        {
             itemIcon: <ConfirmationNumberIcon />,
             itemText: 'Tickets',
             itemPath: '/tickets'
@@ -193,9 +197,9 @@ const Navigationbar = (props) => {
                             anchor='right'>
                             {sidebarList('right')}
                         </MobileeRightMenuSlider>
-                        {showCart && (
-                            <div style={{ display: "flex", flex: 1, justifyContent: 'space-between', color: 'yellow', marginRight: 100}}>
-                                <img src={app_logo} width={'124'} height={'82'} alt='' color={'red'} />
+                            <div style={{ display: "flex", flex: 1, justifyContent: 'start',marginRight: 100}}>
+                                <img src={app_logo} width={124} height={82} alt='' color={'red'} style={{ width: 124, height: 82}} />
+                                {showCart && (
                                 <Button
                                     // type="submit"
                                     // fullWidth
@@ -207,8 +211,9 @@ const Navigationbar = (props) => {
                                 >
                                     Cart
                                 </Button>
+                                )}
                          </div>
-                        )}
+                        
                         <IconButton onClick={toggleSlider('right', true)} style={{ position: 'absolute', right: '2%'}}>
                             <DehazeIcon style={{color: 'black'}} />
                         </IconButton>

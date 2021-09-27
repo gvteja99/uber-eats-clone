@@ -144,6 +144,8 @@ CREATE TABLE `orders`(
     `res_id` int(10) unsigned NOT NULL,
     `customer_id` int(10) unsigned NOT NULL,
     `order_date_time` varchar(255) NOT NULL,
+    --  1. delivery 2. pickup
+    `delivery_type` int(1) DEFAULT 1
     `delivery_date_time` varchar(255) NULL,
     `delivery_address` varchar(500) NULL, 
     `delivery_status` int(10)  DEFAULT 1,

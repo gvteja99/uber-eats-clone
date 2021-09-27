@@ -30,9 +30,18 @@ export default function SimpleDialog(props) {
     onClose(value);
   };
 
-  const reducer =(prev, current) => prev+ current?.dish?.dish_price
+  let totalAmount = 0
+  for (let resIndex = 0; resIndex < cart.length; resIndex++) {
+    for (let dishIndex = 0; dishIndex < cart[resIndex].dishes?.length; dishIndex++ ) {
+      totalAmount += cart[resIndex].dishes[dishIndex].dish_price * cart[resIndex].dishes[dishIndex].quantity
+    }
+  } 
 
-  const totalAmount = cart.reduce(reducer, 0)
+  console.log("=======totalAmount")
+
+  // const reducer =(prev, current) => prev+ current?.dish?.dish_price
+
+  // const totalAmount = cart.reduce(reducer, 0)
 
             // key={email}
   return (
@@ -40,19 +49,23 @@ export default function SimpleDialog(props) {
       <DialogTitle style={{alignSelf: "center", marginLeft: 100, marginRight: 100 }}>Cart</DialogTitle>
       <List sx={{ pt: 0 }}>
         <div style={{ paddingLeft: 10, paddingBottom: 20}}>
-          {cart?.length >0 && cart.map((cartItem, index) => (
+          {cart?.length >0 &&  cart.map((cartItem, index) => {
+            console.log("=========inside 1",cartItem,"index==:", index, cartItem?.dishes)
             // <ListItem button onClick={() => handleListItemClick(email)}>
-            <ListItem key={index}>
-              <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
-                <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
-                    {`${cartItem?.quantity}  ${cartItem?.dish?.dish_name}`}
-                </Typography>
-                <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
-                    {`$ ${cartItem?.dish?.dish_price}`}
-                </Typography>
-              </div>
-            </ListItem>
-          ))}
+            return cartItem?.dishes?.length >0 && cartItem?.dishes.map((dish, dishIndex) => (
+                <ListItem key={index}>
+                <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
+                  <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                      {`${dish?.quantity}  ${dish?.dish_name}`}
+                  </Typography>
+                  <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                      {`$ ${dish.dish_price}`}
+                  </Typography>
+                </div>
+              </ListItem>
+              )
+            )
+          })}
 
           <ListItem>
               <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
@@ -60,7 +73,7 @@ export default function SimpleDialog(props) {
                     {`Total Amount:`}
                 </Typography>
                 <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
-                    {`$ ${totalAmount}`}
+                    {`$ ${totalAmount.toFixed(2)}`}
                 </Typography>
               </div>
           </ListItem>

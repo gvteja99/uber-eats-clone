@@ -38,6 +38,20 @@ router.post('/customer', async (req, res) => {
                 });
             })
     };
+    const queryPromise3 = (customer) => {
+        const sql3 = `Select street_address, apt_number, city, state, country, zipcode from addresses where address_id = '${customer?.customer_address_id}';`;
+        console.log("sql3:", sql3);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql3,  (error3, result3)=>{
+                if(error3){
+                    console.log("error3:", error3);
+                    return reject(error3);
+                }
+                console.log("result3:", result3);
+                return resolve(result3);
+            });
+        });
+    };
     let token;
     try {
         const result1 = await queryPromise1();
@@ -50,6 +64,7 @@ router.post('/customer', async (req, res) => {
         token = jwt.sign({customer_id, email}, config.token_key, {expiresIn: "2h"})
         console.log("hashedpwwd", hashPwd);
         const result2 = await queryPromise2(token, hashPwd, result1);
+        const result3 = await queryPromise3(result1[0]);
         bcrypt.compare(password, hashPwd)
             .then((isMatch) => {
                 if (!isMatch) {
@@ -58,7 +73,7 @@ router.post('/customer', async (req, res) => {
                 else {
                      const res_body = {
                      }
-                     Object.assign(res_body, result1[0], { token });
+                     Object.assign(res_body, result1[0], { token }, result3[0]);
                      return res.status(200).json(res_body);
                 }
              }

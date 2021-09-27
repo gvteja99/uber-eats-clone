@@ -13,6 +13,7 @@ const initialState = {
     customerMenu: [],
     customerOrders: [],
     selectedRes: null,
+    cart: [],
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -77,6 +78,39 @@ export const mainSlice = createSlice({
     updateResOrders: (state, action) => {
         state.customerOrders= action.payload;
     },
+    addDishToCart: (state, action) => {
+      console.log("action ========", action.payload);
+      const payload = action.payload
+      let cartList = state.cart;
+      console.log("cartList1", cartList);
+      // cartList = [res: { dishes: [dishquan]]
+      const resIndex = cartList.findIndex(res => res.res_id === payload?.res?.res_id);
+      if (resIndex === -1) {
+        cartList.push({...payload?.res, dishes: [{ ...payload?.dish, quantity: 1}]})
+      } else {
+        const dishIndex= cartList[resIndex].dishes.findIndex(dish => dish.res_menu_id === payload?.dish?.res_menu_id);
+        if (dishIndex === -1) {
+          cartList[resIndex]?.dishes?.push({...payload?.dish, quantity: 1})
+        } else {
+          alert("Dish already added in cart")
+        }
+      }
+      // const item = {res: payload?.res, dish: payload?.dish, quantity: 1}
+      // cartList.push(item)
+      console.log("cartList", cartList);
+      state.cart = cartList;
+    },
+    removeDishToCart: (state, action) => {
+      let cartList = state.cart;
+      const index = cartList.findIndex(item => item?.res?.res_menu_id === action.payload?.dish?.res_menu_id);
+      if (index !== -1) {
+        cartList.splice(index, 1);
+      }
+      state.cart = cartList;
+    },
+    clearCart: (state, action) => {
+      state.cart = [];
+    },
     // increment: (state) => {
     //   // Redux Toolkit allows us to write "mutating" logic in reducers. It
     //   // doesn't actually mutate the state because it uses the Immer library,
@@ -115,7 +149,7 @@ export const mainSlice = createSlice({
 export const {
   onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
   updateResProfile, updateCustomerProfile, getResMenu, getAllResList,
-  changeToken, selectUserType,
+  changeToken, selectUserType, addDishToCart, removeDishToCart, clearCart,
   updateCustomerMenu, updateCustomerOrders,
   updateResOrders
  } = mainSlice.actions;
