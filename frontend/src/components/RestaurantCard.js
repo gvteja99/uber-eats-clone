@@ -15,7 +15,8 @@ const imgList = [Dish1, Dish2, Dish3, Dish4]
 export default function MediaCard(props) {
     const {
         res,
-        onResClick = () => {}
+        onResClick = () => {},
+        addResToFavourites = () => {},
      } = props
     return (
     <Card sx={{ maxWidth: 345 }}>
@@ -34,7 +35,7 @@ export default function MediaCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" variant="outlined">Add to favourites</Button>
+        <Button size="small" variant="outlined" onClick={() => addResToFavourites(res.res_id)}>Add to favourites</Button>
         <Button size="small" variant="outlined" onClick={() =>onResClick(res)}>Check Menu</Button>
       </CardActions>
     </Card>

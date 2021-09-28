@@ -3,6 +3,7 @@ import { fetchCount } from './counterAPI';
 
 const initialState = {
     allRestList: [],
+    favResList: [],
     token: "",
     // 1 for customer and 2 for restaurant
     userType: undefined,
@@ -69,6 +70,19 @@ export const mainSlice = createSlice({
       state.allRestList = action.payload;
       console.log("========actionpayload", action.payload);
     },
+    getFavResList: (state, action) => {
+      state.favResList = action.payload;
+    },
+    deleteResFromFavList: (state, action) => {
+      const  { favourite_id } = action.payload
+      const favList = state.favResList;
+      const index = favList.findIndex(res => res?.favourite_id === favourite_id);
+      if (index !== -1) {
+        favList.splice(index, 1);
+      }
+      state.favResList = favList;
+    },
+
     updateCustomerMenu: (state, action) => {
         state.customerMenu = action.payload;
     },
@@ -148,7 +162,7 @@ export const mainSlice = createSlice({
 
 export const {
   onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
-  updateResProfile, updateCustomerProfile, getResMenu, getAllResList,
+  updateResProfile, updateCustomerProfile, getResMenu, getAllResList, getFavResList, deleteResFromFavList,
   changeToken, selectUserType, addDishToCart, removeDishToCart, clearCart,
   updateCustomerMenu, updateCustomerOrders,
   updateResOrders
