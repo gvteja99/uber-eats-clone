@@ -55,9 +55,7 @@ const useStyles = makeStyles({
 export default function ResLanding(props) {
     const mainReducer = useSelector((state) => state.mainReducer);
     const [selectedResMenu, setSelectedResMenu] = useState([]);
-    const emails = ['username@gmail.com', 'user02@gmail.com'];
     const [open, setOpen] = useState(false);
-    const [selectedValue, setSelectedValue] = useState(emails[1]);
     const dispatch = useDispatch()
     useEffect(() => {
       getRestMenu();
@@ -122,6 +120,7 @@ export default function ResLanding(props) {
         }
 
     }
+    
 
     // console.log("==cart", cart);
     return (
@@ -146,7 +145,6 @@ export default function ResLanding(props) {
         </Grid>
       </Box>
       <CartDialog
-        selectedValue={selectedValue}
         open={open}
         onClose={handleClose}
         cart={cart}

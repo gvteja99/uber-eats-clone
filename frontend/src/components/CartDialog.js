@@ -37,21 +37,12 @@ export default function SimpleDialog(props) {
     }
   } 
 
-  console.log("=======totalAmount")
-
-  // const reducer =(prev, current) => prev+ current?.dish?.dish_price
-
-  // const totalAmount = cart.reduce(reducer, 0)
-
-            // key={email}
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle style={{alignSelf: "center", marginLeft: 100, marginRight: 100 }}>Cart</DialogTitle>
       <List sx={{ pt: 0 }}>
         <div style={{ paddingLeft: 10, paddingBottom: 20}}>
           {cart?.length >0 &&  cart.map((cartItem, index) => {
-            console.log("=========inside 1",cartItem,"index==:", index, cartItem?.dishes)
-            // <ListItem button onClick={() => handleListItemClick(email)}>
             return cartItem?.dishes?.length >0 && cartItem?.dishes.map((dish, dishIndex) => (
                 <ListItem key={index}>
                 <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>

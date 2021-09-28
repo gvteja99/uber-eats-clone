@@ -105,11 +105,7 @@ const Navigationbar = (props) => {
             itemText: 'Restaurant Menu',
             itemPath: '/restaurant/menu',
         },
-        {
-            itemIcon: <ConfirmationNumberIcon />,
-            itemText: 'Tickets',
-            itemPath: '/tickets'
-        },
+
     ];
 
     const afterCustomerLoginItems = [
@@ -119,17 +115,16 @@ const Navigationbar = (props) => {
             itemPath: '/customer'
         },
         {
+            itemText: 'Favourites',
+            itemPath: 'customer_favourites'
+        },
+        {
             itemText: 'Profile',
             itemPath: '/customer_profile'
         },
         {
             itemText: 'Orders',
             itemPath: '/customer_orders'
-        },
-        {
-            itemIcon: <ConfirmationNumberIcon />,
-            itemText: 'Tickets',
-            itemPath: '/tickets'
         },
     ];
 
