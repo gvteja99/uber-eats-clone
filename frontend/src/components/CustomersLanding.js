@@ -61,13 +61,13 @@ export default function CustomersLanding() {
     const classes = useStyles();
 
     const { customerProfile, token, allRestList, favResList } = mainReducer;
-    const { customer_id } = customerProfile;
+    const { customer_id, city } = customerProfile;
     console.log("customerProfile", customerProfile);
 
     const getAllRestaurantApi = async () => {
-      const url =  "/restaurants";
+      const url =  `/restaurants?customer_city=${city}`;
         const headers = { 
-            'x-access-token': token,
+          'x-access-token': token,
         };
         try {
             const res = await axios.get(url, {headers});
@@ -87,7 +87,7 @@ export default function CustomersLanding() {
         };
         try {
             const res = await axios.get(url, {headers});
-            console.log("response",res);
+            // console.log("response",res);
             await dispatch(getFavResList(res.data?.data))
             
         }catch(err){
