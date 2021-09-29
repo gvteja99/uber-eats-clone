@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { isValidElement, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect, Router} from 'react-router-dom';
 import Navigationbar from './navigationbar.js';
@@ -13,6 +13,7 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {useForm, Controller} from 'react-hook-form'
 import { onResLogin, onCustomerLogin } from '../app/reducers/mainSlice';
+import { isValidEmail } from '../utility.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -52,6 +53,10 @@ export default function SignIn() {
     const history = useHistory();
     const url = parseInt(userType) == 1 ? "/login/customer" : "/login/restaurant";
     const signInApi = async () => {
+
+      if(!validateInputs) {
+        return
+      }
       const body = {email, password}
       console.log("==loginbody", body);
       try {
@@ -73,6 +78,26 @@ export default function SignIn() {
     }
     const onError = (errors, e) => {
         console.log("errors", errors, "e", e);
+    }
+
+    const validateInputs = () =>  {
+      if (!email) {
+        alert("Needs Email");
+        return false
+      }
+      if (!isValidEmail(email)) {
+        alert("Invalid Email");
+        return false
+      }
+      if (!password) {
+        alert("Needs password");
+        return false
+      }
+      if (!userType) {
+        alert("Needs User Type");
+        return false
+      }
+      return true
     }
   const signupPageUrl = parseInt(userType) == 2 ? "/res_signup" : "/customer_signup";
   return (

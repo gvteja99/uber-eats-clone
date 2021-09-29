@@ -11,6 +11,7 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {useForm, Controller} from 'react-hook-form'
 import { onResLogin, onCustomerLogin, updateResProfile } from '../app/reducers/mainSlice';
+import { isValidEmail } from '../utility.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -67,6 +68,9 @@ export default function ResSignup() {
     const history = useHistory();
     const url =  "/signup/restaurant";
     const restaurantSignupApi = async () => {
+      if (!validateInputs()) {
+        return
+      }
         const body = {
             email,
             password,
@@ -94,6 +98,33 @@ export default function ResSignup() {
     }
     const onError = (errors, e) => {
         console.log("errors", errors, "e", e);
+    }
+    const validateInputs = () =>  {
+      if (!email) {
+        alert("Needs Email");
+        return false
+      }
+      if (!isValidEmail(email)) {
+        alert("Invalid Email");
+        return false
+      }
+      if (!name) {
+        alert("Needs firstName");
+        return false
+      }
+      if (!city) {
+        alert("Needs lastName");
+        return false
+      }
+      if (!password) {
+        alert("Needs password");
+        return false
+      }
+      if (!country) {
+        alert("Needs country");
+        return false
+      }
+      return true
     }
   return (
     <>

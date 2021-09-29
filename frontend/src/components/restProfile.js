@@ -86,6 +86,9 @@ export default function ResProfile() {
     console.log("token==", token);
     const url =  "/restaurants/profile";
     const updateProfileApi = async () => {
+      if(!validateInputs()) {
+        return false;
+      }
         const body = {
             res_id: resProfile?.res_id,
             name,
@@ -117,6 +120,26 @@ export default function ResProfile() {
             console.log(err)
         }
 
+    }
+
+    const validateInputs = () =>  {
+      if (!name) {
+        alert("Needs name");
+        return false
+      }
+      // if (!isValidEmail(email)) {
+      //   alert("Invalid Email");
+      //   return false
+      // }
+      if (!city) {
+        alert("Needs city");
+        return false
+      }
+      if (!country) { 
+        alert("Needs country");
+        return false
+      }
+      return true
     }
     const onClickSubmit = (data) => {
         console.log("calling")

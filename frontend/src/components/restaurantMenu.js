@@ -117,7 +117,6 @@ const RestaurantMenu = () => {
     const [open, setOpen] = React.useState(false);
     const [isEdit, setIsEdit] = React.useState(false);
     useEffect(() => {
-        // getTickets();
         getResDishes();
     }, [])
     const dispatch = useDispatch()
@@ -234,13 +233,10 @@ const RestaurantMenu = () => {
     }
 
     const handleCreate = async (edit, dish) => {
-        // console.log("=====handleCreate==========", edit)
         if (!edit) {
             addDishToMenu(dish);
-            // console.log("Adding dish=====", dish);
         } else{
             editDishToMenu(dish);
-            // console.log("Editing dish=====", dish);
         }
          handleClose();
      }

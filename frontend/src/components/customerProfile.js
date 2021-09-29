@@ -11,6 +11,7 @@ import {
 import { AccountCircle} from '@material-ui/icons';
 import {useForm, Controller} from 'react-hook-form'
 import { updateCustomerProfile } from '../app/reducers/mainSlice';
+import { isValidEmail } from '../utility.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -75,6 +76,9 @@ export default function CustomerProfile() {
     const url =  "/customers/profile";
     // console.log("==customerProfileredux", customerProfile)
     const updateCustomerProfileApi = async () => {
+      if(!validateInputs()) {
+        return false;
+      }
         const body = {
             customer_id: customerProfile?.customer_id,
             first_name: firstName,
@@ -109,6 +113,30 @@ export default function CustomerProfile() {
             console.log(err)
         }
 
+    }
+
+    const validateInputs = () =>  {
+      if (!name) {
+        alert("Needs name");
+        return false
+      }
+      if (!email) {
+        alert("Needs email");
+        return false
+      }
+      if (!isValidEmail(email)) {
+        alert("Invalid Email");
+        return false
+      }
+      if (!city) {
+        alert("Needs city");
+        return false
+      }
+      if (!country) { 
+        alert("Needs country");
+        return false
+      }
+      return true
     }
     const onClickSubmit = (data) => {
         console.log("calling")
