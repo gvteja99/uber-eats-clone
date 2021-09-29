@@ -30,6 +30,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Navigationbar from './navigationbar';
 import Dish1 from "../images/dish1.jpeg";
 import { getResMenu } from '../app/reducers/mainSlice';
+import AddEditDishDialog from './AddEditDishDialog';
 
 // CSS styles
 const useStyles = makeStyles(theme=>({
@@ -105,34 +106,28 @@ const ColorButton2 = withStyles((theme) => ({
     },
 }))(Button);
 
-const Tickets = () => {
+const RestaurantMenu = () => {
     const mainReducer = useSelector((state) => state.mainReducer);
     const { resProfile, token, resMenu } = mainReducer;
+    // console.log("=====resMenu", resMenu);
+    const { res_id } = resProfile
     console.log("resProfile", resProfile);
     const classes = useStyles();
-    const [tickets, setTickets] = useState([]);
+    const [dish, setDish] = useState();
     const [open, setOpen] = React.useState(false);
-    const [status, setStatus] = React.useState('');
-    const [title, setTitle] = React.useState('');
-    const [query, setQuery] = React.useState('');
-    const [desc, setDesc] = React.useState('');
     const [isEdit, setIsEdit] = React.useState(false);
-    const [id, setId] = React.useState('');
     useEffect(() => {
-        getTickets();
+        // getTickets();
         getResDishes();
     }, [])
     const dispatch = useDispatch()
-    // const classes = useStyles();
-    // const {register, handleSubmit, control} = useForm()
     const history = useHistory();
-    console.log("token==", token);
-    const url =  `/restaurants/${resProfile?.res_id}/dishes`;
-    console.log("======url", url);
+    // console.log("token==", token);
     const getResDishes = async () => {
+        const url =  `/restaurants/${res_id}/dishes`;
+        console.log("======url", url);
         const headers = { 
             'x-access-token': token,
-            // 'id': resProfile?.res_id,
         };
         try {
             const res = await axios.get(url, {headers });
@@ -146,25 +141,25 @@ const Tickets = () => {
 
     }
 
-    useEffect(() => {
-        getTickets();
-    }, [])
+    const deleteResDish = async (res_menu_id) => {
+        const url =  `/restaurants/${res_id}/dish/${res_menu_id}`;
+        console.log("======url", url);
+        const headers = { 
+            'x-access-token': token,
+        };
+        try {
+            const res = await axios.delete(url, {headers });
+            console.log("response",res);
+            await dispatch(getResMenu(res.data?.data))
+            // setTimeout(() => history.push("/"), 2000);
+            
+        }catch(err){
+            console.log(err)
+        }
 
-    const handleChange = (event) => {
-        setStatus(event.target.value);
-    };
+    }
 
-    const handleTitle = (event) => {
-        setTitle(event.target.value);
-    };
 
-    const handleQuery = (event) => {
-        setQuery(event.target.value);
-    };
-
-    const handleDescription = (event) => {
-        setDesc(event.target.value);
-    };
 
     const handleClickOpen = (edit) => {
         setOpen(true);
@@ -173,83 +168,82 @@ const Tickets = () => {
 
     const handleClose = () => {
         setOpen(false);
+        handleClear();
     };
 
     const handleClear = () => {
-        setTitle('');
-        setDesc('');
-        setQuery('');
-        setStatus('');
-        setId('');
+        setDish({});
     };
 
-    const handleEdit = (ticket) => {
-        setId(ticket.id);
-        setTitle(ticket.title);
-        setDesc(ticket.description);
-        setQuery(ticket.querytype);
-        setStatus(ticket.status);
+    const handleEdit = (dish) => {
+        setDish(dish);
+        // setIsEdit(true);
         handleClickOpen(true);
     }
 
-    const getTickets = async () => {
-        const url = 'https://60bf454597295a0017c42497.mockapi.io/tickets';
-        const resp = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-            },
-        }).then((response) => {
-            return response.json()
-        });
-        console.log("=======resp", resp);
-        setTickets(resp)
-    }
-
-    const handleCreate = async (edit) => {
-        const ticketData = {
-            title: title,
-            querytype: query,
-            description: desc,
-            status: status
+    const addDishToMenu = async (dish) => {
+        const url =  `/restaurants/${res_id}/dish`;
+        const {dish_name, dish_image="", dish_price=5, description="Nice restaurant", main_ingredient="", dish_category="desserts", food_type=1} = dish;
+        const headers = { 
+            'x-access-token': token,
+        };
+        // console.log("=========url", url);
+        const body = {
+            dish_name: dish_name,
+            dish_image: dish_image,
+            dish_price: dish_price,
+            description: description,
+            main_ingredient: main_ingredient,
+            dish_category: dish_category,
+            food_type,
         }
-        if (title && query && desc && status && !edit) {
-            fetch(url, {
-                method: "POST",
-                body: JSON.stringify(ticketData),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                },
-            }).then(async (response) => {
-                handleClose();
-                handleClear();
-                await getTickets();
-            });
-        } else if (title && query && desc && status && edit) {
-            fetch(url + "/" + id, {
-                method: "PUT",
-                body: JSON.stringify(ticketData),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                },
-            }).then(async (response) => {
-                handleClose();
-                handleClear();
-                await getTickets();
-            });
+        try {
+            const res = await axios.post(url, body, {headers});
+            console.log("response",res);
+            await dispatch(getResMenu(res.data?.data))
+            
+        }catch(err){
+            console.log(err)
         }
     }
 
-    const handleDelete = async (id) => {
-        await fetch(url + "/" + id, {
-            method: "DELETE",
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-            },
-        }).then(async (response) => {
-            await getTickets();
-        });
+    const editDishToMenu = async (dish) => {
+        const url =  `/restaurants/${res_id}/dish/${dish.res_menu_id}`;
+        const {dish_name, dish_image="", dish_price=5, description="Nice restaurant", main_ingredient="", dish_category="desserts", food_type=1} = dish;
+        const headers = { 
+            'x-access-token': token,
+        };
+        // console.log("=========url", url);
+        const body = {
+            dish_name: dish_name,
+            dish_image: dish_image,
+            dish_price: dish_price,
+            description: description,
+            main_ingredient: main_ingredient,
+            dish_category: dish_category,
+            food_type,
+        }
+        try {
+            const res = await axios.put(url, body, {headers});
+            console.log("response",res);
+            await dispatch(getResMenu(res.data?.data))
+            
+        }catch(err){
+            console.log(err)
+        }
     }
+
+    const handleCreate = async (edit, dish) => {
+        // console.log("=====handleCreate==========", edit)
+        if (!edit) {
+            addDishToMenu(dish);
+            // console.log("Adding dish=====", dish);
+        } else{
+            editDishToMenu(dish);
+            // console.log("Editing dish=====", dish);
+        }
+         handleClose();
+     }
 
     return (
         <Box component='div' className={classes.mainContainer}>
@@ -263,7 +257,7 @@ const Tickets = () => {
                         variant="contained"
                         color="primary"
                         style={{marginRight: '3rem'}}
-                        onClick={function() {handleClickOpen(false)}}
+                        onClick={() => handleClickOpen(false)}
                         className={classes.button}
                     >
                         Add Dishes
@@ -300,7 +294,7 @@ const Tickets = () => {
                                         variant="contained"
                                         color="secondary"
                                         className={classes.button}
-                                        onClick={function() {handleDelete(dish.id)}}
+                                        onClick={function() {deleteResDish(dish.res_menu_id)}}
                                         startIcon={<DeleteIcon />}
                                     >
                                         Delete
@@ -308,96 +302,27 @@ const Tickets = () => {
                                 </div>
                                 </CardActions>
                             </CardActionArea>
-                        {/* </Hidden> */}
-                        {/* <Hidden mdUp>
-                            <CardActionArea disableRipple>
-                                <CardContent>
-                                    <Typography gutterBottom variant='h6' id={dish.id}>
-                                        {dish.dish_name}<span style={{color: 'tomato'}}> #{dish.id}</span>
-                                    </Typography>
-                                    <Typography variant='body2' style={{color: '#6f7c87', padding: '0 0 10px 0'}} component='p'>
-                                        {dish.description}
-                                    </Typography>
-                                    <Typography variant='body2' component='p'>
-                                        <div className={classes.circle} style={{backgroundColor: 'blue'}}></div>
-                                        <span style={{marginLeft: '1rem'}}>{dish.dish_price}</span>
-                                    </Typography>
-                                </CardContent>
-                                <CardActions>
-                                <div style={{marginRight: '2rem'}}>
-                                <ColorButton onClick={function() {handleEdit(dish)}} variant="contained" startIcon={<EditIcon />} color="primary" className={classes.button}>
-                                    Edit
-                                </ColorButton>
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        className={classes.button}
-                                        onClick={function() {handleDelete(dish.id)}}
-                                        startIcon={<DeleteIcon />}
-                                    >
-                                        Delete
-                                    </Button>
-                                </div>
-                                </CardActions>
-                            </CardActionArea>
-                        </Hidden> */}
                     </Card>
                 </Grid>)})}
                 <div>
-                    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                        <DialogTitle id="form-dialog-title">Dish Detail</DialogTitle>
-                        <DialogContent>
-                        <DialogContentText>
-                            Enter query details to create a ticket.
-                        </DialogContentText>
-                        <TextField
-                            margin="dense"
-                            id="name"
-                            value={title}
-                            onChange={handleTitle}
-                            label="Title"
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="description"
-                            value={desc}
-                            onChange={handleDescription}
-                            label="Description"
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="query"
-                            value={query}
-                            onChange={handleQuery}
-                            label="Query Type"
-                            fullWidth
-                        />
-                        <FormControl className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-label">Status</InputLabel>
-                                <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={status}
-                                onChange={handleChange}
-                                >
-                                    <MenuItem value={1}>Active</MenuItem>
-                                    <MenuItem value={2}>Resolved</MenuItem>
-                                    <MenuItem value={3}>On Hold</MenuItem>
-                                </Select>
-                        </FormControl>
-                        </DialogContent>
-                        <DialogActions>
-                        <Button variant="contained" onClick={function() {handleCreate(isEdit)}} color="primary">
-                            Submit
-                        </Button>
-                        </DialogActions>
-                </Dialog>
+                <AddEditDishDialog open={open}
+                    isEdit={isEdit}
+                    handleCreate={handleCreate}
+                    handleClose={handleClose}
+                    // dishImage={dishImage}
+                    dish={isEdit ? dish : {}}
+                    // dishImage={""}
+                    // dishName={""}
+                    // dishDescription={""}
+                    // dishType={"1"}
+                    // dishName={dishName}
+                    // dishType={dishType}
+                    // dishDescription={dishDescription}
+                />
             </div>
             </Grid>
         </Box>
     )
 }
 
-export default Tickets;
+export default RestaurantMenu;

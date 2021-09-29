@@ -76,13 +76,14 @@ router.put('/profile', auth, async (req, res) => {
 
 // get all restaurants
 // TODO: add auth
-router.get('/', async (req, res) => {
-    console.log("req==", req.user);
+router.get(`/`, async (req, res) => {
+    // console.log("req.query", req.query)
+    const { customer_city } =  req.query;
     const queryPromise1 = () => {
         // const sql1 = `SELECT * from restaurants;`;
         const sql1 = `select r.res_id, r.email, r.address_id, r.name, r.phone_number, r.delivery_option, r.description, r.timing_open, r.timing_close,
         a.street_address, a.apt_number, a.city, a.state, a.country, a.zipcode
-        from restaurants as r INNER JOIN addresses as a ON r.address_id = a.address_id;`;
+        from restaurants as r INNER JOIN addresses as a ON r.address_id = a.address_id order by a.city= '${customer_city}' DESC;`;
         console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1)=>{
@@ -114,7 +115,7 @@ router.get('/', async (req, res) => {
 router.get('/:id/dishes', async (req, res) => {
     const res_id = req.params.id;
     const queryPromise1 = () => {
-        const sql1 = `SELECT * from restaurant_menu where res_id=${res_id};`;
+        const sql1 = `SELECT * from restaurant_menu where res_id='${res_id}';`;
         console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1)=>{
@@ -122,17 +123,13 @@ router.get('/:id/dishes', async (req, res) => {
                     console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 return resolve(result1);
             });
         });
     };
     try {
         const result1 = await queryPromise1();
-        if (!(result1 && result1.length > 0)) {
-            return res.status(400).json("Empty List");
-        }
-        console.log("result1[0]:", result1);
         let res_body = { data: result1};
         return res.status(200).json(res_body);
     } catch(error) {
@@ -155,15 +152,30 @@ router.post('/:id/dish', auth, async (req, res) => {
                     console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 return resolve(result1);
+            });
+        });
+    };
+    const queryPromise2 = () => {
+        const sql2 = `SELECT * from restaurant_menu where res_id='${res_id}';`;
+        console.log("sql2:", sql2);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql2,  (error2, result2)=>{
+                if(error2){
+                    console.log("error2:", error2);
+                    return reject(error2);
+                }
+                // console.log("result2:", result2);
+                return resolve(result2);
             });
         });
     };
     try {
         const result1 = await queryPromise1();
-        let res_body = { res_menu_id: result1.insertId};
-        return res.status(200).json(res_body);
+        const result2 = await queryPromise2();
+        // let res_body = { res_menu_id: result1.insertId};
+        return res.status(200).json({ data: result2 });
     } catch(error) {
         console.log(error);
         return res.status(500).json(error);
@@ -171,6 +183,7 @@ router.post('/:id/dish', auth, async (req, res) => {
 });
 
 // update a restaurant dish
+
 router.put('/:res_id/dish/:id', auth, async (req, res) => {
     const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
     const res_id = req.params.res_id;
@@ -192,10 +205,25 @@ router.put('/:res_id/dish/:id', auth, async (req, res) => {
             });
         });
     };
+    const queryPromise2 = () => {
+        const sql2 = `SELECT * from restaurant_menu where res_id='${res_id}';`;
+        console.log("sql2:", sql2);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql2,  (error2, result2)=>{
+                if(error2){
+                    console.log("error2:", error2);
+                    return reject(error2);
+                }
+                // console.log("result2:", result2);
+                return resolve(result2);
+            });
+        });
+    };
     try {
         const result1 = await queryPromise1();
+        const result2 = await queryPromise2();
         // let res_body = { res_menu_id: result1.insertId};
-        return res.status(200).json("Dish is updated successfully");
+        return res.status(200).json({ data: result2, msg: "Dish is updated successfully" });
     } catch(error) {
         console.log(error);
         return res.status(500).json(error);
@@ -221,8 +249,25 @@ router.delete('/:res_id/dish/:id', auth, async (req, res) => {
             });
         });
     };
+    const queryPromise2 = () => {
+        const sql2 = `SELECT * from restaurant_menu where res_id='${res_id}';`;
+        console.log("sql2:", sql2);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql2,  (error2, result2)=>{
+                if(error2){
+                    console.log("error2:", error2);
+                    return reject(error2);
+                }
+                // console.log("result2:", result2);
+                return resolve(result2);
+            });
+        });
+    };
     try {
         const result1 = await queryPromise1();
+        const result2 = await queryPromise2();
+        // let res_body = { res_menu_id: result1.insertId};
+        return res.status(200).json({ data: result2, msg: "Dish is deleted" });
         // let res_body = { res_menu_id: result1.insertId};
         return res.status(200).json("Dish is deleted successfully");
     } catch(error) {

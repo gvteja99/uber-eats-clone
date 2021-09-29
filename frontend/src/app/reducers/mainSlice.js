@@ -15,6 +15,7 @@ const initialState = {
     customerOrders: [],
     selectedRes: null,
     cart: [],
+    signupPopup: false,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -41,6 +42,9 @@ export const mainSlice = createSlice({
       state.token= data.token;
       state.resProfile = data;
       state.userType = 2;
+    },
+    onCustomerSignup: (state, action) => {
+      alert("Redux action is called");
     },
     onCustomerLogin: (state, action) => {
       const data = action.payload;
@@ -161,7 +165,7 @@ export const mainSlice = createSlice({
 });
 
 export const {
-  onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
+  onCustomerSignup, onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
   updateResProfile, updateCustomerProfile, getResMenu, getAllResList, getFavResList, deleteResFromFavList,
   changeToken, selectUserType, addDishToCart, removeDishToCart, clearCart,
   updateCustomerMenu, updateCustomerOrders,
