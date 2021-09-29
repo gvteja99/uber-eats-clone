@@ -80,6 +80,7 @@ ALTER Table customers ADD token varchar(255);
 -- Table structure for table `restaurants`
 --
 
+-- delivery option 1. supports both, 2. only delivery 3. only pickup
 DROP TABLE IF EXISTS `restaurants`;
 CREATE TABLE `restaurants`(
     `res_id` int(10) unsigned NOT NULL AUTO_INCREMENT,

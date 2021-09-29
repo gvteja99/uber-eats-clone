@@ -77,7 +77,7 @@ router.get('/:id/orders', async (req, res) => {
     const queryPromise1 = () => {
         const sql1 = `select o.order_id, o.res_id, o.order_date_time, o.delivery_date_time, o.delivery_address,
         o.delivery_status,o.taxes, o.tip, o.instruction, o.total_amount, o.delivery_type, r.name as res_name
-        from orders as o Inner Join restaurants as r on o.res_id = r.res_id where o.customer_id='${customer_id}';`;
+        from orders as o Inner Join restaurants as r on o.res_id = r.res_id where o.customer_id='${customer_id}' order by order_date_time DESC;`;
         // const sql1 = `SELECT * from orders where customer_id='${customer_id}';`;
         console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
