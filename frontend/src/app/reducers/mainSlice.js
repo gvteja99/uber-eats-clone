@@ -15,7 +15,8 @@ const initialState = {
     customerOrders: [],
     selectedRes: null,
     cart: [],
-    signupPopup: false,
+    customerSignupSuccessMsg: '',
+    resSignupSuccessMsg: '',
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -37,14 +38,11 @@ export const mainSlice = createSlice({
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    onResLogin: (state, action) => {
-      const data = action.payload;
-      state.token= data.token;
-      state.resProfile = data;
-      state.userType = 2;
-    },
     onCustomerSignup: (state, action) => {
-      alert("Redux action is called");
+      state.customerSignupSuccessMsg= action.payload?.msg;
+    },
+    onResSignup: (state, action) => {
+      state.resSignupSuccessMsg= action.payload?.msg;
     },
     onCustomerLogin: (state, action) => {
       const data = action.payload;
@@ -52,13 +50,26 @@ export const mainSlice = createSlice({
       state.customerProfile = data;
       state.userType = 1;
     },
+    onResLogin: (state, action) => {
+      const data = action.payload;
+      state.token= data.token;
+      state.resProfile = data;
+      state.userType = 2;
+    },
     onCustomerLogout: (state, action) => {
       state.token= '';
       state.userType = undefined;
+      state.cart = [];
+      state.favResList= [];
+      state.customerProfile = {};
+      state.customerSignupSuccessMsg = '';
     },
     onResLogout: (state, action) => {
       state.token= '';
       state.userType = undefined;
+      state.resProfile = {};
+      state.resMenu = [];
+      state.resSignupSuccessMsg = '';
     },
     updateResProfile: (state, action) => {
       state.resProfile = action.payload;
@@ -72,11 +83,11 @@ export const mainSlice = createSlice({
     },
     getAllResList: (state, action) => {
       state.allRestList = action.payload;
-      console.log("========actionpayload", action.payload);
     },
     getFavResList: (state, action) => {
       state.favResList = action.payload;
     },
+    // getCustomersDeliveryAddress
     deleteResFromFavList: (state, action) => {
       const  { favourite_id } = action.payload
       const favList = state.favResList;
@@ -94,14 +105,11 @@ export const mainSlice = createSlice({
         state.customerOrders= action.payload;
     },
     updateResOrders: (state, action) => {
-        state.customerOrders= action.payload;
+        state.resOrders= action.payload;
     },
     addDishToCart: (state, action) => {
-      console.log("action ========", action.payload);
       const payload = action.payload
       let cartList = state.cart;
-      console.log("cartList1", cartList);
-      // cartList = [res: { dishes: [dishquan]]
       const resIndex = cartList.findIndex(res => res.res_id === payload?.res?.res_id);
       if (resIndex === -1) {
         cartList.push({...payload?.res, dishes: [{ ...payload?.dish, quantity: 1}]})
@@ -113,9 +121,6 @@ export const mainSlice = createSlice({
           alert("Dish already added in cart")
         }
       }
-      // const item = {res: payload?.res, dish: payload?.dish, quantity: 1}
-      // cartList.push(item)
-      console.log("cartList", cartList);
       state.cart = cartList;
     },
     removeDishToCart: (state, action) => {
@@ -129,20 +134,6 @@ export const mainSlice = createSlice({
     clearCart: (state, action) => {
       state.cart = [];
     },
-    // increment: (state) => {
-    //   // Redux Toolkit allows us to write "mutating" logic in reducers. It
-    //   // doesn't actually mutate the state because it uses the Immer library,
-    //   // which detects changes to a "draft state" and produces a brand new
-    //   // immutable state based off those changes
-    //   state.value += 1;
-    // },
-    // decrement: (state) => {
-    //   state.value -= 1;
-    // },
-    // // Use the PayloadAction type to declare the contents of `action.payload`
-    // incrementByAmount: (state, action) => {
-    //   state.value += action.payload;
-    // },
     changeToken: (state, action) => {
         state.token = action.payload;
     },
@@ -165,11 +156,10 @@ export const mainSlice = createSlice({
 });
 
 export const {
-  onCustomerSignup, onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
+  onCustomerSignup, onResSignup, onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
   updateResProfile, updateCustomerProfile, getResMenu, getAllResList, getFavResList, deleteResFromFavList,
   changeToken, selectUserType, addDishToCart, removeDishToCart, clearCart,
-  updateCustomerMenu, updateCustomerOrders,
-  updateResOrders
+  updateCustomerMenu, updateCustomerOrders, updateResOrders
  } = mainSlice.actions;
 
 // The function below is called a selector and allows us to select a value from

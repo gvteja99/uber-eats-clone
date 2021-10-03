@@ -33,7 +33,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Navigationbar from './navigationbar';
-import { addDishToCart, getAllResList } from '../app/reducers/mainSlice';
+import { clearCart } from '../app/reducers/mainSlice';
 import { capsStrFirstChar } from "../utility";
 // import "./styles.css";
 import ResDishCard from './ResDishCard';
@@ -55,7 +55,9 @@ const useStyles = makeStyles({
 
 export default function CustomerCheckout(props) {
     const mainReducer = useSelector((state) => state.mainReducer);
-    // const [selectedResMenu, setSelectedResMenu] = useState([]);
+    const [deliveryAddressList, setDeliveryAddressList] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState();
+    const [newAddess, setNewAddess] = useState();
     // const emails = ['username@gmail.com', 'user02@gmail.com'];
     const [open, setOpen] = useState(false);
     // const [selectedValue, setSelectedValue] = useState(emails[1]);
@@ -64,7 +66,8 @@ export default function CustomerCheckout(props) {
     //   getRestMenu();
       console.log("=================20")
       // dispatch(addDishToCart())
-    }, [dispatch])
+    }, [dispatch]);
+    useEffect(() => {getDeliveryAddressesApi()}, []);
     const history = useHistory();
     const classes = useStyles();
     const handleClickOpen = () => {
@@ -80,23 +83,46 @@ export default function CustomerCheckout(props) {
     const { customerProfile, token, cart = [] } = mainReducer;
 
 
-    // const url =  `/restaurants/${selectedRes.res_id}/dishes`;
+   
     // /:id/dishes
-    // const getRestMenu = async () => {
-    //     const headers = { 
-    //         'x-access-token': token,
-    //     };
-    //     try {
-    //         const res = await axios.get(url, {headers});
-    //         console.log("response",res);
-    //         setSelectedResMenu(res.data?.data);
-    //         // await dispatch(getAllResList(res.data?.data))
+    const getDeliveryAddressesApi = async () => {
+        const url =  `/customers/${customer_id}}/delivery_address`;
+        const headers = { 
+            'x-access-token': token,
+        };
+        try {
+            const res = await axios.get(url, {headers});
+            console.log("response",res);
+            setDeliveryAddressList(res.data?.data);
+            // await dispatch(getAllResList(res.data?.data))
             
-    //     }catch(err){
-    //         console.log(err)
-    //     }
+        }catch(err){
+            console.log(err)
+        }
 
-    // }
+    }
+
+    const addDeliveryAddressesApi = async (delivery_address) => {
+        const url =  `/customers/delivery_address`;
+        const body = {
+            customer_id,
+            delivery_address,
+        } 
+        const headers = { 
+            'x-access-token': token,
+        };
+        try {
+            const res = await axios.post(url, body, {headers});
+            console.log("response",res);
+            setDeliveryAddressList(res.data?.data);
+            setNewAddess('');
+            // await dispatch(getAllResList(res.data?.data))
+            
+        }catch(err){
+            console.log(err)
+        }
+
+    }
     // const reducer =(prev, current) => prev+ current?.dish?.dish_price
     let subTotalAmount = 0
     for (let resIndex = 0; resIndex < cart.length; resIndex++) {
@@ -111,13 +137,17 @@ export default function CustomerCheckout(props) {
     // console.log("===profile curstomer:", customerProfile);
     const {customer_id, street_address, zipcode, city, state, country} = customerProfile;
     const onCreateOrder = async () => {
+        if (!selectedAddress) {
+            alert("Select a delivery address");
+            return
+        }
         // console.log("======calling create order")
         const url =  `/customers/orders`;
         const body = {
             cart: cart,
             customer_id,
             delivery_type: 1,
-            delivery_address: `${street_address}, ${zipcode}, ${city}, ${state}, ${country}`,
+            delivery_address: selectedAddress || `${street_address}, ${zipcode}, ${city}, ${state}, ${country}`,
             order_date_time: new Date().toISOString(),
             total_amount: totalAmount.toFixed(2),
             delivery_fee: deliveryFee,
@@ -133,8 +163,9 @@ export default function CustomerCheckout(props) {
             const res = await axios.post(url, body, {headers});
             console.log("response",res);
             handleClose();
-            alert("Your order is placed successfully")
-            // await dispatch(getAllResList(res.data?.data))
+            alert("Your order is placed successfully");
+            await dispatch(clearCart())
+            history.push('/')
             
         }catch(err){
             console.log(err)
@@ -144,9 +175,10 @@ export default function CustomerCheckout(props) {
     }
 
     console.log("==cart", cart);
+    console.log("===list", deliveryAddressList);
     return (
     <>
-        <h1>Checkout Page</h1>
+        <h1 style={{textAlign: 'center', marginTop: 20}}>Checkout Page</h1>
         <div style={{display: "flex", justifyContent: "stretch", marginTop: "50px"}}>
             <div style={{backgroundColor: "white", flex: 1}}>
                 <List sx={{ pt: 0 }}>
@@ -181,14 +213,43 @@ export default function CustomerCheckout(props) {
                     </ListItem>
                     </div>
                 </List>
+                <form style={{marginRight: 30, marginLeft: 30}}>
+                    {deliveryAddressList?.length >0 &&
+                        <TextField
+                            id="selectedAddress"
+                            select
+                            fullWidth
+                            label="selecte delivery Address"
+                            style={{color: 'black', marginBottom: 10}}
+                            value={selectedAddress}
+                            onChange={e => setSelectedAddress(e.target.value)}
+                            
+                        >
+                            {console.log('deliveryList', deliveryAddressList)}
+                            {console.log('selectedAddress', selectedAddress)}
+                            {deliveryAddressList.map((option) => (
+                            <MenuItem key={option.delivery_address} value={option.delivery_address}>
+                                {option.delivery_address}
+                            </MenuItem>
+                            ))}
+                        </TextField>
+                    }
+                     <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        name="newAddess"
+                        label="add new address"
+                        type="text"
+                        id="newAddess"
+                        value={newAddess}
+                        onChange={e => setNewAddess(e.target.value)}
+                    />
+                    <Button disabled={!newAddess} variant="outlined" style={{backgroundColor: 'black', color: 'white'}} onClick={() => addDeliveryAddressesApi(newAddess)}>Add</Button>
+                </form>
+                {/* <Button>Add a delivery Addres</Button> */}
             </div>
             <div style={{backgroundColor: "#F2F3F5", flex: 0.7, paddingLeft: 50, paddingRight: 50}}>
-                <div style={{width: '100%', display: "flex", justifyContent: "center"}}>
-                    <Button 
-                        size="medium" variant="outlined" color="primary" onClick={() => handleClickOpen()}
-                        style={{alignSelf: 'center', backgroundColor: "green", color: "white", paddingLeft: 100, paddingRight: 100}}
-                    >Place Order</Button>
-                </div>
                     <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 10, paddingBottom: 0 }}>
                         <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
                             {`Subtotal Amount: `}
@@ -221,6 +282,12 @@ export default function CustomerCheckout(props) {
                             {`$ ${totalAmount.toFixed(2)}`}
                         </Typography>
                     </div>
+                    <div style={{width: '100%', display: "flex", justifyContent: "center"}}>
+                    <Button 
+                        size="medium" variant="outlined" color="primary" onClick={() => handleClickOpen()}
+                        style={{alignSelf: 'center', backgroundColor: "green", color: "white", marginTop: 30, paddingLeft: 100, paddingRight: 100}}
+                    >Place Order</Button>
+                </div>
             </div>
             <SimpleDialog
                 // selectedValue={selectedValue}
@@ -248,13 +315,17 @@ function SimpleDialog(props) {
     const handleListItemClick = (value) => {
       onClose(value);
     };
+
+    const titleTxt = cart.length > 1 ? "Create Multiple Orders?": "Ready for placing order?"
+
+    const contentTxt = cart.length > 1 ?  `you have orders from more than 1 restaurants. Do you want to create order for each restaurant` : `Your order will be placed once you click on create button`;
   
   
     return (
       <Dialog onClose={handleClose} open={open}>
-        <DialogTitle style={{alignSelf: "center", marginLeft: 100, marginRight: 100 }}>Create Multiple Orders?</DialogTitle>
+        <DialogTitle style={{alignSelf: "center", marginLeft: 100, marginRight: 100 }}>{titleTxt}</DialogTitle>
         <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
-            {`you have orders from more than 1 restaurants. Do you want to create order for each restaurant`}
+            {contentTxt}
         </Typography>
         <div style={{width: '100%', display: "flex", justifyContent: "center"}}>
           <Button size="large" onClick={() => onCreateOrder()} variant="outlined" color="primary" style={{ marginTop: 20,marginBottom: 20, paddingLeft: 100, paddingRight: 100, alignSelf: 'center', width: 100, backgroundColor: "black", color: "white"}}>Create</Button>

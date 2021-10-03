@@ -1,8 +1,9 @@
 import React, { isValidElement, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Redirect, Router} from 'react-router-dom';
-import Navigationbar from './navigationbar.js';
 
+// Importing Redux library
+import { useSelector, useDispatch } from 'react-redux';
+
+import Navigationbar from './navigationbar.js';
 import { useNavigate, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -42,12 +43,11 @@ export default function SignIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [userType, setUserType] = useState("1");
-    // const [allResList, setAllResList] = useState([]);
-    useEffect(() => {
-        // signInApi();
-    }, [])
     const mainReducer = useSelector((state) => state.mainReducer)
-    const dispatch = useDispatch()
+
+    // Using usedispatch hook
+    const dispatch = useDispatch();
+
     const classes = useStyles();
     const {register, handleSubmit, control} = useForm()
     const history = useHistory();
@@ -58,12 +58,15 @@ export default function SignIn() {
         return
       }
       const body = {email, password}
-      console.log("==loginbody", body);
+      // console.log("==loginbody", body);
       try {
           const res = await axios.post(url, body);
-          console.log("response",res.data);
-          console.log("userType", userType, "type", typeof(userType))
+          // console.log("response",res.data);
+          // console.log("userType", userType, "type", typeof(userType))
+
+          // Dispatching Login action to reducer
           await parseInt(userType) === 2 ? dispatch(onResLogin(res.data)) : dispatch(onCustomerLogin(res.data))
+          
           await setTimeout(() => parseInt(userType) == 2 ? history.push("/res_profile") : history.push("/customer"), 2000);
           
       }catch(err){

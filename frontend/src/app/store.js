@@ -5,6 +5,8 @@ import restaurantReducer from './reducers/restaurantSlice';
 import customerReducer from './reducers/customerSlice';
 import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { applyMiddleware, createStore } from 'redux';
 
 const persistConfig = {
     key: 'root',
@@ -21,7 +23,17 @@ const persistedReducer = persistReducer(persistConfig, reducers);
   
 // 
 
-export default configureStore({
-    reducer: persistedReducer,
+// export default configureStore({
+//     reducer: persistedReducer,
 
-})
+// },
+// )
+
+
+const store = createStore(
+    persistedReducer,
+    {},
+    composeWithDevTools(applyMiddleware())
+);
+
+export default store;

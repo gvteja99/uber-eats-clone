@@ -105,6 +105,10 @@ const Navigationbar = (props) => {
             itemText: 'Restaurant Menu',
             itemPath: '/restaurant/menu',
         },
+        {
+            itemText: 'Orders',
+            itemPath: '/restaurant_orders'
+        },
 
     ];
 

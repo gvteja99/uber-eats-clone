@@ -10,7 +10,7 @@ import {
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {useForm, Controller} from 'react-hook-form'
-import { onResLogin, onCustomerLogin, updateResProfile } from '../app/reducers/mainSlice';
+import { onResSignup } from '../app/reducers/mainSlice';
 import { isValidEmail } from '../utility.js';
 
 const useStyles = makeStyles((theme) => ({
@@ -85,6 +85,7 @@ export default function ResSignup() {
         console.log("body", body);
         try {
             const res = await axios.post(url,body);
+            await dispatch(onResSignup(res.data))
             console.log("response",res);
             history.push("/login");
             
