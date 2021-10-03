@@ -15,7 +15,7 @@ import {
     CardActions,
     CardActionArea,
     CardContent,
-    List, ListItem
+    List, ListItem, RadioGroup, FormControlLabel, Radio, FormLabel
 } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -54,14 +54,20 @@ const useStyles = makeStyles({
 
 export default function ResLanding(props) {
     const mainReducer = useSelector((state) => state.mainReducer);
+    const [foodType, setFoodType] = useState("0");
+    const [listOnDisplay, setListOnDisplay] = useState([]);
     const [selectedResMenu, setSelectedResMenu] = useState([]);
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch()
     useEffect(() => {
       getRestMenu();
-      // console.log("=================20")
-      // dispatch(addDishToCart())
     }, [dispatch])
+    useEffect(() => {
+      let filterList = selectedResMenu.filter((res_menu)=>  parseInt(foodType) === 0 ? res_menu : res_menu.food_type === parseInt(foodType));
+      
+      setListOnDisplay(filterList);
+
+    }, [selectedResMenu, foodType]);
     const history = useHistory();
     const classes = useStyles();
     const { customerProfile, token, cart = [] } = mainReducer;
@@ -122,14 +128,30 @@ export default function ResLanding(props) {
     }
     
 
-    // console.log("==cart", cart);
     return (
     <>
       <Navigationbar  showCart={true} onCartClick={handleClickOpen}/>
       <Box component="div" className={classes.container}>
-        <h1 className={classes.Header} style={{marginLeft: '40px', marginBottom: '20px'}}>
-                {capsStrFirstChar(selectedRes.name || 'subway')}
-            </h1>
+        <h1 className={classes.Header} style={{marginLeft: '40px'}}>
+          {capsStrFirstChar(selectedRes.name || 'subway')}
+        </h1>
+        <form style={{display: 'flex', justifyContent: 'flex-end'}}>
+          <FormControl component="fieldset" style={{marginLeft: '40px', marginRight: '40px', marginBottom: '20px'}}>
+            <FormLabel component="legend" style={{color: "blue"}}>Food type</FormLabel>
+              <RadioGroup
+                aria-label="Food type"
+                row
+                name="radio-buttons-group"
+                value={foodType}
+                onChange={e => setFoodType(e.target.value)}
+              >
+                <FormControlLabel value="0" control={<Radio />} label="All" />
+                <FormControlLabel value="1" control={<Radio />} label="Veg" />
+                <FormControlLabel value="2" control={<Radio />} label="Non-veg" />
+                <FormControlLabel value="3" control={<Radio />} label="Vegan" />
+              </RadioGroup>
+            </FormControl>
+        </form>
         <Grid
           container
           spacing={4}

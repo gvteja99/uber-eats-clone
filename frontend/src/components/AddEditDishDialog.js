@@ -26,7 +26,6 @@ const AddEditDishDialog = (props) => {
         setDishPrice(dish?.dish_price);
         setDishImage(dish?.dish_image);
         setDishDescription(dish?.description);
-        // getTickets();
         // getResDishes();
     }, [props.open]);
 

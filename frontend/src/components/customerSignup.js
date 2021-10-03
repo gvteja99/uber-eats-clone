@@ -64,7 +64,7 @@ export default function ResProfile() {
         try {
             const res = await axios.post(url,body);
             console.log("response",res);
-            dispatch(onCustomerSignup())
+            dispatch(onCustomerSignup(res.data))
             history.push("/login");
             
         }catch(err){

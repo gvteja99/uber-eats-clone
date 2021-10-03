@@ -14,10 +14,13 @@ import {
     CardActions,
     CardActionArea,
     CardContent,
-    List, ListItem
+    List, ListItem,
+    Radio, RadioGroup, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment
 } from '@material-ui/core';
+import {useForm, Controller} from 'react-hook-form'
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SearchIcon from '@material-ui/icons/Search';
 import EditIcon from '@material-ui/icons/Edit';
 import { orange, teal } from '@material-ui/core/colors';
 import TextField from '@material-ui/core/TextField';
@@ -29,7 +32,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
 import Navigationbar from './navigationbar';
 import Dish1 from "../images/dish1.jpeg";
 import { getAllResList, getFavResList, getResMenu } from '../app/reducers/mainSlice';
@@ -46,26 +48,39 @@ const useStyles = makeStyles({
     flexWrap: 'wrap',
   },
   container: {
-    marginTop: '160px',
+    marginTop: '120px',
   },
 });
 
 export default function CustomersLanding() {
-    const mainReducer = useSelector((state) => state.mainReducer);
+  const mainReducer = useSelector((state) => state.mainReducer);
+    const { customerProfile, token, allRestList, favResList } = mainReducer;
+    const [deliveryOption, setDeliveryOption] = useState("2");
+    const [searchValue, setSearchValue] = useState("");
+
+    const [listOnDisplay, setListOnDisplay] = useState([]);
+    console.log("======deliveryOption", deliveryOption);
     useEffect(() => {
         getAllRestaurantApi();
         getFavouritesRestaurantApi();
     }, [])
-    const dispatch = useDispatch()
+    useEffect(() => {
+      
+      setListOnDisplay(allRestList.filter((res)=>  res.delivery_option === 1 || res.delivery_option === parseInt(deliveryOption)))
+
+    }, [allRestList, deliveryOption])
+    const dispatch = useDispatch();
+    const {register, handleSubmit, control} = useForm()
     const history = useHistory();
     const classes = useStyles();
-
-    const { customerProfile, token, allRestList, favResList } = mainReducer;
+   console.log("=========setViewList", listOnDisplay);
+    // const { customerProfile, token, allRestList, favResList } = mainReducer;
+    
     const { customer_id, city } = customerProfile;
     console.log("customerProfile", customerProfile);
 
     const getAllRestaurantApi = async () => {
-      const url =  `/restaurants?customer_city=${city}`;
+      const url =  `/restaurants?customer_city=${city}&search=${searchValue}`;
         const headers = { 
           'x-access-token': token,
         };
@@ -79,6 +94,7 @@ export default function CustomersLanding() {
         }
 
     }
+
 
     const getFavouritesRestaurantApi = async () => {
       const url =  `/customers/${customer_id}/favourites/`;
@@ -139,13 +155,53 @@ export default function CustomersLanding() {
         {/* <h1 className={classes.Header}>
                 Customer Dashboard
             </h1> */}
+        <form style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center',  marginBottom: '25px'}}>
+        <TextField
+              variant="outlined"
+              margin="normal"
+              // , { required: true }
+              inputRef={{...register('searchValue')}}
+              // required
+              // 
+              
+              name="searchValue"
+              label="search by name or city"
+              type="text"
+              id="searchValue"
+              value={searchValue}
+              style={{ width: 300}}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment>
+                    <IconButton onClick={() => getAllRestaurantApi()}>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              onChange={e => setSearchValue(e.target.value)}
+            />
+        <FormControl component="fieldset" style={{marginLeft: '40px', marginRight: '40px'}}>
+            <FormLabel component="legend" style={{color: "blue"}}>Delivery Option</FormLabel>
+            <RadioGroup
+                // aria-label="gender"
+                row
+                name="controlled-radio-buttons-group"
+                value={deliveryOption}
+                onChange={e => setDeliveryOption(e.target.value)}
+            >
+                <FormControlLabel value="2" control={<Radio />} label="Delivery" />
+                <FormControlLabel value="3" control={<Radio />} label="Pickup" />
+            </RadioGroup>
+            </FormControl>
+        </form>
         <Grid
           container
           spacing={4}
           className={classes.gridContainer}
           justifyContent="center"
         >
-            {allRestList?.length > 0 && allRestList.map((res, key) => (
+            {listOnDisplay?.length > 0 && listOnDisplay.map((res, key) => (
                 <Grid item xs={12} sm={6} md={4}>
                     <RestaurantCard res={res} onResClick={onResClick} addResToFavourites={addResToFavourites}/>
                 </Grid>
