@@ -66,7 +66,7 @@ router.post('/customer', async (req, res) => {
     try {
         const result1 = await queryPromise1();
         if (result1 && result1.length > 0) {
-            return res.status(400).json("Email should be unique");
+            return res.status(400).end("Email should be unique");
         }
         const result2 = await queryPromise2(result1);
         const  result = await addHashToken(result2.insertId);

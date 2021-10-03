@@ -132,7 +132,7 @@ router.get('/:id/delivery_address', async (req, res) => {
     }
 });
 
-router.post('/delivery_address', async (req, res) => {
+router.post('/delivery_address', auth, async (req, res) => {
     const  { customer_id, delivery_address } = req.body;
     const queryPromise1 = () => {
         const sql1 = `INSERT INTO delivery_addresses (customer_id, delivery_address)
