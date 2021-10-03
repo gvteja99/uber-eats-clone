@@ -56,27 +56,9 @@ router.post('/customer', async (req, res) => {
                 }
             ));
 
-            const queryPromise4 = (customer_id, address_id) => {
-                const sql4 = `INSERT INTO delivery_addresses (customer_id, address_id, is_default)
-                VALUES ('${customer_id}', '${address_id}', TRUE);`;
-                // console.log("sql4:", sql4);
-                return new Promise((resolve, reject)=>{
-                    pool.query(sql4,  (error4, result4)=>{
-                        if(error4){
-                            console.log("error4:", error4);
-                            return reject(error4);
-                        }
-                        // console.log("result4:", result4);
-                        return resolve(result4);
-                    });
-                });
-            };
 
             const result3 = await queryPromise3();
-            // console.log("========result3", result3);
-            const result4 = await queryPromise4(result3.insertId, address_id);
-            // console.log("=========result4", result4);
-            res.status(200).json("Signup Successful");
+            res.status(200).json({msg: "Customer Signup Successful"});
         });
         return result
     };
@@ -87,12 +69,7 @@ router.post('/customer', async (req, res) => {
             return res.status(400).json("Email should be unique");
         }
         const result2 = await queryPromise2(result1);
-        // console.log("insertId: ", result2.insertId);
         const  result = await addHashToken(result2.insertId);
-        // console.log("===result=====:", result);
-        // const result4 = await queryPromise4(result3.insertId, result2.insertId);
-        // console.log("result4:", result4);
-        // res.status(200).json("Signup Successful");
     } catch(error) {
         console.log(error);
         return res.status(500).json(error);
@@ -161,7 +138,7 @@ router.post('/restaurant', async (req, res) => {
         console.log("insertID: ", result2.insertId);
         const result3 = await queryPromise3(result2.insertId);
         console.log("result3:", result3);
-        res.status(200).json("Signup Successful");
+        res.status(200).json({msg: " Restaurant Signup Successful"});
     } catch(error) {
         console.log(error);
         return res.status(500).json(error);

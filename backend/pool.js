@@ -4,7 +4,7 @@ const port = 3306;
 const pool = mysql.createPool({
     host: "database-1.caorc3vfgkkg.us-east-2.rds.amazonaws.com",
     user: "admin",
-    password: "zerosehero123",
+    password: "Password123",
     port,
     database: "ubereats_db",
     // connectionLimit: 100,

@@ -228,8 +228,9 @@ DROP TABLE IF EXISTS `delivery_addresses`;
 CREATE TABLE `delivery_addresses`(
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `customer_id` int(10) unsigned NOT NULL,
-    `address_id` int(10) unsigned NOT NULL,
-    `is_default` boolean default FALSE,
+    `delivery_address` varchar(255),
+    -- `address_id` int(10) unsigned NOT NULL,
+    -- `is_default` boolean default FALSE,
 
     PRIMARY KEY (`id`),
     UNIQUE KEY `id_UNIQUE` (`id`),

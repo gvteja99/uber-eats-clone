@@ -105,6 +105,76 @@ router.get('/:id/orders', async (req, res) => {
     }
 });
 
+router.get('/:id/delivery_address', async (req, res) => {
+    const customer_id = req.params.id;
+    const queryPromise1 = () => {
+        const sql1 = `select * from delivery_addresses where customer_id='${customer_id}';`;
+        console.log("sql1:", sql1);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql1,  (error1, result1)=>{
+                if(error1){
+                    console.log("error1:", error1);
+                    return reject(error1);
+                }
+                console.log("result1:", result1);
+                return resolve(result1);
+            });
+        });
+    };
+    try {
+        const result1 = await queryPromise1();
+        console.log("result1[0]:", result1);
+        let res_body = { data: result1};
+        return res.status(200).json(res_body);
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+router.post('/delivery_address', async (req, res) => {
+    const  { customer_id, delivery_address } = req.body;
+    const queryPromise1 = () => {
+        const sql1 = `INSERT INTO delivery_addresses (customer_id, delivery_address)
+        VALUES ('${customer_id}', '${delivery_address}');;`;
+        console.log("sql1:", sql1);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql1,  (error1, result1)=>{
+                if(error1){
+                    console.log("error1:", error1);
+                    return reject(error1);
+                }
+                console.log("result1:", result1);
+                return resolve(result1);
+            });
+        });
+    };
+    const queryPromise2 = () => {
+        const sql2 = `select * from delivery_addresses where customer_id='${customer_id}';`;
+        console.log("sql2:", sql2);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql2,  (error2, result2)=>{
+                if(error2){
+                    console.log("error2:", error2);
+                    return reject(error2);
+                }
+                console.log("result2:", result2);
+                return resolve(result2);
+            });
+        });
+    };
+    try {
+        const result1 = await queryPromise1();
+        const result2 = await queryPromise2();
+        console.log("result1[0]:", result1);
+        let res_body = { data: result2 };
+        return res.status(200).json(res_body);
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
 router.post('/orders', async (req, res) => {
     const { customer_id, cart, delivery_type, delivery_address, order_date_time, total_amount, delivery_fee, taxes, instruction, tip }= req.body;
     // for (const order of cart) {
