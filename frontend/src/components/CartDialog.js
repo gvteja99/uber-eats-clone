@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
+import { Button, makeStyles } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -19,6 +19,11 @@ const emails = ['username@gmail.com', 'user02@gmail.com'];
 
 export default function SimpleDialog(props) {
   const { onClose, selectedValue, open, cart=[], onCartCheckout = () => {} } = props;
+
+  const useStyles = makeStyles(theme=>({
+    disabledButton: {
+      backgroundColor: 'grey'
+  },}))
 
   // const [error, setError] 
 
@@ -70,21 +75,10 @@ export default function SimpleDialog(props) {
           </ListItem>
         </div>
         <div style={{width: '100%', display: "flex", justifyContent: "center"}}>
-          <Button size="small" onClick={() => onCartCheckout()} variant="outlined" color="primary" style={{alignSelf: 'center', width: 100, backgroundColor: "green", color: "white"}}>Checkout</Button>
+          <Button size="small" disabled={cart.length === 0} 
+           onClick={() => onCartCheckout()} variant="outlined" color="primary" classes={{ disabled: useStyles.disabledButton }}
+           style={{alignSelf: 'center', width: 100, backgroundColor: "green", color: "white"}}>Checkout</Button>
         </div>
-
-        {/* <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
-          <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "green", textAlign: "center"}}>
-                  {`Checkout`}
-          </Typography>
-        </ListItem> */}
-          {/* <ListItemAvatar>
-            <Avatar>
-              <AddIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary="Add account" />
-        </ListItem> */}
       </List>
     </Dialog>
   );
