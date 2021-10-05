@@ -219,7 +219,7 @@ export default function CustomerCheckout(props) {
                             id="selectedAddress"
                             select
                             fullWidth
-                            label="selecte delivery Address"
+                            label="selected delivery Address"
                             style={{color: 'black', marginBottom: 10}}
                             value={selectedAddress}
                             onChange={e => setSelectedAddress(e.target.value)}

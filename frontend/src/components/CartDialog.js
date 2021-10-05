@@ -51,10 +51,10 @@ export default function SimpleDialog(props) {
             return cartItem?.dishes?.length >0 && cartItem?.dishes.map((dish, dishIndex) => (
                 <ListItem key={index}>
                 <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
-                  <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                  <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
                       {`${dish?.quantity}  ${dish?.dish_name}`}
                   </Typography>
-                  <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                  <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
                       {`$ ${dish.dish_price}`}
                   </Typography>
                 </div>
@@ -65,10 +65,10 @@ export default function SimpleDialog(props) {
 
           <ListItem>
               <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
-                <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                <Typography variant="body1" color="black" style={{alignSelf: "center",textAlign: "center"}}>
                     {`Total Amount:`}
                 </Typography>
-                <Typography variant="body1" color="black" style={{alignSelf: "center", backgroundColor: "yellow", textAlign: "center"}}>
+                <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
                     {`$ ${totalAmount.toFixed(2)}`}
                 </Typography>
               </div>

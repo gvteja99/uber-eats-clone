@@ -42,6 +42,7 @@ export default function ResProfile() {
     console.log("resProfile", resProfile);
     const [name, setName] = useState(resProfile && ( resProfile?.name ||  ""));
     const [phone, setPhone] = useState(resProfile?.phone_number || "");
+    const [description, setDescription] = useState(resProfile?.description || "");
     const [streetAddress, setStreetAddress] = useState(resProfile?.street_address ||  "");
     const [aptNumber, setAptNumber] = useState(resProfile?.apt_number ||  "");
     const [city, setCity] = useState(resProfile?.city ||  "san jose");
@@ -95,7 +96,7 @@ export default function ResProfile() {
             address_id: resProfile?.address_id,
             delivery_option: deliveryOptions,
             phone_number: phone,
-            description: `${name} is a good restaurant`,
+            description: description || `${name} is a good restaurant`,
             timing_open: timingOpen,
             timing_close: timingClose,
             street_address: streetAddress,
@@ -164,9 +165,7 @@ export default function ResProfile() {
             <TextField
               variant="outlined"
               margin="normal"
-              // , { required: true }
               inputRef={{...register('name')}}
-              // required
               fullWidth
               id="name"
               label="name"
@@ -190,6 +189,20 @@ export default function ResProfile() {
               id="phone"
               value={phone}
               onChange={e => setPhone(e.target.value)}
+            />
+             <TextField
+              variant="outlined"
+              margin="normal"
+              inputRef={{...register('description')}}
+              fullWidth
+              id="description"
+              label="description"
+              name="description"
+              type='text'
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              autoFocus
+              inputProps={{className: classes.textInput}}
             />
             <TextField
               variant="outlined"

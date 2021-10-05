@@ -129,6 +129,8 @@ export default function ResLanding(props) {
         <h1 className={classes.Header} style={{marginLeft: '40px'}}>
           {capsStrFirstChar(selectedRes.name || 'subway')}
         </h1>
+        <Typography variant="body2" style={{marginLeft: '40px'}}>{selectedRes.description}</Typography>
+        <Typography variant="caption" style={{marginLeft: '40px'}}>{`Open between ${selectedRes.timing_open} to ${selectedRes.timing_close}`}</Typography>
         <form style={{display: 'flex', justifyContent: 'flex-end'}}>
           <FormControl component="fieldset" style={{marginLeft: '40px', marginRight: '40px', marginBottom: '20px'}}>
             <FormLabel component="legend" style={{color: "blue"}}>Food type</FormLabel>
