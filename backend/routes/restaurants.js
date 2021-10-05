@@ -208,7 +208,7 @@ router.put('/:res_id/dish/:id', async (req, res) => {
                     console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 console.log("fields1:", fields1);
                 return resolve(result1);
             });
@@ -253,7 +253,7 @@ router.delete('/:res_id/dish/:id', auth, async (req, res) => {
                     console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 return resolve(result1);
             });
         });
@@ -298,7 +298,7 @@ router.get('/:id/orders', async (req, res) => {
                     console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 return resolve(result1);
             });
         });
@@ -325,7 +325,7 @@ router.put('/order', async (req, res) => {
                     console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 return resolve(result1);
             });
         });

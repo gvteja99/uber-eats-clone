@@ -37,6 +37,7 @@ import Dish1 from "../images/dish1.jpeg";
 import { getAllResList, getFavResList, getResMenu } from '../app/reducers/mainSlice';
 // import "./styles.css";
 import RestaurantCard from './RestaurantCard';
+import CartDialog from './CartDialog';
 
 const useStyles = makeStyles({
   gridContainer: {
@@ -54,11 +55,27 @@ const useStyles = makeStyles({
 
 export default function CustomersLanding() {
   const mainReducer = useSelector((state) => state.mainReducer);
-    const { customerProfile, token, allRestList, favResList } = mainReducer;
+    const { customerProfile, token, allRestList, favResList, cart } = mainReducer;
     const [deliveryOption, setDeliveryOption] = useState("2");
     const [searchValue, setSearchValue] = useState("");
+    const [open, setOpen] = useState(false);
 
     const [listOnDisplay, setListOnDisplay] = useState([]);
+
+    const handleClickOpen = () => {
+      setOpen(true);
+  };
+
+  const handleClose = () => {
+    // value
+      setOpen(false);
+      // setSelectedValue(value);
+  };
+
+  const onCartCheckout = (value) => {
+    history.push("/customer_checkout");
+    handleClose();
+  }
     console.log("======deliveryOption", deliveryOption);
     useEffect(() => {
         getAllRestaurantApi();
@@ -150,7 +167,7 @@ export default function CustomersLanding() {
     }
     return (
     <>
-      <Navigationbar />
+      <Navigationbar  showCart={true} onCartClick={handleClickOpen}/>
       <Box component="div" className={classes.container}>
         {/* <h1 className={classes.Header}>
                 Customer Dashboard
@@ -209,6 +226,12 @@ export default function CustomersLanding() {
           }
         </Grid>
       </Box>
+      <CartDialog
+        open={open}
+        onClose={handleClose}
+        cart={cart}
+        onCartCheckout={onCartCheckout}
+      />
     </>
   );
 }

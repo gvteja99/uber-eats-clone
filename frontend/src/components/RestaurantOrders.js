@@ -61,7 +61,6 @@ export default function CustomerOrders(props) {
     const [open, setOpen] = useState(false);
     const [orderFilter, setOrderFilter] = useState("0");
     const [listOnDisplay, setListOnDisplay] = useState([]);
-    console.log("======orderFilter", orderFilter);
     const dispatch = useDispatch()
     useEffect(() => {
       getCustomersOrders();
@@ -70,7 +69,6 @@ export default function CustomerOrders(props) {
         let allowedStatus = parseInt(orderFilter )=== 0 ? [1,2,3,4,5,6] : (parseInt(orderFilter ) === 1 ? [1,2,3,5] : [4,6])
         setListOnDisplay(resOrders.filter((order)=>  allowedStatus.includes(order.delivery_status))
     )}, [resOrders, orderFilter]);
-    console.log("=========setViewList", listOnDisplay);
     const history = useHistory();
     const classes = useStyles();
     const handleClickOpen = () => {
@@ -79,7 +77,6 @@ export default function CustomerOrders(props) {
 
     const onClickViewReciept = async(order) => {
         setSelectedOrder(order);
-        console.log("===order", order);
         const url =  `/customers/order/${order.order_id}`;
         const headers = { 
             'x-access-token': token,
@@ -166,7 +163,7 @@ export default function CustomerOrders(props) {
         <h1 className={classes.Header} style={{marginLeft: '40px', marginBottom: '20px'}}>
             {'Past Orders'}
         </h1>
-        <form style={{display: 'flex', justifyContent: 'flex-end'}}>
+        <form style={{display: 'flex', justifyContent: 'start'}}>
         <FormControl component="fieldset" style={{marginLeft: '40px', marginRight: '40px', marginBottom: '20px'}}>
             <FormLabel component="legend" style={{color: "blue"}}>Delivery Option</FormLabel>
                 <RadioGroup
@@ -186,30 +183,38 @@ export default function CustomerOrders(props) {
         </form>
         {listOnDisplay?.length >0 && listOnDisplay.map((order, index) => (
             <ListItem key={index}>
-                <div style={{display: "block", paddingLeft: 50,  paddingRight: 50}}>
+                <Card style={{ width: "60%", display: "block", paddingLeft: 20,  paddingRight: 40}}>
                     <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
-                        <Typography variant="h6" color="black" style={{}}>
+                        <Button onClick={() => history.push({
+                            pathname: '/customer_detail',
+                            state: { customer: order }
+                        })}>
+                        <Typography variant="h6" color="black" style={{fontSize: 14}}>
                             {capsStrFirstChar(`${order?.first_name} ${order?.last_name}`)}
                         </Typography>
+                        </Button>
                         <Typography variant="body2" style={{ color: "green", textAlign: 'center'}}>
                             {capsStrFirstChar(`${getOrderStatus(order?.delivery_status)}`)}
                         </Typography>
-                        <Button variant="outlined" onClick={() => updateOrderStatusApi(order?.order_id, order?.delivery_status, order?.delivery_type)}>Move to Next status</Button>
                     </div>
-                    <div style={{width: '100%', display: "flex", justifyContent: "start", paddingTop: 0, paddingBottom: 0}}>
-                        <Typography variant="caption" color="black" style={{}}>
+                    <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
+                        <Typography variant="caption" style={{}}>
                                 {`${moment(order.order_date_time).format('yyyy-MM-DD ddd hh:mm:ss')} `}
                         </Typography>
-                        <Typography variant="caption" color="black" style={{paddingLeft: 5}}>
-                            {`Amount Paid: $ ${order.total_amount}`}
+                        <Typography variant="caption" style={{paddingLeft: 5}}>
+                            {`$${order.total_amount}`}
                         </Typography>
-                        <Button 
-                            size="small" variant="text" color="primary" onClick={() => onClickViewReciept(order)}
-                            style={{alignSelf: 'center', backgroundColor: "green", color: "white", paddingLeft: 55, paddingRight: 55}}
-                        >View Reciept</Button>
                         {/* <Link href="#">Link</Link> */}
                     </div>
-                </div>
+                    <div style={{display: "flex", paddingTop: 10, paddingBottom: 10}}>
+                    <Button 
+                            size="small" variant="text" color="primary" onClick={() => onClickViewReciept(order)}
+                            style={{alignSelf: 'center', backgroundColor: "green", color: "white", paddingLeft: 20, paddingRight: 20}}
+                        >View Reciept</Button>
+                     <Button size="small" variant="outlined" style={{marginLeft: 20}}
+                     onClick={() => updateOrderStatusApi(order?.order_id, order?.delivery_status, order?.delivery_type)}>Move to Next status</Button>
+                     </div>
+                </Card>
             </ListItem>
         )
         )}
@@ -243,7 +248,8 @@ function SimpleDialog(props) {
     return (
       <Dialog onClose={handleClose} open={open}>
         <DialogTitle style={{alignSelf: "center", marginLeft: 100, marginRight: 100 }}>Reciept</DialogTitle>
-        <div style={{width: '100%', fontWeight: "bold", fontSize: 20, display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0, paddingLeft: 30, paddingRight: 30}}>
+        <div style={{width: "100%", alignSelf: "center" }}>
+        <div style={{width: '100%', fontWeight: "bold", fontSize: 20, display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0, paddingLeft: 15, paddingRight: 20}}>
             <Typography variant="body1" color="black" style={{color: 'black'}}>
                 {`Total `}
             </Typography>
@@ -255,32 +261,30 @@ function SimpleDialog(props) {
         </div>
         {orderDetails?.length >0 && orderDetails.map((orderItem, index) => (
             <ListItem key={index}>
-                <div style={{display: "block", paddingLeft: 30}}>
+                <div style={{width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                     <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
-                        <div style={{width: '100%', display: "flex", justifyContent: "start"}}>
-                            <Typography variant="body1" color="black" style={{color: 'black'}}>
+                        <div style={{width: '100%', display: "flex", justifyContent: "stretch", alignItems: 'baseline'}}>
+                            <Typography variant="body1" style={{fontSize: 13, color: 'black'}}>
                                 {orderItem.quantity}
                             </Typography>
-                            <Typography variant="body1" color="black" style={{marginLeft: 30, color: 'black'}}>
+                            <Typography variant="body1" style={{fontSize:13, marginLeft: 30, color: 'black'}}>
                                 {capsStrFirstChar(`${orderItem?.dish_name}`)}
                             </Typography>
                         </div>
-                        <Typography variant="body1" style={{marginLeft: 30, color: "black", width: 300, textAlign: 'end'}}>
-                            {`$ ${orderItem.dish_price}`}
-                        </Typography>
                     </div>
-                    {/* <div style={{width: '100%', display: "flex", justifyContent: "start", paddingTop: 0, paddingBottom: 0}}>
-                        <Typography variant="caption" color="black" style={{}}>
-                                {`${moment(orderItem.order_date_time).format('yyyy-MM-DD ddd hh:mm:ss')} `}
+                    <Typography variant="body1" style={{fontSize: 13, paddingRight: 5, marginLeft: 30, color: "black"}}>
+                            {`$${orderItem.dish_price}`}
                         </Typography>
-                        <Typography variant="caption" color="black" style={{paddingLeft: 5}}>
-                            {`Amount Paid: $ ${orderItem.total_amount}`}
-                        </Typography>}
-                    </div> */}
+                
                 </div>
             </ListItem>
+
         )
         )}
+        <Typography variant="body1" style={{fontSize: 13, paddingRight: 30, marginLeft: 16, color: "black", textAlign: 'start'}}>
+            { `Delivered at: ${order.delivery_address}`}
+        </Typography>
+    </div>
       </Dialog>
     );
   }

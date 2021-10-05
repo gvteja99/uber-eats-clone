@@ -196,8 +196,9 @@ const Navigationbar = (props) => {
                             anchor='right'>
                             {sidebarList('right')}
                         </MobileeRightMenuSlider>
-                            <div style={{ display: "flex", flex: 1, justifyContent: 'start',marginRight: 100}}>
+                            <div style={{ display: "flex", flex: 1, justifyContent: 'space-between',marginRight: 40}}>
                                 <img src={app_logo} width={124} height={82} alt='' color={'red'} style={{ width: 124, height: 82}} />
+                                <div style={{display: "flex", justifyContent: 'flex-end'}}>
                                 {showCart && (
                                 <Button
                                     // type="submit"
@@ -206,16 +207,16 @@ const Navigationbar = (props) => {
                                     color="black"
                                     // className={classes.submit}
                                     onClick={() => onCartClick()}
-                                    style={{  width: 100, height: 40, alignSelf: 'center' }}
+                                    style={{  width: 100, height: 40, alignSelf: 'center', marginRight: 20 }}
                                 >
                                     Cart
                                 </Button>
                                 )}
+                                 <IconButton onClick={toggleSlider('right', true)} style={{}}>
+                                    <DehazeIcon style={{color: 'black'}} />
+                                </IconButton>
+                                </div>
                          </div>
-                        
-                        <IconButton onClick={toggleSlider('right', true)} style={{ position: 'absolute', right: '2%'}}>
-                            <DehazeIcon style={{color: 'black'}} />
-                        </IconButton>
                     </Toolbar>
                 </AppBar>
             </Box>

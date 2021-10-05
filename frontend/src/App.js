@@ -17,6 +17,7 @@ import CustomerCheckout from './components/customerCheckout';
 import CustomerOrders from './components/CustomerOrders';
 import RestaurantOrders from './components/RestaurantOrders';
 import FavouritesTab from './components/FavouritesTab';
+import CustomerProfileDetails from "./components/CustomerProfileDetails";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
       <Route path="/customer_orders" component={CustomerOrders} />
       <Route path="/restaurant_orders" component={RestaurantOrders} />
       <Route path="/customer_favourites" component={FavouritesTab} />
+      <Route path="/customer_detail" component={CustomerProfileDetails} />
     </>
   );
 }
