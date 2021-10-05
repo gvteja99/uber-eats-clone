@@ -1,7 +1,119 @@
 import express from "express";
 import pool from "../pool.js";
 import auth from "../middleware/auth.js";
+import multer from "multer";
+import { fileURLToPath } from 'url';
+// import { dirname } from 'path';
+import  path, {dirname} from "path";
+import fs from 'fs';
+// const fs = require('fs');
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
 const router = express.Router();
+
+const userstorage = multer.diskStorage({
+    destination: path.join(__dirname, '..') + '/public/uploads/users',
+    filename: (req, file, cb) => {
+        cb(null, 'user' + req.params.customer_id + "-" + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const useruploads = multer({
+    storage: userstorage,
+    limits: { fileSize: 1000000 },
+}).single("image");
+
+//Update customer profile pic:
+router.post('/:customer_id/upload/profile_pic', async (req, res) => {
+    const { customer_id } = req.params;
+    const queryPromise1 = () => {
+        const sql1 = `UPDATE customers SET profile_pic= '${req.file.filename}'
+            where customer_id= '${customer_id}'`;
+        console.log("sql1:", sql1);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql1,  (error1, result1)=>{
+                if(error1){
+                    console.log("error1:", error1);
+                    return reject(error1);
+                }
+                console.log("result1:", result1);
+                return resolve(result1);
+            });
+        });
+    };
+    try {
+        useruploads(req, res,  async (err) => {
+            if (!err) {
+            const result1 = await queryPromise1();
+            // const result2 = await queryPromise2();
+            // const result3 = await queryPromise3();
+            // let res_body = { res_menu_id: result1.insertId};
+            // return res.status(200).json(result1);
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+            });
+            res.end(req.file.filename);
+        } else {
+            console.log('Error!'), err;
+        }
+        })
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+router.get('/profile_pic/:user_image', (req, res) => {
+    var image = path.join(__dirname, '..') + '/public/uploads/users/' + req.params.user_image;
+    if (fs.existsSync(image)) {
+        res.sendFile(image);
+    }
+    else {
+        res.sendFile(path.join(__dirname, '..') + '/public/uploads/users/userplaceholder.jpg')
+    }
+});
+
+
+//get customer profile:
+router.get('/:id/profile', auth, async (req, res) => {
+    const customer_id = req.params.id;
+    const queryPromise1 = () => {
+        const sql1 = `select c.customer_id, c.customer_address_id, c.email, c.first_name, c.last_name, c.phone_number, c.dob, c.nickname, c.profile_pic, c.about,
+            a.street_address, a.apt_number, a.city, a.state, a.country, a.zipcode
+            from customers as c INNER JOIN addresses as a ON c.customer_address_id = a.address_id where c.customer_id='${customer_id}';`;
+        console.log("sql1:", sql1);
+        return new Promise((resolve, reject)=>{
+            pool.query(sql1,  (error1, result1, fields1)=>{
+                if(error1){
+                    console.log("error1:", error1);
+                    return reject(error1);
+                }
+                console.log("result1:", result1);
+                console.log("fields1:", fields1);
+                return resolve(result1);
+            });
+        });
+    };
+    try {
+        const result1 = await queryPromise1();
+        // let res_body = { res_menu_id: result1.insertId};
+        return res.status(200).json(result1[0]);
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+
+
+
+
+
+
+
 
 //Update customer profile:
 router.put('/profile', auth, async (req, res) => {
@@ -26,7 +138,7 @@ router.put('/profile', auth, async (req, res) => {
     };
     const queryPromise2 = () => {
         const sql2 = `UPDATE customers SET email= '${email}', first_name= '${first_name}', last_name= '${last_name}', phone_number= '${phone_number}', 
-            dob= '${dob}', nickname= '${nickname}', profile_pic= '${profile_pic}', about= '${about}'
+            dob= '${dob}', nickname= '${nickname}', about= '${about}'
             where customer_id= '${customer_id}'`;
         console.log("sql2:", sql2);
         return new Promise((resolve, reject)=>{
@@ -281,28 +393,28 @@ router.post('/favourites', async (req, res) => {
     const { customer_id, res_id }= req.body;
     const queryPromise1 = () => {
         const sql1 = `Select * from favourites where customer_id = '${customer_id}' and res_id = '${res_id}';`
-        console.log("sql1:", sql1);
+        // console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1)=>{
                 if(error1){
                     console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 return resolve(result1);
             });
         });
     };
     const queryPromise2 = () => {
         const sql2 = `INSERT INTO favourites (customer_id, res_id) VALUES ('${customer_id}', '${res_id}');`
-        console.log("sql2:", sql2);
+        // console.log("sql2:", sql2);
         return new Promise((resolve, reject)=>{
             pool.query(sql2,  (error2, result2)=>{
                 if(error2){
                     console.log("error2:", error2);
                     return reject(error2);
                 }
-                console.log("result2:", result2);
+                // console.log("result2:", result2);
                 return resolve(result2);
             });
         });
@@ -311,14 +423,14 @@ router.post('/favourites', async (req, res) => {
         const sql3 = `select f.favourite_id, f.customer_id, f.res_id, r.email, r.address_id, r.name, r.phone_number, r.delivery_option, r.description, r.timing_open, r.timing_close,
         a.street_address, a.apt_number, a.city, a.state, a.country, a.zipcode
         from restaurants as r INNER JOIN addresses as a ON r.address_id = a.address_id INNER JOIN favourites as f ON r.res_id = f.res_id  where customer_id = '${customer_id}';`
-        console.log("sql3:", sql3);
+        // console.log("sql3:", sql3);
         return new Promise((resolve, reject)=>{
             pool.query(sql3,  (error3, result3)=>{
                 if(error3){
                     console.log("error3:", error3);
                     return reject(error3);
                 }
-                console.log("result3:", result3);
+                // console.log("result3:", result3);
                 return resolve(result3);
             });
         });
@@ -344,14 +456,14 @@ router.get('/:id/favourites', async (req, res) => {
         a.street_address, a.apt_number, a.city, a.state, a.country, a.zipcode
         from restaurants as r INNER JOIN addresses as a ON r.address_id = a.address_id INNER JOIN favourites as f ON r.res_id = f.res_id  where customer_id = '${customer_id}';`
         // const sql1 = `Select * from favourites where customer_id = '${customer_id}';`
-        console.log("sql1:", sql1);
+        // console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{
             pool.query(sql1,  (error1, result1)=>{
                 if(error1){
                     console.log("error1:", error1);
                     return reject(error1);
                 }
-                console.log("result1:", result1);
+                // console.log("result1:", result1);
                 return resolve(result1);
             });
         });

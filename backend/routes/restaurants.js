@@ -92,7 +92,7 @@ router.get(`/`, async (req, res) => {
         else {
             sql1 = `select DISTINCT r.res_id, r.email, r.address_id, r.name, r.phone_number, r.delivery_option, r.description, r.timing_open, r.timing_close,
             a.street_address, a.apt_number, a.city, a.state, a.country, a.zipcode
-            from restaurants as r INNER JOIN addresses as a ON r.address_id = a.address_id Inner join restaurant_menu as d ON r.res_id = d.res_id where
+            from restaurants as r INNER JOIN addresses as a ON r.address_id = a.address_id Left Outer join restaurant_menu as d ON r.res_id = d.res_id where
             d.dish_name LIKE '${search_string}' or r.name LIKE '${search_string}' or d.description LIKE '${search_string}' or a.city LIKE '${search_string}'
             order by a.city= '${customer_city}' DESC;`;
         }
@@ -111,10 +111,6 @@ router.get(`/`, async (req, res) => {
     };
     try {
         const result1 = await queryPromise1();
-        // if (!(result1 && result1.length > 0)) {
-        //     return res.status(400).json("Empty List");
-        // }
-        // console.log("result1[0]:", result1);
         let res_body = { data: result1};
         return res.status(200).json(res_body);
     } catch(error) {
