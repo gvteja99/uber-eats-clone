@@ -63,7 +63,9 @@ export default function ResLanding(props) {
       getRestMenu();
     }, [dispatch])
     useEffect(() => {
-      let filterList = selectedResMenu.filter((res_menu)=>  parseInt(foodType) === 0 ? res_menu : res_menu.food_type === parseInt(foodType));
+      let filterList = selectedResMenu.filter((res_menu)=>  {
+        return parseInt(foodType) === 0 ?  true :  res_menu.food_type === parseInt(foodType);
+      });
       
       setListOnDisplay(filterList);
 
@@ -97,15 +99,7 @@ export default function ResLanding(props) {
       if (!token) {
         return
       }
-      // const found = cart.find(item => item?.dish?.res_menu_id === dish?.res_menu_id);
-      // console.log("===found", found);
-      // if (found) {
-      //   return
-      // }
       await dispatch(addDishToCart({res, dish}))
-      // await dispatch(addDishToCart());
-
-
     };
 
 
@@ -158,7 +152,7 @@ export default function ResLanding(props) {
           className={classes.gridContainer}
           justifyContent="center"
         >
-            {selectedResMenu?.length > 0 && selectedResMenu.map((dish, key) => (
+            {listOnDisplay?.length > 0 && listOnDisplay.map((dish, key) => (
                 <Grid item xs={12} sm={6} md={4}>
                     <ResDishCard dish={dish} res={selectedRes} onAddToCartClick={onAddToCartClick}/>
                 </Grid>
