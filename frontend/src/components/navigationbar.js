@@ -84,7 +84,7 @@ const Navigationbar = (props) => {
             const res = await axios.post(url,body, {headers});
             console.log("response",res);
             userType === 1 ? dispatch(onCustomerLogout(res.data)): dispatch(onResLogout(res.data)); 
-            setTimeout(() => history.push("/login"), 2000);
+            setTimeout(() => history.push("/login"), 100);
             
         }catch(err){
             console.log(err)

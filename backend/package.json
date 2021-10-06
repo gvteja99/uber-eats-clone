@@ -17,6 +17,7 @@
     "@babel/core": "^7.15.0",
     "@babel/node": "^7.14.9",
     "@babel/preset-env": "^7.15.0",
+    "alert": "^5.0.10",
     "assert": "^2.0.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",

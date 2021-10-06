@@ -199,7 +199,7 @@ router.put('/:res_id/dish/:id', async (req, res) => {
     const res_menu_id = req.params.id;
     const queryPromise1 = () => {
         const sql1 = `UPDATE restaurant_menu SET dish_name= '${dish_name}', dish_image= '${dish_image}', dish_price= '${dish_price}', 
-            main_ingredient= '${main_ingredient}', dish_category= '${dish_category}', food_type= '${food_type}' 
+            main_ingredient= '${main_ingredient}', dish_category= '${dish_category}', food_type= '${food_type}', description='${description}'
             where res_menu_id='${res_menu_id}' and res_id= '${res_id}'`;
         console.log("sql1:", sql1);
         return new Promise((resolve, reject)=>{

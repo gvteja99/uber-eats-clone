@@ -212,6 +212,7 @@ const RestaurantMenu = () => {
         const headers = { 
             'x-access-token': token,
         };
+        // console.log("====Dish", dish);
         // console.log("=========url", url);
         const body = {
             dish_name: dish_name,

@@ -111,6 +111,7 @@ ALTER Table restaurants ADD token varchar(255);
 --
 -- Table structure for table `restaurant_menu`
 --
+-- dish_category Appetizer, Salads, Main Course, Desserts, Beverages
 DROP TABLE IF EXISTS `restaurant_menu`;
 CREATE TABLE `restaurant_menu`(
     `res_menu_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
