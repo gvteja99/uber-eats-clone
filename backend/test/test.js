@@ -80,7 +80,7 @@ describe('Customer Delivery Address Test', function () {
                 "delivery_address": "san franando, 108, sanjose,95112, ca, us"
             })
             .then(function (res) {
-                expect(res.text).to.equal("A token is required for authentication");
+                expect(res.text).to.equal("Sign in to access");
             })
             .catch(error => {
                 console.log(error);

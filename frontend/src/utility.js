@@ -1,3 +1,11 @@
+import { applyMiddleware, createStore } from 'redux';
+import { reducers} from './../src/app/store';
+
+export const testStore = (initialState) => {
+    const createStoreWithMiddleware = applyMiddleware()(createStore);
+    return createStoreWithMiddleware(reducers, initialState);
+};
+
 export const capsStrFirstChar = (str) => {
     return str?.charAt(0).toUpperCase() + str?.slice(1);
 }

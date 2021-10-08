@@ -27,7 +27,7 @@ export default function MediaCard(props) {
         alt="green iguana"
       />
       <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography gutterBottom variant="h5" component="div" className="resName">
           {res?.name || "subway"}
         </Typography>
         <Typography variant="body2" color="textSecondary">
@@ -36,7 +36,7 @@ export default function MediaCard(props) {
       </CardContent>
       <CardActions>
         <Button size="small" variant="outlined" onClick={() => addResToFavourites(res.res_id)}>Add to favourites</Button>
-        <Button size="small" variant="outlined" onClick={() =>onResClick(res)}>Check Menu</Button>
+        <Button size="small" id="resMenu" variant="outlined" onClick={() =>onResClick(res)}>Check Menu</Button>
       </CardActions>
     </Card>
   );

@@ -25,7 +25,7 @@ export default function MediaCard(props) {
       />
       <div style={{display: "flex", justifyContent: 'space-between'}}>
         <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
+            <Typography className="dishName" gutterBottom variant="h5" component="div">
             {dish?.dish_name || "pizza"}
             </Typography>
             <Typography variant="body2" color="black">
@@ -36,7 +36,7 @@ export default function MediaCard(props) {
             </Typography>
         </CardContent>
         <CardActions>
-            <Button size="small" variant="outlined" onClick={() => onAddToCartClick(res, dish)}>Add to Cart</Button>
+            <Button size="small" id="addCartBtn" variant="outlined" onClick={() => onAddToCartClick(res, dish)}>Add to Cart</Button>
             {/* <Button size="small" variant="outlined">Check Menu</Button> */}
         </CardActions>
         </div>

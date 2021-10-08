@@ -59,32 +59,7 @@ const useStyles = makeStyles({
 export default function CustomerOrders(props) {
     const { customer = {} } = props?.location?.state;
     const { first_name, last_name, email, profile_pic} = customer;
-    console.log("customer", customer);
-    const mainReducer = useSelector((state) => state.mainReducer);
-    const { resProfile, token } = mainReducer;
-    // const [profilePic, setProfilePic]
-    // console.log("==resProfile", resProfile, token)
-    // const { res_id } = resProfile
-    const history = useHistory();
     const classes = useStyles();
-
-    // useEffect(() => getCustomerProfileApi(), [profilePic])
-
-    // const getCustomerProfileApi = async () => {
-    //     const url =  `/customers/${customer?.customer_id}/profile`;
-    //     const headers = { 
-    //         'x-access-token': token,
-    //     };
-    //     try {
-    //         const res = await axios.get(url, {headers});
-    //         console.log("response",res);
-    //         // await dispatch(updateCustomerProfile(res.data))
-            
-    //     }catch(err){
-    //         console.log(err)
-    //     }
-  
-    //   }
 
     return (
     <>
@@ -105,7 +80,7 @@ export default function CustomerOrders(props) {
         <h1 className={classes.Header} style={{ marginBottom: '20px'}}>
             {`${first_name} ${last_name}`}
         </h1>
-        <Typography variant="caption" style={{}}>
+        <Typography variant="caption" style={{}} className={"email"}>
             {`${customer.email} `}
         </Typography>
         <Typography variant="caption" style={{}}>

@@ -13,7 +13,7 @@ const persistConfig = {
     storage,
 };
 
-const reducers = combineReducers({
+export const reducers = combineReducers({
     mainReducer: mainReducer,
     restaurantReducer,
     customerReducer,

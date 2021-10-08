@@ -43,7 +43,7 @@ export default function SignIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [userType, setUserType] = useState("1");
-    const mainReducer = useSelector((state) => state.mainReducer)
+    // const mainReducer = useSelector((state) => state.mainReducer)
 
     // Using usedispatch hook
     const dispatch = useDispatch();
@@ -112,10 +112,10 @@ export default function SignIn() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" className="signIn">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate  onSubmit={handleSubmit(onClickSubmit, onError)}>
+        <form className={classes.form} noValidate  onSubmit={handleSubmit(onClickSubmit, onError)} >
           <TextField
             variant="outlined"
             margin="normal"
@@ -124,6 +124,7 @@ export default function SignIn() {
             // required
             fullWidth
             id="email"
+            className="email"
             label="Email Address"
             name="email"
             autoComplete="email"
