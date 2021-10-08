@@ -4,7 +4,7 @@ import './App.css';
 import React from 'react';
 import { Route } from 'react-router-dom';
 import Home from './components/home';
-import Dashboard from './components/dashboard';
+import Dashboard from './components/Dashboard';
 import Login from './components/login';
 import ResProfile from './components/restProfile';
 import CustomerSignup from './components/customerSignup';

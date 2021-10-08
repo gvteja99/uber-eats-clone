@@ -90,7 +90,7 @@ describe('Customer Delivery Address Test', function () {
 
 describe('GET Restaurant Dish Test', function () {
 
-    it('Authentication Error Test',() => {
+    it('Success Res Dish Test',() => {
         agent.get("/restaurants/14563/dishes")
             .then(function (res) {
                 expect(res.status).to.equal(200);

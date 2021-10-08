@@ -24,6 +24,7 @@ const port = 3306;
 //   });
 
 // export default connection;
+
 const pool = mysql.createPool({
     host: "database-1.caorc3vfgkkg.us-east-2.rds.amazonaws.com",
     user: "admin",
