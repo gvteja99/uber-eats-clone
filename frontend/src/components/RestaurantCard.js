@@ -30,7 +30,7 @@ export default function MediaCard(props) {
         <Typography gutterBottom variant="h5" component="div" className="resName">
           {res?.name || "subway"}
         </Typography>
-        <Typography variant="body2" color="textSecondary">
+        <Typography variant="body2" color="textSecondary" style={{maxLines: 2, lineHeight: 2}}>
           {res.description || "A nice restaurant"}
         </Typography>
       </CardContent>

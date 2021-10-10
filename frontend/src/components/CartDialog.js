@@ -1,8 +1,9 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
 import * as React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button, makeStyles } from '@material-ui/core';
+import { Button, makeStyles, ButtonGroup } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -14,11 +15,13 @@ import PersonIcon from '@material-ui/icons/Person';
 import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
+import { incrementDishCount, decrementDishCount } from '../app/reducers/mainSlice';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
 export default function SimpleDialog(props) {
-  const { onClose, selectedValue, open, cart=[], onCartCheckout = () => {} } = props;
+  const { onClose, selectedValue, open, cart=[], onCartCheckout = () => {}, } = props;
+  const dispatch = useDispatch()
 
   const useStyles = makeStyles(theme=>({
     disabledButton: {
@@ -34,6 +37,17 @@ export default function SimpleDialog(props) {
   const handleListItemClick = (value) => {
     onClose(value);
   };
+
+  const handleIncrement = dish => {
+    dispatch(incrementDishCount({dish}))
+    
+    // console.log("dish====", dish, "cart", cart);
+  }
+
+  const handleDecrement = dish => {
+    // console.log("dish====", dish, "cart",cart);
+    dispatch(decrementDishCount({dish}))
+  }
 
   let totalAmount = 0
   for (let resIndex = 0; resIndex < cart.length; resIndex++) {
@@ -51,8 +65,16 @@ export default function SimpleDialog(props) {
             return cartItem?.dishes?.length >0 && cartItem?.dishes.map((dish, dishIndex) => (
                 <ListItem key={index}>
                 <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
+                <div style={{ width: '50%', display: 'flex', justifyContent: 'flex-end' }}>
+                  <ButtonGroup size="small" aria-label="small outlined button group">
+                    <Button onClick={() => { handleIncrement(dish); }}>+</Button>
+                    <Button disabled>{dish.quantity ? dish.quantity : 1}</Button>
+                    <Button onClick={() => { handleDecrement(dish); }}>-</Button>
+                  </ButtonGroup>
+                </div>
+                {/* ${dish?.quantity} */}
                   <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
-                      {`${dish?.quantity}  ${dish?.dish_name}`}
+                      {`  ${dish?.dish_name}`}
                   </Typography>
                   <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
                       {`$ ${dish.dish_price}`}

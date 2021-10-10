@@ -123,6 +123,35 @@ export const mainSlice = createSlice({
       }
       state.cart = cartList;
     },
+    incrementDishCount: (state, action) => {
+      const payload = action.payload;
+      const { dish } = payload;
+      let cartList = state.cart;
+      const resIndex = cartList.findIndex(res => res.res_id === dish?.res_id);
+      if (resIndex !== -1) {
+        const dishIndex= cartList[resIndex].dishes.findIndex(dishItem => dishItem.res_menu_id === dish?.res_menu_id);
+        if (dishIndex !== -1) {
+          cartList[resIndex].dishes[dishIndex].quantity += 1
+        }
+
+      }
+
+    },
+    decrementDishCount: (state, action) => {
+      const payload = action.payload;
+      const { dish } = payload;
+      let cartList = state.cart;
+      const resIndex = cartList.findIndex(res => res.res_id === dish?.res_id);
+      if (resIndex !== -1) {
+        const dishIndex= cartList[resIndex].dishes.findIndex(dishItem => dishItem.res_menu_id === dish?.res_menu_id);
+        if (dishIndex !== -1) {
+          if (cartList[resIndex].dishes[dishIndex].quantity !== 1) {
+            cartList[resIndex].dishes[dishIndex].quantity -= 1
+          }
+        }
+
+      }
+    },
     removeDishToCart: (state, action) => {
       let cartList = state.cart;
       const index = cartList.findIndex(item => item?.res?.res_menu_id === action.payload?.dish?.res_menu_id);
@@ -158,7 +187,7 @@ export const mainSlice = createSlice({
 export const {
   onCustomerSignup, onResSignup, onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
   updateResProfile, updateCustomerProfile, getResMenu, getAllResList, getFavResList, deleteResFromFavList,
-  changeToken, selectUserType, addDishToCart, removeDishToCart, clearCart,
+  changeToken, selectUserType, addDishToCart, removeDishToCart, clearCart, incrementDishCount, decrementDishCount,
   updateCustomerMenu, updateCustomerOrders, updateResOrders
  } = mainSlice.actions;
 

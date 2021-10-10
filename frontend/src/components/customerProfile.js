@@ -59,7 +59,9 @@ export default function CustomerProfile() {
     const [file, setFile] = useState("");
     // const [profileUrl, setProfileUrl] = useState("");
 
-    useEffect(() => getCustomerProfileApi(), [profilePic])
+    useEffect(() => {
+      getCustomerProfileApi();
+    }, [profilePic])
 
     const countries = [
         {
@@ -74,7 +76,7 @@ export default function CustomerProfile() {
     
 
     // const [selectedFile, setSelectedFile]= useState();
-    useEffect(() => {}, []);
+    // useEffect(() => {}, []);
     // useEffect(() => {console.log("=====file", selectedFile)}, [selectedFile?.name])
     const dispatch = useDispatch()
     const classes = useStyles();
@@ -131,7 +133,7 @@ export default function CustomerProfile() {
           const res = await axios.put(url,body, {headers});
           console.log("response",res);
           await dispatch(updateCustomerProfile(res.data))
-          setTimeout(() => history.push("/"), 500);
+          setTimeout(() => history.push("/"), 100);
           
       }catch(err){
           console.log(err)
