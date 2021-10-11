@@ -1,0 +1,20 @@
+Steps to deploy the application
+
+Front End
+
+Clone the repository's front end folder "frontend" into any machine having node.js installed on it.
+Open the terminal in the folder "frontend".
+Execute "npm install" to install all the dependencies. 
+Execute "npm start" to run the front end server.
+
+Backend
+
+Clone the repository's Backend folder "backend" into any machine having node.js installed on it.
+ Open the terminal in the folder "backend".
+ Execute "npm install" to install all the dependencies.
+ Create a database "ubereats_db" in MySQL database server and execute the SQL dump to generate the schema.
+ Update pool.js file in backend folder with database name and connection details.
+ Update the config.json file in backend folder with frontend server's IP address and port.
+ Execute "node index" or npm start to run the backend server.
+
+Launch the application Open the browser and navigate to Front end server's IP address with Port number (Eg: 127.0.0.1:3000) to find the landing page.

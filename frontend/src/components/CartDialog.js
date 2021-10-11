@@ -65,8 +65,8 @@ export default function SimpleDialog(props) {
             return cartItem?.dishes?.length >0 && cartItem?.dishes.map((dish, dishIndex) => (
                 <ListItem key={index}>
                 <div style={{width: '100%', display: "flex", justifyContent: "space-between", paddingTop: 0, paddingBottom: 0}}>
-                <div style={{ width: '50%', display: 'flex', justifyContent: 'flex-end' }}>
-                  <ButtonGroup size="small" aria-label="small outlined button group">
+                <div style={{ width: '50%', display: 'flex'}}>
+                  <ButtonGroup size="small" aria-label="small outlined button group" style={{height: 30}}>
                     <Button onClick={() => { handleIncrement(dish); }}>+</Button>
                     <Button disabled>{dish.quantity ? dish.quantity : 1}</Button>
                     <Button onClick={() => { handleDecrement(dish); }}>-</Button>
@@ -77,7 +77,7 @@ export default function SimpleDialog(props) {
                       {`  ${dish?.dish_name}`}
                   </Typography>
                   <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
-                      {`$ ${dish.dish_price}`}
+                      {`$${dish.dish_price}`}
                   </Typography>
                 </div>
               </ListItem>
