@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import config  from "./config.js";
 
-console.log("===", config)
+// console.log("===", config)
 const { mongoDB } = config;
 
 //Mongo Connection

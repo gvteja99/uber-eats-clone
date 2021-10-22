@@ -8,10 +8,10 @@ import cors from 'cors';
 import connectMongoDB from './utils/dbConnection.js';
 // import config from "./utils/config.js";
 import signup from "./routes/signup.js";
-// import login from "./routes/login.js";
+import login from "./routes/login.js";
 // import restaurants from "./routes/restaurants.js";
 // import customers from "./routes/customers.js";
-// import logout from './routes/logout.js';
+import logout from './routes/logout.js';
 
 const app = express();
 // const {mongoDB} = config
@@ -24,12 +24,12 @@ app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 
 app.use("/signup", signup);
-// app.use("/login", login);
+app.use("/login", login);
 // app.use("/restaurants", restaurants);
 // app.use("/customers", customers);
-// app.use("/logout", logout);
+app.use("/logout", logout);
 
-const port = 3001;
+const port = 3002;
 
 
 // Use of another path to see results for js_refresher.js
