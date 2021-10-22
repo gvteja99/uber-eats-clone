@@ -25,7 +25,10 @@ const customerSchema = new Schema({
         zipcode: Number,
     },
     //TODO:
-    favourites: Array,
+    favourites:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Restaurant"
+    }],
 },
 { 
     versionKey: false 
