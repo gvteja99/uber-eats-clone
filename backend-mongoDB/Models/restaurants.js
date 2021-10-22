@@ -2,6 +2,23 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+const dishSchema = new Schema({
+    dish_name: { type: String, required: true, trim: true },
+    dish_image: String,
+    dish_price: { type: Number, required: true, trim: true },
+    description: String,
+    main_ingredient: String,
+    dish_category: { type: String, required: true, trim: true , default: 'appetizer'},
+    food_type: {type: Number, required: true, default: 1},
+    res_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Restaurant"
+    }
+},
+{ 
+    versionKey: false 
+});
+
 const restaurantSchema = new Schema({
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true },
@@ -20,15 +37,14 @@ const restaurantSchema = new Schema({
         country: String,
         zipcode: Number,
     },
-    dishes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Dish"
-    }]
+    dishes: [dishSchema]
 },
 { 
     versionKey: false 
 });
 
 const Restaurant = mongoose.model("Restaurant", restaurantSchema);
+export const Dish = mongoose.model("Dish", dishSchema);
 
 export default Restaurant;
+
