@@ -1,6 +1,7 @@
 import express from "express";
 import auth from "../middleware/auth.js";
-import Restaurants from "../Models/restaurants.js";
+import Restaurants, {Dish} from "../Models/restaurants.js";
+import mongoose from "mongoose";
 const router = express.Router();
 
 
@@ -76,6 +77,63 @@ router.put('/profile',  async (req, res) => {
         return res.status(500).json(error);
     }
 });
+
+// add a restaurant dish
+// auth
+router.post('/:id/dish', async (req, res) => {
+    const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
+    const res_id = req.params.id;
+    try {
+        const dishObj = new Dish({
+            dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type, res_id
+        });
+        const r = await Restaurants.findById(res_id);
+        r.dishes.push(dishObj);
+        await r.save();
+        // TODO: Now complete res is set
+        return res.status(200).json({ data: r, dish: dishObj });
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+
+// update a restaurant dish
+router.put('/:res_id/dish/:id', async (req, res) => {
+    const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
+    const res_id = req.params.res_id;
+    const dish_id = req.params.id;
+    try {
+        const update = {
+            dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type
+        }
+        const r = await Restaurants.findById(res_id);
+        let dish = r.dishes.id(mongoose.Types.ObjectId(dish_id));
+        dish.set({...update});
+        let result = await r.save();
+        return res.status(200).json({ data: result, dish})
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+
+// delete a restaurant dish
+// auth
+router.delete('/:res_id/dish/:id', async (req, res) => {
+    const res_id = req.params.res_id;
+    const dish_id = req.params.id;
+    try {
+        const result = await Restaurants.findByIdAndUpdate(res_id, {"$pull": {"dishes": { "_id": dish_id}}}, { new:true })
+        return res.status(200).json({ data: result})
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
 
 
 export default router;
