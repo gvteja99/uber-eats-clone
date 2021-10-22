@@ -5,7 +5,8 @@ const router = express.Router();
 
 
 //Update restaurant profile:
-router.put('/profile', auth, async (req, res) => {
+// auth
+router.put('/profile', async (req, res) => {
     const { res_id, address_id, name, delivery_option, phone_number, description, timing_open, timing_close, street_address,
         apt_number, city,  state, country, zipcode, isAddressUpdated = true} = req.body;
     const queryPromise1 = () => {
