@@ -2,6 +2,8 @@ import express from "express";
 // import pool from "../pool.js";
 import auth from "../middleware/auth.js";
 import Customers from "../Models/customers.js";
+import Restaurants from "../Models/restaurants.js";
+import Orders from "../Models/orders.js";
 import multer from "multer";
 import { fileURLToPath } from 'url';
 import  path, {dirname} from "path";
@@ -11,6 +13,20 @@ const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+//get customer profile:
+// auth,
+router.get('/:id/profile',  async (req, res) => {
+    const customer_id = req.params.id;
+    try {
+        const c = await Customers.findById(customer_id);
+        return res.status(200).json(c);
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
 
 //Update customer profile:
 router.put('/profile', async (req, res) => {
@@ -30,6 +46,161 @@ router.put('/profile', async (req, res) => {
         }
         const result = await Customers.findByIdAndUpdate(customer_id, update, { new:true });
         res.status(200).json(result);
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+router.get('/:id/favourites', async (req, res) => {
+    const customer_id = req.params.id;
+    try {
+        let customer = await Customers.findById(customer_id);
+        if (!customer) {
+            return res.status(400).send("Customer not found");
+        }
+        const restaurantIds = customer.favourites.toObject();
+        const favourites = await Restaurants.find({_id: {$in: restaurantIds}});
+        return res.status(200).json({data: favourites});
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+router.post('/favourites', async (req, res) => {
+    const { customer_id, res_id }= req.body;
+    try {
+        let customer = await Customers.findOne({ customer_id });
+        if (!customer) {
+            return res.status(400).send("Customer not found");
+        }
+        const index = customer.favourites.findIndex(item =>  item && item.toString() === res_id);
+        console.log("index", index)
+        if (index !== -1) {
+            return res.status(400).send("Restaurant Already present in favourites");
+        }
+        customer.favourites.push(res_id);
+        let updatedCustomer = await customer.save()
+        return res.status(200).json({data: updatedCustomer});
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+router.delete('/:id/favourites/:res_id', async (req, res) => {
+    const customer_id = req.params.id;
+    const res_id = req.params.res_id;
+    try {
+        let customer = await Customers.findById(customer_id);
+        const idx = customer.favourites.findIndex(item => item && item.toString() === res_id);
+        if (idx !== -1) {
+            customer.favourites.splice(idx, 1);
+        } else {
+            return res.status(400).send("Res is not in favourites");
+        }
+        customer = await customer.save();
+        const restaurantIds = customer.favourites.toObject();
+        const favourites = await Restaurants.find({_id: {$in: restaurantIds}});
+        return res.status(200).json({data: favourites});
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+// router.get('/:id/delivery_address', async (req, res) => {
+//     const customer_id = req.params.id;
+//     const queryPromise1 = () => {
+//         const sql1 = `select * from delivery_addresses where customer_id='${customer_id}';`;
+//         console.log("sql1:", sql1);
+//         return new Promise((resolve, reject)=>{
+//             pool.query(sql1,  (error1, result1)=>{
+//                 if(error1){
+//                     console.log("error1:", error1);
+//                     return reject(error1);
+//                 }
+//                 console.log("result1:", result1);
+//                 return resolve(result1);
+//             });
+//         });
+//     };
+//     try {
+//         const result1 = await queryPromise1();
+//         console.log("result1[0]:", result1);
+//         let res_body = { data: result1};
+//         return res.status(200).json(res_body);
+//     } catch(error) {
+//         console.log(error);
+//         return res.status(500).json(error);
+//     }
+// });
+
+// auth
+router.post('/delivery_address', async (req, res) => {
+    const  { customer_id, delivery_address } = req.body;
+    try {
+        let c = await Customers.findById(customer_id);
+        c.delivery_addresses.push({delivery_address});
+        c = await c.save();
+        return res.status(200).json({data: c})
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+//TODO:
+router.get('/:id/orders', async (req, res) => {
+    const customer_id = req.params.id;
+    try {
+        const orders = await Orders.find({customer_id})
+        return res.status(200).json({data: orders});
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+router.post('/orders', async (req, res) => {
+    const { customer_id, cart, delivery_type, delivery_address, order_date_time, total_amount, delivery_fee, taxes, instruction, tip }= req.body;
+    try {
+        // For single Rest order place:
+        let cartList = cart?.length > 0 && cart[0]
+        let order_items = [];
+        cartList?.dishes.map(dish => {
+            order_items.push({
+                res_id: dish.res_id,
+                res_menu_id: dish.res_menu_id,
+                dish_name: dish.dish_name,
+                description: dish.description,
+                quantity: dish.quantity,
+                dish_price: dish.dish_price, 
+                dish_category: dish.dish_category,
+                food_type: dish.food_type,
+            })
+        })
+
+        let orderPayload = {
+            res_id: cartList.res_id,
+            res_name: cartList.name,
+            customer_id,
+            order_date_time,
+            delivery_type,
+            delivery_address,
+            delivery_fee,
+            taxes,
+            tip,
+            instruction,
+            total_amount,
+            order_items,
+        }
+
+        const order = new Orders({...orderPayload}); 
+        const savedOrder = await order.save()
+        res.status(200).send(savedOrder);
+        return res.status(200).json("Order Placed");
     } catch(error) {
         console.log(error);
         return res.status(500).json(error);

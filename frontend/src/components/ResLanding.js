@@ -103,21 +103,23 @@ export default function ResLanding(props) {
     };
 
 
-    const url =  `/restaurants/${selectedRes.res_id}/dishes`;
     // /:id/dishes
-    const getRestMenu = async () => {
-        const headers = { 
-            'x-access-token': token,
-        };
-        try {
-            const res = await axios.get(url, {headers});
-            console.log("response",res);
-            setSelectedResMenu(res.data?.data);
+    // const getRestMenu = async () => {
+      const getRestMenu = () => {
+      // const url =  `/restaurants/${selectedRes.res_id}/dishes`;
+        // const headers = { 
+        //     'x-access-token': token,
+        // };
+        // try {
+        //     const res = await axios.get(url, {headers});
+        //     console.log("response",res);
+            // setSelectedResMenu(res.data?.data);
+            setSelectedResMenu(selectedRes.dishes)
             // await dispatch(getAllResList(res.data?.data))
             
-        }catch(err){
-            console.log(err)
-        }
+        // }catch(err){
+        //     console.log(err)
+        // }
 
     }
     

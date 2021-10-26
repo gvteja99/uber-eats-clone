@@ -93,7 +93,8 @@ export default function CustomersLanding() {
    console.log("=========setViewList", listOnDisplay);
     // const { customerProfile, token, allRestList, favResList } = mainReducer;
     
-    const { customer_id, city } = customerProfile;
+    const { city } = customerProfile;
+    const customer_id = customerProfile?._id;
     console.log("customerProfile", customerProfile);
 
     const getAllRestaurantApi = async () => {
@@ -130,6 +131,7 @@ export default function CustomersLanding() {
     }
     
     const addResToFavourites = async (res_id) => {
+      // console.log("FAV RES LIST", favResList, "\nRESID", res_id);
       const isPresent = favResList.find(elem => elem.res_id === res_id);
       if (isPresent) {
         // console.log("===========Already Present")

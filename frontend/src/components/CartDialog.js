@@ -41,7 +41,6 @@ export default function SimpleDialog(props) {
   const handleIncrement = dish => {
     dispatch(incrementDishCount({dish}))
     
-    // console.log("dish====", dish, "cart", cart);
   }
 
   const handleDecrement = dish => {
@@ -49,6 +48,7 @@ export default function SimpleDialog(props) {
     dispatch(decrementDishCount({dish}))
   }
 
+  // console.log("cartdailog", cart);
   let totalAmount = 0
   for (let resIndex = 0; resIndex < cart.length; resIndex++) {
     for (let dishIndex = 0; dishIndex < cart[resIndex].dishes?.length; dishIndex++ ) {

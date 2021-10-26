@@ -71,7 +71,7 @@ export default function CustomersLanding() {
     const classes = useStyles();
 
     const { customerProfile, token, allRestList, favResList } = mainReducer;
-    const { customer_id } = customerProfile;
+    const customer_id  = customerProfile._id;
     console.log("customerProfile", customerProfile);
 
     // const getAllRestaurantApi = async () => {
@@ -107,21 +107,21 @@ export default function CustomersLanding() {
     }
     console.log("====favResList====", favResList);
     
-    const removeResToFavourites = async (favourite_id) => {
-      console.log("====favourite_id====", favourite_id);
-      const isPresent = favResList.find(elem => elem.favourite_id === favourite_id);
+    const removeResToFavourites = async (res_id) => {
+      // console.log("====favourite_id====", res_id);
+      const isPresent = favResList.find(elem => elem._id === res_id);
       if (!isPresent) {
         console.log("===========Already Not Present")
         return
       }
-      const url =  `/customers/favourites/${favourite_id}`;
+      const url =  `/customers/${customer_id}/favourites/${res_id}`;
       const headers = { 
           'x-access-token': token,
       };
       try {
           const res = await axios.delete(url, {headers});
           console.log("response",res);
-          await dispatch(deleteResFromFavList({favourite_id }))
+          await dispatch(deleteResFromFavList({resFavList: res?.data?.data }))
           
       }catch(err){
           console.log(err)
@@ -188,7 +188,7 @@ function FavResCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" variant="outlined" onClick={() => removeResToFavourites(res.favourite_id)}>Remove from favourites</Button>
+        <Button size="small" variant="outlined" onClick={() => removeResToFavourites(res._id)}>Remove from favourites</Button>
         <Button size="small" variant="outlined" onClick={() =>onResClick(res)}>Check Menu</Button>
       </CardActions>
     </Card>

@@ -33,7 +33,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Navigationbar from './navigationbar';
-import { clearCart } from '../app/reducers/mainSlice';
+import { clearCart, updateCustomerProfile } from '../app/reducers/mainSlice';
 import { capsStrFirstChar } from "../utility";
 // import "./styles.css";
 import ResDishCard from './ResDishCard';
@@ -86,14 +86,16 @@ export default function CustomerCheckout(props) {
    
     // /:id/dishes
     const getDeliveryAddressesApi = async () => {
-        const url =  `/customers/${customer_id}}/delivery_address`;
-        const headers = { 
-            'x-access-token': token,
-        };
+        // const url =  `/customers/${customer_id}}/delivery_address`;
+        // const headers = { 
+        //     'x-access-token': token,
+        // };
         try {
-            const res = await axios.get(url, {headers});
-            console.log("response",res);
-            setDeliveryAddressList(res.data?.data);
+            // const res = await axios.get(url, {headers});
+            // console.log("response",res);
+            // setDeliveryAddressList(res.data?.delivery_addresses?.data);
+            setDeliveryAddressList(customerProfile.delivery_addresses);
+            customerProfile
             // await dispatch(getAllResList(res.data?.data))
             
         }catch(err){
@@ -114,7 +116,8 @@ export default function CustomerCheckout(props) {
         try {
             const res = await axios.post(url, body, {headers});
             console.log("response",res);
-            setDeliveryAddressList(res.data?.data);
+            updateCustomerProfile(res.data?.data)
+            setDeliveryAddressList(res.data?.data?.delivery_addresses);
             setNewAddess('');
             // await dispatch(getAllResList(res.data?.data))
             
@@ -135,7 +138,8 @@ export default function CustomerCheckout(props) {
     const taxes = 0.00
     const totalAmount =  deliveryFee * cart.length + taxes + subTotalAmount
     // console.log("===profile curstomer:", customerProfile);
-    const {customer_id, street_address, zipcode, city, state, country} = customerProfile;
+    const { street_address, zipcode, city, state, country} = customerProfile;
+    const customer_id = customerProfile?._id;
     const onCreateOrder = async () => {
         if (!selectedAddress) {
             alert("Select a delivery address");

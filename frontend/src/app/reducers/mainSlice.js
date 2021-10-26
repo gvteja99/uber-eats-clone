@@ -89,13 +89,8 @@ export const mainSlice = createSlice({
     },
     // getCustomersDeliveryAddress
     deleteResFromFavList: (state, action) => {
-      const  { favourite_id } = action.payload
-      const favList = state.favResList;
-      const index = favList.findIndex(res => res?.favourite_id === favourite_id);
-      if (index !== -1) {
-        favList.splice(index, 1);
-      }
-      state.favResList = favList;
+      const  { resFavList } = action.payload
+      state.favResList = resFavList;
     },
 
     updateCustomerMenu: (state, action) => {
@@ -108,13 +103,16 @@ export const mainSlice = createSlice({
         state.resOrders= action.payload;
     },
     addDishToCart: (state, action) => {
-      const payload = action.payload
+      const payload = action.payload;
       let cartList = state.cart;
-      const resIndex = cartList.findIndex(res => res.res_id === payload?.res?.res_id);
+      const resIndex = cartList.findIndex(res => res._id === payload?.res?._id);
       if (resIndex === -1) {
+        if (cartList.length >= 1) {
+          return alert("Cant select dish from 2 different restaurant in cart");
+        }
         cartList.push({...payload?.res, dishes: [{ ...payload?.dish, quantity: 1}]})
       } else {
-        const dishIndex= cartList[resIndex].dishes.findIndex(dish => dish.res_menu_id === payload?.dish?.res_menu_id);
+        const dishIndex= cartList[resIndex].dishes.findIndex(dish => dish._id === payload?.dish?._id);
         if (dishIndex === -1) {
           cartList[resIndex]?.dishes?.push({...payload?.dish, quantity: 1})
         } else {
@@ -127,9 +125,9 @@ export const mainSlice = createSlice({
       const payload = action.payload;
       const { dish } = payload;
       let cartList = state.cart;
-      const resIndex = cartList.findIndex(res => res.res_id === dish?.res_id);
+      const resIndex = cartList.findIndex(res => res._id === dish?.res_id);
       if (resIndex !== -1) {
-        const dishIndex= cartList[resIndex].dishes.findIndex(dishItem => dishItem.res_menu_id === dish?.res_menu_id);
+        const dishIndex= cartList[resIndex].dishes.findIndex(dishItem => dishItem._id === dish?._id);
         if (dishIndex !== -1) {
           cartList[resIndex].dishes[dishIndex].quantity += 1
         }
@@ -141,9 +139,9 @@ export const mainSlice = createSlice({
       const payload = action.payload;
       const { dish } = payload;
       let cartList = state.cart;
-      const resIndex = cartList.findIndex(res => res.res_id === dish?.res_id);
+      const resIndex = cartList.findIndex(res => res._id === dish?.res_id);
       if (resIndex !== -1) {
-        const dishIndex= cartList[resIndex].dishes.findIndex(dishItem => dishItem.res_menu_id === dish?.res_menu_id);
+        const dishIndex= cartList[resIndex].dishes.findIndex(dishItem => dishItem._id === dish?._id);
         if (dishIndex !== -1) {
           if (cartList[resIndex].dishes[dishIndex].quantity !== 1) {
             cartList[resIndex].dishes[dishIndex].quantity -= 1

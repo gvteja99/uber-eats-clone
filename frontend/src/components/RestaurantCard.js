@@ -35,7 +35,7 @@ export default function MediaCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" variant="outlined" onClick={() => addResToFavourites(res.res_id)}>Add to favourites</Button>
+        <Button size="small" variant="outlined" onClick={() => addResToFavourites(res._id)}>Add to favourites</Button>
         <Button size="small" id="resMenu" variant="outlined" onClick={() =>onResClick(res)}>Check Menu</Button>
       </CardActions>
     </Card>

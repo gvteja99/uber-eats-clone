@@ -49,12 +49,12 @@ export default function CustomerProfile() {
     const [nickName, setNickName]= useState(customerProfile?.nickname || "");
     const [about, setAbout]= useState(customerProfile?.about || "");
     const [profilePic, setProfilePic] = useState(customerProfile?.profile_pic ||  "");
-    const [streetAddress, setStreetAddress] = useState(customerProfile?.street_address ||  "");
-    const [aptNumber, setAptNumber] = useState(customerProfile?.apt_number ||  "");
-    const [city, setCity] = useState(customerProfile?.city ||  "san jose");
-    const [state, setState] = useState(customerProfile?.state ||  "california");
-    const [country, setCountry] = useState(customerProfile?.country ||  "united states");
-    const [zipcode, setZipcode] = useState(customerProfile?.zipcode ||  "95111");
+    const [streetAddress, setStreetAddress] = useState(customerProfile?.address?.street_address ||  "");
+    const [aptNumber, setAptNumber] = useState(customerProfile?.address?.apt_number ||  "");
+    const [city, setCity] = useState(customerProfile?.address?.city ||  "san jose");
+    const [state, setState] = useState(customerProfile?.address?.state ||  "california");
+    const [country, setCountry] = useState(customerProfile?.address?.country ||  "united states");
+    const [zipcode, setZipcode] = useState(customerProfile?.address?.zipcode ||  "95111");
     const [fileText, setFileText] = useState("Choose image..");
     const [file, setFile] = useState("");
     // const [profileUrl, setProfileUrl] = useState("");
@@ -85,7 +85,7 @@ export default function CustomerProfile() {
     // console.log("token==", token);
     // console.log("==customerProfileredux", customerProfile)
     const getCustomerProfileApi = async () => {
-      const url =  `/customers/${customerProfile?.customer_id}/profile`;
+      const url =  `/customers/${customerProfile?._id}/profile`;
       const headers = { 
           'x-access-token': token,
       };
@@ -106,7 +106,7 @@ export default function CustomerProfile() {
       }
       const url =  "/customers/profile";
       const body = {
-          customer_id: customerProfile?.customer_id,
+          customer_id: customerProfile?._id,
           first_name: firstName,
           last_name: lastName,
           address_id: customerProfile?.customer_address_id,
@@ -195,7 +195,7 @@ export default function CustomerProfile() {
         "content-type": "multipart/form-data",
       };
       try {
-          const url =  `/customers/${customerProfile?.customer_id}/upload/profile_pic`;
+          const url =  `/customers/${customerProfile?._id}/upload/profile_pic`;
           console.log("====url", url);
 
           const res = await axios.post(url,formData, {headers});

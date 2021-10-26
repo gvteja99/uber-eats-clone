@@ -61,7 +61,7 @@ export default function CustomerOrders(props) {
     const [listOnDisplay, setListOnDisplay] = useState([]);
 
     const { customerProfile, token, cart = [], customerOrders } = mainReducer;
-    const { customer_id } = customerProfile
+    const customer_id  = customerProfile._id;
 
     const dispatch = useDispatch()
     useEffect(() => {
@@ -78,21 +78,22 @@ export default function CustomerOrders(props) {
         setOpen(true);
     };
 
-    const onClickViewReciept = async(order) => {
+    // const onClickViewReciept = async(order) => {
+    const onClickViewReciept = (order) => {
         setSelectedOrder(order);
-        const url =  `/customers/order/${order.order_id}`;
-        const headers = { 
-            'x-access-token': token,
-        };
-        try {
-            const res = await axios.get(url, {headers});
-            console.log("response",res);
-            setSelectedOrderDetails(res.data?.data)
+        // const url =  `/customers/order/${order._id}`;
+        // const headers = { 
+        //     'x-access-token': token,
+        // };
+        // try {
+            // const res = await axios.get(url, {headers});
+            // console.log("response",order?.order_items);
+            setSelectedOrderDetails(order?.order_items)
             // await dispatch(updateCustomerOrders(res.data?.data));
             
-        }catch(err){
-            console.log(err)
-        }
+        // }catch(err){
+        //     console.log(err)
+        // }
 
         handleClickOpen();
     }

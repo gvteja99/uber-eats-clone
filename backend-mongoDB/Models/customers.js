@@ -27,8 +27,9 @@ const customerSchema = new Schema({
     //TODO:
     favourites:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Restaurant"
+        ref: "Restaurant",
     }],
+    delivery_addresses:[{delivery_address: {type: String, trim: true}}]
 },
 { 
     versionKey: false 
