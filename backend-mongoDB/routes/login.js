@@ -2,10 +2,15 @@ import express from "express";
 // import pool from "../pool.js";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
+// const passport = require("passport");
+import passport from "passport";
+import usepassport from "../middleware/passport.js";
 import config from "../utils/config.js";
 import Customers from "../Models/customers.js"; 
 import Restaurants from "../Models/restaurants.js";
 const router = express.Router();
+
+usepassport(passport);
 
 router.post('/customer', async (req, res) => {
     const { email, password } = req.body;
@@ -19,7 +24,7 @@ router.post('/customer', async (req, res) => {
             res.status(400).json({msg: "Invalid password"});
         }
         const token = jwt.sign({ email}, config.token_key, {expiresIn: "2h"});
-        customer.token = token;
+        customer.token = "Bearer "+ token;
         await customer.save();
         res.status(200).json(customer);
     } catch(error) {

@@ -93,7 +93,8 @@ export default function CustomersLanding() {
     const getFavouritesRestaurantApi = async () => {
       const url =  `/customers/${customer_id}/favourites/`;
         const headers = { 
-            'x-access-token': token,
+            // 'x-access-token': token,
+            Authorization: token,
         };
         try {
             const res = await axios.get(url, {headers});

@@ -1,6 +1,7 @@
 import express from "express";
 // import pool from "../pool.js";
 import auth from "../middleware/auth.js";
+import passport from "passport";
 import Customers from "../Models/customers.js";
 import Restaurants from "../Models/restaurants.js";
 import Orders from "../Models/orders.js";
@@ -52,20 +53,24 @@ router.put('/profile', async (req, res) => {
     }
 });
 
-router.get('/:id/favourites', async (req, res) => {
-    const customer_id = req.params.id;
-    try {
-        let customer = await Customers.findById(customer_id);
-        if (!customer) {
-            return res.status(400).send("Customer not found");
+router.get('/:id/favourites',
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        const customer_id = req.params.id;
+        // console.log("req====", req.user);
+        // customer = req.user
+        try {
+            let customer = await Customers.findById(customer_id);
+            if (!customer) {
+                return res.status(400).send("Customer not found");
+            }
+            const restaurantIds = customer.favourites.toObject();
+            const favourites = await Restaurants.find({_id: {$in: restaurantIds}});
+            return res.status(200).json({data: favourites});
+        } catch(error) {
+            console.log(error);
+            return res.status(500).json(error);
         }
-        const restaurantIds = customer.favourites.toObject();
-        const favourites = await Restaurants.find({_id: {$in: restaurantIds}});
-        return res.status(200).json({data: favourites});
-    } catch(error) {
-        console.log(error);
-        return res.status(500).json(error);
-    }
 });
 
 router.post('/favourites', async (req, res) => {
