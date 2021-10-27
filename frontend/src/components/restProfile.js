@@ -43,12 +43,12 @@ export default function ResProfile() {
     const [name, setName] = useState(resProfile && ( resProfile?.name ||  ""));
     const [phone, setPhone] = useState(resProfile?.phone_number || "");
     const [description, setDescription] = useState(resProfile?.description || "");
-    const [streetAddress, setStreetAddress] = useState(resProfile?.street_address ||  "");
-    const [aptNumber, setAptNumber] = useState(resProfile?.apt_number ||  "");
-    const [city, setCity] = useState(resProfile?.city ||  "san jose");
-    const [state, setState] = useState(resProfile?.state ||  "california");
-    const [country, setCountry] = useState(resProfile?.country ||  "united states");
-    const [zipcode, setZipcode] = useState(resProfile?.zipcode ||  "95111");
+    const [streetAddress, setStreetAddress] = useState(resProfile?.address?.street_address ||  "");
+    const [aptNumber, setAptNumber] = useState(resProfile?.address?.apt_number ||  "");
+    const [city, setCity] = useState(resProfile?.address?.city ||  "san jose");
+    const [state, setState] = useState(resProfile?.address?.state ||  "california");
+    const [country, setCountry] = useState(resProfile?.address?.country ||  "united states");
+    const [zipcode, setZipcode] = useState(resProfile?.address?.zipcode ||  "95111");
     const [timingOpen, setTimingOpen] = useState(resProfile?.timing_open ||  "");
     const [timingClose, setTimingClose] = useState(resProfile?.timing_close ||  "");
     const [deliveryOptions, setDeliveryOptions] = useState((resProfile?.delivery_option));
@@ -91,9 +91,9 @@ export default function ResProfile() {
         return false;
       }
         const body = {
-            res_id: resProfile?.res_id,
+            res_id: resProfile?._id,
             name,
-            address_id: resProfile?.address_id,
+            // address_id: resProfile?.address?.address_id,
             delivery_option: deliveryOptions,
             phone_number: phone,
             description: description || `${name} is a good restaurant`,

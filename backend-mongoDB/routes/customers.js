@@ -164,7 +164,7 @@ router.get('/:id/orders', async (req, res) => {
 });
 
 router.post('/orders', async (req, res) => {
-    const { customer_id, cart, delivery_type, delivery_address, order_date_time, total_amount, delivery_fee, taxes, instruction, tip }= req.body;
+    const { customer_id, first_name, last_name, cart, delivery_type, delivery_address, order_date_time, total_amount, delivery_fee, taxes, instruction, tip }= req.body;
     try {
         // For single Rest order place:
         let cartList = cart?.length > 0 && cart[0]
@@ -183,9 +183,11 @@ router.post('/orders', async (req, res) => {
         })
 
         let orderPayload = {
-            res_id: cartList.res_id,
+            res_id: cartList._id,
             res_name: cartList.name,
             customer_id,
+            first_name,
+            last_name,
             order_date_time,
             delivery_type,
             delivery_address,

@@ -80,12 +80,12 @@ export default function CustomerOrders(props) {
         <h1 className={classes.Header} style={{ marginBottom: '20px'}}>
             {`${first_name} ${last_name}`}
         </h1>
-        <Typography variant="caption" style={{}} className={"email"}>
+        {/* <Typography variant="caption" style={{}} className={"email"}>
             {`${customer.email} `}
         </Typography>
         <Typography variant="caption" style={{}}>
             {`${customer.phone_number} `}
-        </Typography>
+        </Typography> */}
       </Box>
     </>
   );

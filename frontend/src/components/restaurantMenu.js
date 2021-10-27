@@ -29,7 +29,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Navigationbar from './navigationbar';
 import Dish1 from "../images/dish1.jpeg";
-import { getResMenu } from '../app/reducers/mainSlice';
+import { getResMenu, updateResProfile } from '../app/reducers/mainSlice';
 import AddEditDishDialog from './AddEditDishDialog';
 
 // CSS styles
@@ -108,9 +108,10 @@ const ColorButton2 = withStyles((theme) => ({
 
 const RestaurantMenu = () => {
     const mainReducer = useSelector((state) => state.mainReducer);
-    const { resProfile, token, resMenu } = mainReducer;
+    const { resProfile, token } = mainReducer;
+    const resMenu = resProfile?.dishes;
     // console.log("=====resMenu", resMenu);
-    const { res_id } = resProfile
+    const res_id  = resProfile?._id;
     console.log("resProfile", resProfile);
     const classes = useStyles();
     const [dish, setDish] = useState();
@@ -122,21 +123,21 @@ const RestaurantMenu = () => {
     const dispatch = useDispatch()
     const history = useHistory();
     // console.log("token==", token);
-    const getResDishes = async () => {
-        const url =  `/restaurants/${res_id}/dishes`;
-        console.log("======url", url);
-        const headers = { 
-            'x-access-token': token,
-        };
-        try {
-            const res = await axios.get(url, {headers });
-            console.log("response",res);
-            await dispatch(getResMenu(res.data?.data))
+    const getResDishes = () => {
+        // const url =  `/restaurants/${res_id}/dishes`;
+        // console.log("======url", url);
+        // const headers = { 
+        //     'x-access-token': token,
+        // };
+        // try {
+        //     const res = await axios.get(url, {headers });
+        //     console.log("response",res);
+            // await dispatch(getResMenu(res.data?.data))
             // setTimeout(() => history.push("/"), 2000);
             
-        }catch(err){
-            console.log(err)
-        }
+        // }catch(err){
+        //     console.log(err)
+        // }
 
     }
 
@@ -149,7 +150,7 @@ const RestaurantMenu = () => {
         try {
             const res = await axios.delete(url, {headers });
             console.log("response",res);
-            await dispatch(getResMenu(res.data?.data))
+            await dispatch(updateResProfile(res.data?.data))
             // setTimeout(() => history.push("/"), 2000);
             
         }catch(err){
@@ -199,7 +200,8 @@ const RestaurantMenu = () => {
         try {
             const res = await axios.post(url, body, {headers});
             console.log("response",res);
-            await dispatch(getResMenu(res.data?.data))
+            await dispatch(updateResProfile(res.data?.data))
+            // await dispatch(getResMenu(res.data?.data))
             
         }catch(err){
             console.log(err)
@@ -207,7 +209,7 @@ const RestaurantMenu = () => {
     }
 
     const editDishToMenu = async (dish) => {
-        const url =  `/restaurants/${res_id}/dish/${dish.res_menu_id}`;
+        const url =  `/restaurants/${res_id}/dish/${dish._id}`;
         const {dish_name, dish_image="", dish_price=5, description="Nice restaurant", main_ingredient="", dish_category="desserts", food_type=1} = dish;
         const headers = { 
             'x-access-token': token,
@@ -226,7 +228,7 @@ const RestaurantMenu = () => {
         try {
             const res = await axios.put(url, body, {headers});
             console.log("response",res);
-            await dispatch(getResMenu(res.data?.data))
+            await dispatch(updateResProfile(res.data?.data))
             
         }catch(err){
             console.log(err)
@@ -291,7 +293,7 @@ const RestaurantMenu = () => {
                                         variant="contained"
                                         color="secondary"
                                         className={classes.button}
-                                        onClick={function() {deleteResDish(dish.res_menu_id)}}
+                                        onClick={function() {deleteResDish(dish._id)}}
                                         startIcon={<DeleteIcon />}
                                     >
                                         Delete

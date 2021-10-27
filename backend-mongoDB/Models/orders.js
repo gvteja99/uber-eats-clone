@@ -33,6 +33,8 @@ const orderSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Customer"
     },
+    first_name: String,
+    last_name: String,
     order_date_time: { type: String, required: true},
     delivery_type: { type: Number, default: 1},
     delivery_date_time: { type: String},

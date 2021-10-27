@@ -150,6 +150,8 @@ export default function CustomerCheckout(props) {
         const body = {
             cart: cart,
             customer_id,
+            first_name: customerProfile?.first_name,
+            last_name: customerProfile?.first_name,
             delivery_type: 1,
             delivery_address: selectedAddress || `${street_address}, ${zipcode}, ${city}, ${state}, ${country}`,
             order_date_time: new Date().toISOString(),

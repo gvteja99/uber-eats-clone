@@ -55,7 +55,7 @@ export default function CustomerOrders(props) {
     const mainReducer = useSelector((state) => state.mainReducer);
     const { resProfile, token, resOrders } = mainReducer;
     console.log("==resProfile", resProfile, token)
-    const { res_id } = resProfile
+    const res_id = resProfile?._id;
     const [selectedOrder, setSelectedOrder] = useState({});
     const [selectedOrderDetails, setSelectedOrderDetails] = useState([]);
     const [open, setOpen] = useState(false);
@@ -77,20 +77,20 @@ export default function CustomerOrders(props) {
 
     const onClickViewReciept = async(order) => {
         setSelectedOrder(order);
-        const url =  `/customers/order/${order.order_id}`;
-        const headers = { 
-            'x-access-token': token,
-        };
-        try {
-            console.log('====url', url);
-            const res = await axios.get(url, {headers});
-            console.log("response",res);
-            setSelectedOrderDetails(res.data?.data)
+        // const url =  `/customers/order/${order.order_id}`;
+        // const headers = { 
+        //     'x-access-token': token,
+        // };
+        // try {
+        //     console.log('====url', url);
+        //     const res = await axios.get(url, {headers});
+        //     console.log("response",res);
+            setSelectedOrderDetails(order?.order_items)
             // await dispatch(updateCustomerOrders(res.data?.data));
             
-        }catch(err){
-            console.log(err)
-        }
+        // }catch(err){
+        //     console.log(err)
+        // }
 
         handleClickOpen();
     }
@@ -212,7 +212,7 @@ export default function CustomerOrders(props) {
                             style={{alignSelf: 'center', backgroundColor: "green", color: "white", paddingLeft: 20, paddingRight: 20}}
                         >View Reciept</Button>
                      <Button size="small" variant="outlined" style={{marginLeft: 20}}
-                     onClick={() => updateOrderStatusApi(order?.order_id, order?.delivery_status, order?.delivery_type)}>Move to Next status</Button>
+                     onClick={() => updateOrderStatusApi(order?._id, order?.delivery_status, order?.delivery_type)}>Move to Next status</Button>
                      </div>
                 </Card>
             </ListItem>
