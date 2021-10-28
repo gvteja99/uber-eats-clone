@@ -16,6 +16,8 @@ import updateCustomerProfile from "./services/updateCustomerProfile.js";
 import getCustomerProfile from "./services/getCustomerProfile.js";
 import addDish from "./services/addDish.js";
 import updateDish from "./services/updateDish.js";
+import updateRestaurantProfile from "./services/updateRestaurantProfile.js";
+import getRestaurantOrders from "./services/getRestaurantOrders.js";
 
 try {
     connectMongoDB();
@@ -69,3 +71,5 @@ handleTopicRequest("updateCustomerProfile", updateCustomerProfile);
 handleTopicRequest("getCustomerProfile", getCustomerProfile);
 handleTopicRequest("addDish", addDish);
 handleTopicRequest("updateDish", updateDish);
+handleTopicRequest("updateRestaurantProfile", updateRestaurantProfile);
+handleTopicRequest("getRestaurantOrders", getRestaurantOrders);
