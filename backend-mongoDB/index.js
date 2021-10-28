@@ -24,6 +24,8 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+// var kafka = require('./kafka/client');
+import kafka from "./kafka/client.js";
 
 app.use("/signup", signup);
 app.use("/restaurants", restaurants);
@@ -84,6 +86,29 @@ connectMongoDB();
 const db = mongoose.connection;
 db.on('error', (error) => console.log(error))
 db.once('open', () => console.log('Connected to Database'));
+
+app.post('/book', function(req, res){
+
+  kafka.make_request('post_book',req.body, function(err,results){
+      console.log('in result');
+      console.log(results);
+      if (err){
+          console.log("Inside err");
+          res.json({
+              status:"error",
+              msg:"System Error, Try Again."
+          })
+      }else{
+          console.log("Inside else");
+              res.json({
+                  updatedList:results
+              });
+
+              res.end();
+          }
+      
+  });
+});
 
 // To listen to port 3001
 app.listen(port, () => {

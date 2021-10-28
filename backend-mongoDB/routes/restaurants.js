@@ -2,7 +2,8 @@ import express from "express";
 import auth from "../middleware/auth.js";
 import Restaurants, {Dish} from "../Models/restaurants.js";
 import mongoose from "mongoose";
-import Orders from "../Models/orders.js";
+// import Orders from "../Models/orders.js";
+import kafka from "../kafka/client.js";
 const router = express.Router();
 
 
@@ -10,7 +11,7 @@ const router = express.Router();
 // TODO: add auth
 router.get(`/`, async (req, res) => {
     // console.log("req.query", req.query)
-    const { customer_city, search } =  req.query;
+    // const { customer_city, search } =  req.query;
     const queryPromise1 = () => {
         // const sql1 = `SELECT * from restaurants;`;
         let sql1;
@@ -42,12 +43,28 @@ router.get(`/`, async (req, res) => {
        
     };
     try {
-        // TODO: Search and customer city sort option
-        const resList = await Restaurants.find({});
-        console.log("resList", resList);
-         return res.status(200).json({data: resList});
+        const reqObj = {
+            query: req.query, params: req.params, body: req.body,
+        }
+        kafka.make_request("getRestaurants", reqObj, function (err, results) {
+            if (err) {
+                console.log("err", err);
+                // throw err
+                //   console.log("Inside err", err);
+                //   res.json({
+                //     status: "error",
+                //     msg: "System Error, Try Again.",
+                //   });
+            } else {
+              res.status(200).json(results);
+            }
+          });
+        // // TODO: Search and customer city sort option
+        // const resList = await Restaurants.find({});
+        // console.log("resList", resList);
+        // return res.status(200).json({data: resList});
     } catch(error) {
-        console.log(error);
+        console.log("error:", error);
         return res.status(500).json(error);
     }
 });
@@ -149,37 +166,6 @@ router.get('/:id/orders', async (req, res) => {
 
 router.put('/order', async (req, res) => {
     const { order_id, delivery_status, res_id} = req.body;
-    const queryPromise1 = () => {
-        const sql1 = `update orders set delivery_status='${delivery_status}' where order_id = '${order_id}';`
-        console.log("sql1:", sql1);
-        return new Promise((resolve, reject)=>{
-            pool.query(sql1,  (error1, result1)=>{
-                if(error1){
-                    console.log("error1:", error1);
-                    return reject(error1);
-                }
-                // console.log("result1:", result1);
-                return resolve(result1);
-            });
-        });
-    }
-    const queryPromise2 = () => {
-        const sql2 = `select o.order_id, o.customer_id, o.order_date_time, o.delivery_date_time, o.delivery_address,
-        o.delivery_status,o.taxes, o.tip, o.instruction, o.total_amount, o.delivery_type, c.first_name , c.last_name, c.email, c.phone_number, c.profile_pic
-        from orders as o Inner Join customers as c on o.customer_id = c.customer_id where o.res_id='${res_id}' order by order_date_time DESC;`;
-        // const sql2 = `SELECT * from orders where customer_id='${customer_id}';`;
-        console.log("sql2:", sql2);
-        return new Promise((resolve, reject)=>{
-            pool.query(sql2,  (error2, result2)=>{
-                if(error2){
-                    console.log("error2:", error2);
-                    return reject(error2);
-                }
-                // console.log("result2:", result2); 
-                return resolve(result2);
-            });
-        });
-    };
     try {
         // const result1 = await queryPromise1();
         // const result2 = await queryPromise2();
