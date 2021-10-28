@@ -8,6 +8,7 @@ import connection from './kafka/Connection.js';
 import Books from './services/books.js';
 import getRestaurants from './services/getRestaurants.js';
 import connectMongoDB from "./dbconnection.js";
+import customersignup from "./services/customersignup.js";
 
 try {
     connectMongoDB();
@@ -53,3 +54,4 @@ function handleTopicRequest(topic_name,fname){
 //second argument is a function that will handle this topic request
 // handleTopicRequest("post_book",Books);
 handleTopicRequest("getRestaurants", getRestaurants);
+handleTopicRequest("customersignup", customersignup);
