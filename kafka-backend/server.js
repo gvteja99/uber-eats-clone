@@ -9,6 +9,8 @@ import Books from './services/books.js';
 import getRestaurants from './services/getRestaurants.js';
 import connectMongoDB from "./dbconnection.js";
 import customersignup from "./services/customersignup.js";
+import restaurantsignup from "./services/restaurantsignup.js";
+import placeorder from "./services/placeorder.js";
 
 try {
     connectMongoDB();
@@ -55,3 +57,5 @@ function handleTopicRequest(topic_name,fname){
 // handleTopicRequest("post_book",Books);
 handleTopicRequest("getRestaurants", getRestaurants);
 handleTopicRequest("customersignup", customersignup);
+handleTopicRequest("restaurantsignup", restaurantsignup);
+handleTopicRequest("placeorder", placeorder);
