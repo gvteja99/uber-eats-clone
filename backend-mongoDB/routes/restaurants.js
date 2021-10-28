@@ -111,22 +111,18 @@ router.post('/:id/dish', async (req, res) => {
 
 // update a restaurant dish
 router.put('/:res_id/dish/:id', async (req, res) => {
-    const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
-    const res_id = req.params.res_id;
-    const dish_id = req.params.id;
-    try {
-        const update = {
-            dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type
-        }
-        const r = await Restaurants.findById(res_id);
-        let dish = r.dishes.id(mongoose.Types.ObjectId(dish_id));
-        dish.set({...update});
-        let result = await r.save();
-        return res.status(200).json({ data: result, dish})
-    } catch(error) {
-        console.log(error);
-        return res.status(500).json(error);
+    const reqObj = {
+        query: req.query, params: req.params, body: req.body,
     }
+    kafka.make_request("updateDish", reqObj, function (err, results) {
+        if (err) {
+            console.log("err", err);
+            return res.status(500).json(err);
+        } else {
+            const {status_code, response} = results;
+            return res.status(status_code).json(response);
+        }
+    });
 });
 
 

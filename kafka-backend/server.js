@@ -15,6 +15,7 @@ import getCustomerOrders from "./services/getCustomerOrders.js";
 import updateCustomerProfile from "./services/updateCustomerProfile.js";
 import getCustomerProfile from "./services/getCustomerProfile.js";
 import addDish from "./services/addDish.js";
+import updateDish from "./services/updateDish.js";
 
 try {
     connectMongoDB();
@@ -67,3 +68,4 @@ handleTopicRequest("getCustomerOrders", getCustomerOrders);
 handleTopicRequest("updateCustomerProfile", updateCustomerProfile);
 handleTopicRequest("getCustomerProfile", getCustomerProfile);
 handleTopicRequest("addDish", addDish);
+handleTopicRequest("updateDish", updateDish);
