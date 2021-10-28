@@ -20,14 +20,18 @@ const __dirname = dirname(__filename);
 //get customer profile:
 // auth,
 router.get('/:id/profile',  async (req, res) => {
-    const customer_id = req.params.id;
-    try {
-        const c = await Customers.findById(customer_id);
-        return res.status(200).json(c);
-    } catch(error) {
-        console.log(error);
-        return res.status(500).json(error);
+    const reqObj = {
+        query: req.query, params: req.params, body: req.body,
     }
+    kafka.make_request("getCustomerProfile", reqObj, function (err, results) {
+        if (err) {
+            console.log("err", err);
+            return res.status(500).json(err);
+        } else {
+            const {status_code, response} = results;
+            return res.status(status_code).json(response);
+        }
+    });
 });
 
 

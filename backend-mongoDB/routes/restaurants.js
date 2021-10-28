@@ -49,12 +49,6 @@ router.get(`/`, async (req, res) => {
         kafka.make_request("getRestaurants", reqObj, function (err, results) {
             if (err) {
                 console.log("err", err);
-                // throw err
-                //   console.log("Inside err", err);
-                //   res.json({
-                //     status: "error",
-                //     msg: "System Error, Try Again.",
-                //   });
             } else {
               res.status(200).json(results);
             }
@@ -99,21 +93,19 @@ router.put('/profile',  async (req, res) => {
 // add a restaurant dish
 // auth
 router.post('/:id/dish', async (req, res) => {
-    const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
-    const res_id = req.params.id;
-    try {
-        const dishObj = new Dish({
-            dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type, res_id
-        });
-        const r = await Restaurants.findById(res_id);
-        r.dishes.push(dishObj);
-        await r.save();
-        // TODO: Now complete res is set
-        return res.status(200).json({ data: r, dish: dishObj });
-    } catch(error) {
-        console.log(error);
-        return res.status(500).json(error);
+
+    const reqObj = {
+        query: req.query, params: req.params, body: req.body,
     }
+    kafka.make_request("addDish", reqObj, function (err, results) {
+        if (err) {
+            console.log("err", err);
+            return res.status(500).json(err);
+        } else {
+            const {status_code, response} = results;
+            return res.status(status_code).json(response);
+        }
+    });
 });
 
 
