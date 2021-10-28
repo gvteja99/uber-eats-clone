@@ -33,26 +33,18 @@ router.get('/:id/profile',  async (req, res) => {
 
 //Update customer profile:
 router.put('/profile', async (req, res) => {
-    const { customer_id, address_id, email, first_name, last_name, phone_number, dob, nickname, profile_pic, about,
-        street_address, apt_number, city,  state, country, zipcode } = req.body;
-    try {
-        const update = {
-            email, first_name, last_name, phone_number, dob, nickname, profile_pic, about,
-            address: {
-                street_address,
-                apt_number,
-                city,
-                state,
-                country,
-                zipcode,
-            }
-        }
-        const result = await Customers.findByIdAndUpdate(customer_id, update, { new:true });
-        res.status(200).json(result);
-    } catch(error) {
-        console.log(error);
-        return res.status(500).json(error);
+    const reqObj = {
+        query: req.query, params: req.params, body: req.body,
     }
+    kafka.make_request("updateCustomerProfile", reqObj, function (err, results) {
+        if (err) {
+            console.log("err", err);
+            return res.status(500).json(err);
+        } else {
+            const {status_code, response} = results;
+            return res.status(status_code).json(response);
+        }
+    });
 });
 
 router.get('/:id/favourites',

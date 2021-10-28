@@ -12,6 +12,7 @@ import customersignup from "./services/customersignup.js";
 import restaurantsignup from "./services/restaurantsignup.js";
 import placeorder from "./services/placeorder.js";
 import getCustomerOrders from "./services/getCustomerOrders.js";
+import updateCustomerProfile from "./services/updateCustomerProfile.js";
 
 try {
     connectMongoDB();
@@ -61,3 +62,4 @@ handleTopicRequest("customersignup", customersignup);
 handleTopicRequest("restaurantsignup", restaurantsignup);
 handleTopicRequest("placeorder", placeorder);
 handleTopicRequest("getCustomerOrders", getCustomerOrders);
+handleTopicRequest("updateCustomerProfile", updateCustomerProfile);
