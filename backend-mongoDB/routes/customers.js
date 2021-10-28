@@ -160,14 +160,18 @@ router.post('/delivery_address', async (req, res) => {
 
 //TODO:
 router.get('/:id/orders', async (req, res) => {
-    const customer_id = req.params.id;
-    try {
-        const orders = await Orders.find({customer_id})
-        return res.status(200).json({data: orders});
-    } catch(error) {
-        console.log(error);
-        return res.status(500).json(error);
+    const reqObj = {
+        query: req.query, params: req.params, body: req.body,
     }
+    kafka.make_request("getCustomerOrders", reqObj, function (err, results) {
+        if (err) {
+            console.log("err", err);
+            return res.status(500).json(err);
+        } else {
+            const {status_code, response} = results;
+            return res.status(status_code).json(response);
+        }
+    });
 });
 
 router.post('/orders', async (req, res) => {
