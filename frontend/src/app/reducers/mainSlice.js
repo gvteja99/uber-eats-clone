@@ -99,6 +99,12 @@ export const mainSlice = createSlice({
     updateCustomerOrders: (state, action) => {
         state.customerOrders= action.payload;
     },
+    cancelCustomerOrder: (state, action) => {
+        const orderList = state.customerOrders;
+        const orderIndex  = orderList.findIndex(o => o._id === action.payload?.order._id);
+        orderList[orderIndex].delivery_status =  7;
+        state.customerOrders = orderList;
+    },
     updateResOrders: (state, action) => {
         state.resOrders= action.payload;
     },
@@ -150,11 +156,17 @@ export const mainSlice = createSlice({
 
       }
     },
-    removeDishToCart: (state, action) => {
+    removeDishFromCart: (state, action) => {
+      const dish = action.payload?.dish;
+      console.log("========dish");
       let cartList = state.cart;
-      const index = cartList.findIndex(item => item?.res?.res_menu_id === action.payload?.dish?.res_menu_id);
-      if (index !== -1) {
-        cartList.splice(index, 1);
+      const resIndex = cartList.findIndex(res => res._id === dish?.res_id);
+      if (resIndex !== -1) {
+        const dishIndex= cartList[resIndex].dishes.findIndex(dishItem => dishItem._id === dish?._id);
+        if (dishIndex !== -1) {
+          cartList[resIndex].dishes.splice(dishIndex, 1);
+        }
+
       }
       state.cart = cartList;
     },
@@ -185,8 +197,8 @@ export const mainSlice = createSlice({
 export const {
   onCustomerSignup, onResSignup, onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
   updateResProfile, updateCustomerProfile, getResMenu, getAllResList, getFavResList, deleteResFromFavList,
-  changeToken, selectUserType, addDishToCart, removeDishToCart, clearCart, incrementDishCount, decrementDishCount,
-  updateCustomerMenu, updateCustomerOrders, updateResOrders
+  changeToken, selectUserType, addDishToCart, clearCart, incrementDishCount, decrementDishCount, removeDishFromCart,
+  updateCustomerMenu, updateCustomerOrders, updateResOrders, cancelCustomerOrder
  } = mainSlice.actions;
 
 // The function below is called a selector and allows us to select a value from

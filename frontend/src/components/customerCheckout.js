@@ -158,7 +158,7 @@ export default function CustomerCheckout(props) {
             total_amount: totalAmount.toFixed(2),
             delivery_fee: deliveryFee,
             taxes: 0,
-            instruction: '',
+            instruction: cart[0]?.instruction,
             tip: 0,
         }
         const headers = { 

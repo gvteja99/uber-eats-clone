@@ -66,7 +66,13 @@ export default function CustomerOrders(props) {
       getCustomersOrders();
     }, [dispatch])
     useEffect(() => {
-        let allowedStatus = parseInt(orderFilter )=== 0 ? [1,2,3,4,5,6] : (parseInt(orderFilter ) === 1 ? [1,2,3,5] : [4,6])
+        const orderDict = {
+            0: [1,2,3,4,5,6,7],
+            1: [1,2,3,5],
+            2: [4,6],
+            3: [7],
+        }
+        let allowedStatus =  orderDict[parseInt(orderFilter )];
         setListOnDisplay(resOrders.filter((order)=>  allowedStatus.includes(order.delivery_status))
     )}, [resOrders, orderFilter]);
     const history = useHistory();
@@ -119,6 +125,9 @@ export default function CustomerOrders(props) {
     }
 
     const updateOrderStatusApi = async (order_id, delivery_status, delivery_type) => {
+        if (parseInt(delivery_status) === 7) {
+            return 
+        }
         const url =  `/restaurants/order`;
         const headers = { 
             'x-access-token': token,
@@ -130,6 +139,7 @@ export default function CustomerOrders(props) {
                 2: 3,
                 3: 4,
                 4: 4,
+                7: 7
             }
         } else {
             deliveryToOrderMap = {
@@ -137,6 +147,7 @@ export default function CustomerOrders(props) {
                 2: 5,
                 5: 6,
                 6: 6,
+                7: 7,
             }
         }
         const body = {
@@ -153,8 +164,33 @@ export default function CustomerOrders(props) {
         }catch(err){
             console.log(err)
         }
-
     }
+
+    const cancelOrderStatusApi = async (order_id, delivery_status, delivery_type) => {
+        if ([7,6,4].includes(parseInt(delivery_status))) {
+            return 
+        }
+        const url =  `/restaurants/order`;
+        const headers = { 
+            'x-access-token': token,
+        };
+        const body = {
+            res_id,
+            order_id,
+            delivery_status: 7,
+        }
+
+        try {
+            const res = await axios.put(url, body, {headers});
+            console.log("response",res);
+            await dispatch(updateResOrders(res.data?.data));
+            
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+
 
     return (
     <>
@@ -178,6 +214,7 @@ export default function CustomerOrders(props) {
                     <FormControlLabel value="0" control={<Radio />} label="All" />
                     <FormControlLabel value="1" control={<Radio />} label="New Orders" />
                     <FormControlLabel value="2" control={<Radio />} label="Delivered" />
+                    <FormControlLabel value="3" control={<Radio />} label="Cancelled" />
                 </RadioGroup>
             </FormControl>
         </form>
@@ -193,7 +230,7 @@ export default function CustomerOrders(props) {
                             {capsStrFirstChar(`${order?.first_name} ${order?.last_name}`)}
                         </Typography>
                         </Button>
-                        <Typography variant="body2" style={{ color: "green", textAlign: 'center'}}>
+                        <Typography variant="body2" style={{ color: order?.delivery_status === 7?  "red":  "green", textAlign: 'center'}}>
                             {capsStrFirstChar(`${getOrderStatus(order?.delivery_status)}`)}
                         </Typography>
                     </div>
@@ -211,8 +248,15 @@ export default function CustomerOrders(props) {
                             size="small" variant="text" color="primary" onClick={() => onClickViewReciept(order)}
                             style={{alignSelf: 'center', backgroundColor: "green", color: "white", paddingLeft: 20, paddingRight: 20}}
                         >View Reciept</Button>
-                     <Button size="small" variant="outlined" style={{marginLeft: 20}}
-                     onClick={() => updateOrderStatusApi(order?._id, order?.delivery_status, order?.delivery_type)}>Move to Next status</Button>
+                     <Button size="small" variant="outlined" style={{marginLeft: 20, backgroundColor: "black", color: "white"}}
+                        onClick={() => updateOrderStatusApi(order?._id, order?.delivery_status, order?.delivery_type)}>
+                        Move to Next status
+                    </Button>
+
+                    <Button size="small" variant="outlined" style={{marginLeft: 20, backgroundColor: "#CB0C0C", color: "white"}}
+                        onClick={() => cancelOrderStatusApi(order?._id, order?.delivery_status, order?.delivery_type)}>
+                        Cancel Order
+                    </Button>
                      </div>
                 </Card>
             </ListItem>
@@ -281,6 +325,11 @@ function SimpleDialog(props) {
 
         )
         )}
+        { order.instruction &&
+            <Typography variant="body1" style={{fontSize: 13, paddingRight: 30, marginLeft: 16, color: "black", textAlign: 'start'}}>
+                { `Special Instruction: ${order.instruction} \n`}
+            </Typography>
+        }
         <Typography variant="body1" style={{fontSize: 13, paddingRight: 30, marginLeft: 16, color: "black", textAlign: 'start'}}>
             { `Delivered at: ${order.delivery_address}`}
         </Typography>

@@ -32,7 +32,7 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Navigationbar from './navigationbar';
-import { addDishToCart, getAllResList, updateCustomerOrders } from '../app/reducers/mainSlice';
+import { addDishToCart, cancelCustomerOrder, getAllResList, updateCustomerOrders } from '../app/reducers/mainSlice';
 import { capsStrFirstChar, getOrderStatus } from "../utility";
 // import "./styles.css";
 import ResDishCard from './ResDishCard';
@@ -69,7 +69,7 @@ export default function CustomerOrders(props) {
     }, [dispatch])
 
     useEffect(() => {
-        let allowedStatus = parseInt(orderFilter )=== 0 ? [1,2,3,4,5,6] : (parseInt(orderFilter ) === 1 ? [1,2,3,5] : [4,6])
+        let allowedStatus = parseInt(orderFilter )=== 0 ? [1,2,3,4,5,6,7] : (parseInt(orderFilter ) === 1 ? [1,2,3,5] : [4,6,7])
         setListOnDisplay(customerOrders.filter((order)=>  allowedStatus.includes(order.delivery_status))
     )}, [customerOrders, orderFilter]);
     const history = useHistory();
@@ -121,6 +121,30 @@ export default function CustomerOrders(props) {
 
     }
 
+    const cancelOrderStatusApi = async (order) => {
+        const order_id =  order?._id;
+        const res_id = order?.res_id;
+        const url =  `/restaurants/order`;
+        const headers = { 
+            'x-access-token': token,
+        };
+        const body = {
+            res_id,
+            order_id,
+            delivery_status: 7,
+        }
+
+        try {
+            const res = await axios.put(url, body, {headers});
+            console.log("response",res);
+            await dispatch(cancelCustomerOrder(order));
+            
+        }catch(err){
+            console.log(err)
+        }
+
+    }
+
     return (
     <>
       <Navigationbar />
@@ -153,7 +177,7 @@ export default function CustomerOrders(props) {
                         <Typography variant="h6" color="black" style={{}}>
                             {capsStrFirstChar(`${order?.res_name}`)}
                         </Typography>
-                        <Typography variant="body2" style={{ color: "green"}}>
+                        <Typography variant="body2" style={order?.delivery_status === 7? {color: "red"}: { color: "green"}}>
                             {capsStrFirstChar(`${getOrderStatus(order?.delivery_status)}`)}
                         </Typography>
                     </div>
@@ -171,6 +195,14 @@ export default function CustomerOrders(props) {
                             size="small" variant="text" color="primary" onClick={() => onClickViewReciept(order)}
                             style={{alignSelf: 'center', backgroundColor: "green", color: "white", paddingLeft: 20, paddingRight: 20, marginTop: 10, marginBottom: 10}}
                         >View Reciept</Button>
+                    {order.delivery_status === 1 &&
+                        <Button size="small" variant="text" onClick={() => {cancelOrderStatusApi({order})}}
+                            style={{alignSelf: 'center', backgroundColor: "#CB0C0C", color: "white", marginLeft: 25, paddingLeft: 20, paddingRight: 20, marginTop: 10, marginBottom: 10}}
+                        >
+                        Cancel Order
+                        </Button>
+                    }
+                    
                 </Card>
             </ListItem>
         )
@@ -236,6 +268,11 @@ function SimpleDialog(props) {
             </ListItem>
         )
         )}
+        { order.instruction &&
+            <Typography variant="body1" style={{fontSize: 13, paddingRight: 30, marginLeft: 16, color: "black", textAlign: 'start'}}>
+                { `Special Instruction: ${order.instruction} \n`}
+            </Typography>
+        }
         <Typography variant="body1" style={{fontSize: 13, paddingRight: 30, marginLeft: 16, color: "black", textAlign: 'start'}}>
             { `Delivered at: ${order.delivery_address}`}
         </Typography>

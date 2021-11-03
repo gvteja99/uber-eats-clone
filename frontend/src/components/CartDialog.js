@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
-import * as React from 'react';
+import React, {useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button, makeStyles, ButtonGroup } from '@material-ui/core';
+import { Button, makeStyles, ButtonGroup,TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -15,18 +15,22 @@ import PersonIcon from '@material-ui/icons/Person';
 import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
-import { incrementDishCount, decrementDishCount } from '../app/reducers/mainSlice';
+import { incrementDishCount, decrementDishCount, removeDishFromCart } from '../app/reducers/mainSlice';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
 export default function SimpleDialog(props) {
-  const { onClose, selectedValue, open, cart=[], onCartCheckout = () => {}, } = props;
-  const dispatch = useDispatch()
+  const { onClose, selectedValue, open, cart=[], onCartCheckout = (instruction) => {}, } = props;
+  const [instruction, setInstruction]= useState("");
+  const dispatch = useDispatch();
 
   const useStyles = makeStyles(theme=>({
     disabledButton: {
       backgroundColor: 'grey'
-  },}))
+    },
+    paper: { minWidth: "80%" },
+  }))
+
 
   // const [error, setError] 
 
@@ -48,7 +52,7 @@ export default function SimpleDialog(props) {
     dispatch(decrementDishCount({dish}))
   }
 
-  // console.log("cartdailog", cart);
+  console.log("cartdailog", cart);
   let totalAmount = 0
   for (let resIndex = 0; resIndex < cart.length; resIndex++) {
     for (let dishIndex = 0; dishIndex < cart[resIndex].dishes?.length; dishIndex++ ) {
@@ -56,9 +60,10 @@ export default function SimpleDialog(props) {
     }
   } 
 
+
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <DialogTitle style={{alignSelf: "center", marginLeft: 100, marginRight: 100 }}>Cart</DialogTitle>
+    <Dialog onClose={handleClose} open={open} classes={{paper: useStyles.paper}}>
+      <DialogTitle style={{alignSelf: "center", marginLeft: 100, marginRight: 100, }}>Cart</DialogTitle>
       <List sx={{ pt: 0 }}>
         <div style={{ paddingLeft: 10, paddingBottom: 20}}>
           {cart?.length >0 &&  cart.map((cartItem, index) => {
@@ -79,6 +84,9 @@ export default function SimpleDialog(props) {
                   <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
                       {`$${dish.dish_price}`}
                   </Typography>
+                  <Button variant="outlined" style={{marginLeft: 10,  width: 100, height: 40,backgroundColor: "red", color: "white"}} onClick={() => {
+                     dispatch(removeDishFromCart({dish}));
+                  }}>Remove</Button>
                 </div>
               </ListItem>
               )
@@ -95,11 +103,29 @@ export default function SimpleDialog(props) {
                 </Typography>
               </div>
           </ListItem>
+          <TextField
+          required
+          id="filled-required"
+          onChange={e => setInstruction(e.target.value)}
+          placeholder="Add instruction for store"
+          multiline={true}
+          maxRows={"2"}
+          variant="filled"
+          style={{width: "90%", }}
+        />
         </div>
         <div style={{width: '100%', display: "flex", justifyContent: "center"}}>
           <Button size="small" disabled={cart.length === 0} 
-           onClick={() => onCartCheckout()} variant="outlined" color="primary" classes={{ disabled: useStyles.disabledButton }}
-           style={{alignSelf: 'center', width: 100, backgroundColor: "green", color: "white"}}>Checkout</Button>
+            onClick={() => {
+              if (cart.length > 0) {
+                cart[0].instruction = instruction;
+              }
+              onCartCheckout()
+            }} 
+            variant="outlined" color="primary" classes={{ disabled: useStyles.disabledButton }}
+            style={{alignSelf: 'center', width: 100, backgroundColor: "black", color: "white"}}>
+            Checkout
+          </Button>
         </div>
       </List>
     </Dialog>
