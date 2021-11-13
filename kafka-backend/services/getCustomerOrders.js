@@ -6,8 +6,17 @@ import Orders from "../Models/orders.js";
 async function handle_request(req, callback) { 
     try {
         const customer_id = req.params.id;
-        const orders = await Orders.find({customer_id})
-        callback(null, {status_code: 200, response: {data: orders}});
+        let page = req.query.page || 1;
+        let pageSize = req.query.pageSize || 5;
+        let orders = await Orders.find({customer_id})
+        let pageMax = Math.ceil(orders.length / pageSize);
+            if (page > pageMax) {
+                page = pageMax;
+            }
+            let start = (page - 1) * pageSize;
+            let end = page * pageSize;
+            orders = orders.slice(start,end);
+        callback(null, {status_code: 200, response: {data: orders, page, pageSize}});
         return;
     } catch(error) {
         console.log(error);
