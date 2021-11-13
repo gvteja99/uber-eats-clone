@@ -18,6 +18,8 @@ import addDish from "./services/addDish.js";
 import updateDish from "./services/updateDish.js";
 import updateRestaurantProfile from "./services/updateRestaurantProfile.js";
 import getRestaurantOrders from "./services/getRestaurantOrders.js";
+import customerLogin from "./services/customerLogin.js";
+import updateDeliveryStatus from "./services/updateDeliveryStatus.js";
 
 try {
     connectMongoDB();
@@ -64,6 +66,7 @@ function handleTopicRequest(topic_name,fname){
 // handleTopicRequest("post_book",Books);
 handleTopicRequest("getRestaurants", getRestaurants);
 handleTopicRequest("customersignup", customersignup);
+handleTopicRequest("customerLogin", customerLogin);
 handleTopicRequest("restaurantsignup", restaurantsignup);
 handleTopicRequest("placeorder", placeorder);
 handleTopicRequest("getCustomerOrders", getCustomerOrders);
@@ -73,3 +76,4 @@ handleTopicRequest("addDish", addDish);
 handleTopicRequest("updateDish", updateDish);
 handleTopicRequest("updateRestaurantProfile", updateRestaurantProfile);
 handleTopicRequest("getRestaurantOrders", getRestaurantOrders);
+handleTopicRequest("updateDeliveryStatus", updateDeliveryStatus);
