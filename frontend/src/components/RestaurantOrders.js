@@ -252,11 +252,12 @@ export default function CustomerOrders(props) {
                         onClick={() => updateOrderStatusApi(order?._id, order?.delivery_status, order?.delivery_type)}>
                         Move to Next status
                     </Button>
-
-                    <Button size="small" variant="outlined" style={{marginLeft: 20, backgroundColor: "#CB0C0C", color: "white"}}
-                        onClick={() => cancelOrderStatusApi(order?._id, order?.delivery_status, order?.delivery_type)}>
-                        Cancel Order
-                    </Button>
+                    { [1,2,3,5].includes(order?.delivery_status) &&
+                        <Button size="small" variant="outlined" style={{marginLeft: 20, backgroundColor: "#CB0C0C", color: "white"}}
+                            onClick={() => cancelOrderStatusApi(order?._id, order?.delivery_status, order?.delivery_type)}>
+                            Cancel Order
+                        </Button>
+                    }
                      </div>
                 </Card>
             </ListItem>

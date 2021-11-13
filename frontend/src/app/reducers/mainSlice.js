@@ -58,7 +58,7 @@ export const mainSlice = createSlice({
     },
     onCustomerLogout: (state, action) => {
       state.token= '';
-      state.userType = undefined;
+      state.userType = 0;
       state.cart = [];
       state.favResList= [];
       state.customerProfile = {};
@@ -66,7 +66,7 @@ export const mainSlice = createSlice({
     },
     onResLogout: (state, action) => {
       state.token= '';
-      state.userType = undefined;
+      state.userType = 0;
       state.resProfile = {};
       state.resMenu = [];
       state.resSignupSuccessMsg = '';
@@ -75,6 +75,8 @@ export const mainSlice = createSlice({
       state.resProfile = action.payload;
     },
     updateCustomerProfile: (state, action) => {
+      console.log("action.payload", action.payload);
+      console.log("customerProfile===", state.customerProfile);
       state.customerProfile = action.payload;
     },
     getResMenu: (state, action) => {
@@ -97,10 +99,13 @@ export const mainSlice = createSlice({
         state.customerMenu = action.payload;
     },
     updateCustomerOrders: (state, action) => {
+        // console.log("customer order", action.payload);
         state.customerOrders= action.payload;
     },
     cancelCustomerOrder: (state, action) => {
         const orderList = state.customerOrders;
+        // console.log("orderList", orderList.length);
+        // console.log("action", action.payload);
         const orderIndex  = orderList.findIndex(o => o._id === action.payload?.order._id);
         orderList[orderIndex].delivery_status =  7;
         state.customerOrders = orderList;
@@ -170,6 +175,12 @@ export const mainSlice = createSlice({
       }
       state.cart = cartList;
     },
+    addInstructionToCart: (state, action) => {
+      const instruction = action.payload?.instruction;
+      let cartList = state.cart;
+      cartList[0].instruction = instruction;
+      state.cart = cartList;
+    },
     clearCart: (state, action) => {
       state.cart = [];
     },
@@ -198,7 +209,7 @@ export const {
   onCustomerSignup, onResSignup, onCustomerLogin, onResLogin, onCustomerLogout, onResLogout,
   updateResProfile, updateCustomerProfile, getResMenu, getAllResList, getFavResList, deleteResFromFavList,
   changeToken, selectUserType, addDishToCart, clearCart, incrementDishCount, decrementDishCount, removeDishFromCart,
-  updateCustomerMenu, updateCustomerOrders, updateResOrders, cancelCustomerOrder
+  addInstructionToCart, updateCustomerMenu, updateCustomerOrders, updateResOrders, cancelCustomerOrder
  } = mainSlice.actions;
 
 // The function below is called a selector and allows us to select a value from

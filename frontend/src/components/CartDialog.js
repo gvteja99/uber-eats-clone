@@ -15,7 +15,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
-import { incrementDishCount, decrementDishCount, removeDishFromCart } from '../app/reducers/mainSlice';
+import { incrementDishCount, decrementDishCount, removeDishFromCart, addInstructionToCart } from '../app/reducers/mainSlice';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
@@ -118,7 +118,8 @@ export default function SimpleDialog(props) {
           <Button size="small" disabled={cart.length === 0} 
             onClick={() => {
               if (cart.length > 0) {
-                cart[0].instruction = instruction;
+                // cart[0].instruction = instruction;
+                dispatch(addInstructionToCart({instruction}))
               }
               onCartCheckout()
             }} 

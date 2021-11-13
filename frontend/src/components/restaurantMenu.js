@@ -262,8 +262,8 @@ const RestaurantMenu = () => {
                         Add Dishes
                     </ColorButton2>
                 </div>
-                {console.log("============ResMenu", resMenu)}
-                {resMenu.length > 0  && resMenu.map((dish) => {
+                {/* {console.log("============ResMenu", resMenu)} */}
+                { resMenu && resMenu.length > 0  && resMenu.map((dish) => {
                     return (
                         <Grid item xs={12} sm={12} md={12} key={0}>
                     <Card className={classes.cardContainer}>

@@ -4,7 +4,7 @@ import alert from "alert"
 
 const verifyToken = (req, res, next) => {
     const token = 
-    req.body.token || req.query.token || req.headers["x-access-token"];
+    req.body.token || req.query.token || req.headers["x-access-token"] || req.headers["Authorization"];
 
     if (!token) {
         alert("Unauthorized Error\n sign in to get access");

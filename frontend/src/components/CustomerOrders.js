@@ -16,13 +16,14 @@ import {
     CardActions,
     CardActionArea,
     CardContent,
-    List, ListItem, Link, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup
+    List, ListItem, Link, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup,
+    TablePagination, TextField,
 } from '@material-ui/core';
+// import TablePagination from '@material-ui/core/TablePagination';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { orange, teal } from '@material-ui/core/colors';
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -59,6 +60,9 @@ export default function CustomerOrders(props) {
     const [open, setOpen] = useState(false);
     const [orderFilter, setOrderFilter] = useState("0");
     const [listOnDisplay, setListOnDisplay] = useState([]);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
+
 
     const { customerProfile, token, cart = [], customerOrders } = mainReducer;
     const customer_id  = customerProfile._id;
@@ -103,17 +107,18 @@ export default function CustomerOrders(props) {
     };
 
 
-    
-
-    const url =  `/customers/${customer_id}/orders`;
-    const getCustomersOrders = async () => {
+    const getCustomersOrders = async (page, pageSize) => {
         const headers = { 
             'x-access-token': token,
         };
+        const url =  `/customers/${customer_id}/orders?page=${page || 1}&pageSize=${pageSize||5}`;
         try {
             const res = await axios.get(url, {headers});
             console.log("response",res);
             await dispatch(updateCustomerOrders(res.data?.data));
+            setPage(parseInt(res.data.page));
+            setPageSize(parseInt(res.data.pageSize));
+            
             
         }catch(err){
             console.log(err)
@@ -121,7 +126,28 @@ export default function CustomerOrders(props) {
 
     }
 
-    const cancelOrderStatusApi = async (order) => {
+    const prevPage = (e) => {
+        // let page = this.state.page;
+        let page_number = page;
+        if (page === 1)
+            return;
+        // else{
+        //      // page -= 1;
+        //     setPage(page_number -1)
+        // }
+        getCustomersOrders(page_number -1, pageSize);
+    }
+
+    const nextPage = (e) => {
+        let page_number = page;
+        console.log("page", page, "pagesize", pageSize);
+        // setPage(page_number + 1)
+        getCustomersOrders(page_number+1, pageSize);
+    }
+
+
+    const cancelOrderStatusApi = async ({order}) => {
+        console.log("order", order);
         const order_id =  order?._id;
         const res_id = order?.res_id;
         const url =  `/restaurants/order`;
@@ -135,15 +161,32 @@ export default function CustomerOrders(props) {
         }
 
         try {
+            console.log("body", body)
             const res = await axios.put(url, body, {headers});
             console.log("response",res);
-            await dispatch(cancelCustomerOrder(order));
+            await dispatch(cancelCustomerOrder({order}));
             
         }catch(err){
             console.log(err)
         }
 
     }
+
+    const pageSizeOptions = [
+        {
+          value: '2',
+          label: '2',
+        },
+        {
+          value: '5',
+          label: '5',
+        },
+        {
+            value: '10',
+            label: '10',
+        }
+      ];
+    
 
     return (
     <>
@@ -169,6 +212,24 @@ export default function CustomerOrders(props) {
                     <FormControlLabel value="2" control={<Radio />} label="Past Orders" />
                 </RadioGroup>
             </FormControl>
+        {/* {console.log("size:", pageSize, typeof(pageSize))} */}
+        <TextField
+            id="pageSize"
+            select
+            label="Page Size"
+            value={pageSize.toString()}
+            style={{color: "blue", width: 100}}
+            onChange={e => {
+                getCustomersOrders(1,parseInt(e.target.value))
+                setPageSize(parseInt(e.target.value))
+            }}
+        >
+            {pageSizeOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+                {option.label}
+            </MenuItem>
+            ))}
+            </TextField>
         </form>
         {listOnDisplay?.length >0 && listOnDisplay.map((order, index) => (
             <ListItem key={index}>
@@ -207,6 +268,29 @@ export default function CustomerOrders(props) {
             </ListItem>
         )
         )}
+        {/* <TablePagination
+            rowsPerPageOptions={[2, 5, 10]}
+            component="div"
+            count={orderDetails.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+        /> */}
+        (
+        <div className="col-sm-12 justify-content-center mt-1">
+            <nav aria-label="Page navigation example">
+                <ul className="pagination justify-content-center">
+                    <li className="page-item ">
+                        <div className="page-link" onClick={() => prevPage()} aria-label="Previous"><span aria-hidden="true">&laquo;</span></div>
+                    </li>
+                    <li className="page-item">
+                        <div className="page-link" onClick={() => nextPage()} aria-label="Next"><span aria-hidden="true">&raquo;</span></div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+            );
       </Box>
       <SimpleDialog
         // selectedValue={selectedValue}

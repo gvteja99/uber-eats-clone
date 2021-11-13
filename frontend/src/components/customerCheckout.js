@@ -55,7 +55,9 @@ const useStyles = makeStyles({
 
 export default function CustomerCheckout(props) {
     const mainReducer = useSelector((state) => state.mainReducer);
-    const [deliveryAddressList, setDeliveryAddressList] = useState([]);
+    const { customerProfile, token, cart = [] } = mainReducer;
+    // console.log("customerProfile", customerProfile)
+    const [deliveryAddressList, setDeliveryAddressList] = useState(customerProfile.delivery_addresses || []);
     const [selectedAddress, setSelectedAddress] = useState();
     const [newAddess, setNewAddess] = useState();
     // const emails = ['username@gmail.com', 'user02@gmail.com'];
@@ -80,7 +82,7 @@ export default function CustomerCheckout(props) {
         setOpen(false);
         // setSelectedValue(value);
     };
-    const { customerProfile, token, cart = [] } = mainReducer;
+    // console.log("===cart", cart);
 
 
    
@@ -95,7 +97,6 @@ export default function CustomerCheckout(props) {
             // console.log("response",res);
             // setDeliveryAddressList(res.data?.delivery_addresses?.data);
             setDeliveryAddressList(customerProfile.delivery_addresses);
-            customerProfile
             // await dispatch(getAllResList(res.data?.data))
             
         }catch(err){
@@ -116,7 +117,7 @@ export default function CustomerCheckout(props) {
         try {
             const res = await axios.post(url, body, {headers});
             console.log("response",res);
-            updateCustomerProfile(res.data?.data)
+            dispatch(updateCustomerProfile(res.data?.data));
             setDeliveryAddressList(res.data?.data?.delivery_addresses);
             setNewAddess('');
             // await dispatch(getAllResList(res.data?.data))
@@ -134,14 +135,19 @@ export default function CustomerCheckout(props) {
         }
     } 
 
-    const deliveryFee = 0.00
-    const taxes = 0.00
-    const totalAmount =  deliveryFee * cart.length + taxes + subTotalAmount
+    const deliveryFee = 0.00;
+    const taxes = 0.00;
+    const totalAmount =  deliveryFee * cart.length + taxes + subTotalAmount;
+    const isPickupOnlyRes = cart.length >0 && cart[0]?.delivery_option === 3;
+
+    const resAddress = cart.length>0 && cart[0].address;
+    // const pickupAddress = `${resAddress.apt_number} ${resAddress.street_address} ${resAddress.city} ${resAddress.state} ${resAddress.country}`
+    const pickupAddress = Object.values(resAddress).join(", ");
     // console.log("===profile curstomer:", customerProfile);
     const { street_address, zipcode, city, state, country} = customerProfile;
     const customer_id = customerProfile?._id;
     const onCreateOrder = async () => {
-        if (!selectedAddress) {
+        if (!isPickupOnlyRes && !selectedAddress) {
             alert("Select a delivery address");
             return
         }
@@ -152,7 +158,7 @@ export default function CustomerCheckout(props) {
             customer_id,
             first_name: customerProfile?.first_name,
             last_name: customerProfile?.first_name,
-            delivery_type: 1,
+            delivery_type: isPickupOnlyRes ? 2 : 1,
             delivery_address: selectedAddress || `${street_address}, ${zipcode}, ${city}, ${state}, ${country}`,
             order_date_time: new Date().toISOString(),
             total_amount: totalAmount.toFixed(2),
@@ -180,7 +186,7 @@ export default function CustomerCheckout(props) {
 
     }
 
-    console.log("==cart", cart);
+    // console.log("==cart", cart);
     console.log("===list", deliveryAddressList);
     return (
     <>
@@ -219,7 +225,12 @@ export default function CustomerCheckout(props) {
                     </ListItem>
                     </div>
                 </List>
-                <form style={{marginRight: 30, marginLeft: 30}}>
+                {isPickupOnlyRes ?
+                 <Typography variant="body1" color="black" style={{alignSelf: "center", textAlign: "center"}}>
+                    {`Pickup Address: ${pickupAddress}`}
+                </Typography>
+                :
+<form style={{marginRight: 30, marginLeft: 30}}>
                     {deliveryAddressList?.length >0 &&
                         <TextField
                             id="selectedAddress"
@@ -253,6 +264,7 @@ export default function CustomerCheckout(props) {
                     />
                     <Button disabled={!newAddess} variant="outlined" style={{backgroundColor: 'black', color: 'white'}} onClick={() => addDeliveryAddressesApi(newAddess)}>Add</Button>
                 </form>
+                }
                 {/* <Button>Add a delivery Addres</Button> */}
             </div>
             <div style={{backgroundColor: "#F2F3F5", flex: 0.7, paddingLeft: 50, paddingRight: 50}}>

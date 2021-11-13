@@ -19,7 +19,7 @@ const __dirname = dirname(__filename);
 
 //get customer profile:
 // auth,
-router.get('/:id/profile',  async (req, res) => {
+router.get('/:id/profile', passport.authenticate("jwt", { session: false }), async (req, res) => {
     const reqObj = {
         query: req.query, params: req.params, body: req.body,
     }
@@ -36,7 +36,7 @@ router.get('/:id/profile',  async (req, res) => {
 
 
 //Update customer profile:
-router.put('/profile', async (req, res) => {
+router.put('/profile', passport.authenticate("jwt", { session: false }), async (req, res) => {
     const reqObj = {
         query: req.query, params: req.params, body: req.body,
     }
@@ -73,13 +73,13 @@ router.get('/:id/favourites',
 
 router.post('/favourites', async (req, res) => {
     const { customer_id, res_id }= req.body;
+    console.log("req.body", req.body)
     try {
-        let customer = await Customers.findOne({ customer_id });
+        let customer = await Customers.findById( customer_id );
         if (!customer) {
             return res.status(400).send("Customer not found");
         }
         const index = customer.favourites.findIndex(item =>  item && item.toString() === res_id);
-        console.log("index", index)
         if (index !== -1) {
             return res.status(400).send("Restaurant Already present in favourites");
         }
@@ -92,7 +92,7 @@ router.post('/favourites', async (req, res) => {
     }
 });
 
-router.delete('/:id/favourites/:res_id', async (req, res) => {
+router.delete('/:id/favourites/:res_id', passport.authenticate("jwt", { session: false }), async (req, res) => {
     const customer_id = req.params.id;
     const res_id = req.params.res_id;
     try {
@@ -141,7 +141,7 @@ router.delete('/:id/favourites/:res_id', async (req, res) => {
 // });
 
 // auth
-router.post('/delivery_address', async (req, res) => {
+router.post('/delivery_address', passport.authenticate("jwt", { session: false }), async (req, res) => {
     const  { customer_id, delivery_address } = req.body;
     try {
         let c = await Customers.findById(customer_id);
@@ -155,7 +155,7 @@ router.post('/delivery_address', async (req, res) => {
 });
 
 //TODO:
-router.get('/:id/orders', async (req, res) => {
+router.get('/:id/orders', passport.authenticate("jwt", { session: false }), async (req, res) => {
     const reqObj = {
         query: req.query, params: req.params, body: req.body,
     }
@@ -170,7 +170,7 @@ router.get('/:id/orders', async (req, res) => {
     });
 });
 
-router.post('/orders', async (req, res) => {
+router.post('/orders', passport.authenticate("jwt", { session: false }), async (req, res) => {
     const reqObj = {
         query: req.query, params: req.params, body: req.body,
     }

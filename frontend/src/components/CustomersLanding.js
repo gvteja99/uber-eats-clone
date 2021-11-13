@@ -113,7 +113,6 @@ export default function CustomersLanding() {
 
     }
 
-
     const getFavouritesRestaurantApi = async () => {
       const url =  `/customers/${customer_id}/favourites/`;
         const headers = { 
