@@ -39,7 +39,7 @@ usepassport(passport);
 app.use("/login", login);
 app.use("/customers", customers);
 app.use("/logout", logout);
-app.use("/imageUpload", imageUpload);
+app.use("", imageUpload);
 
 const port = 3002;
 

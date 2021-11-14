@@ -19,7 +19,7 @@
     "@babel/preset-env": "^7.15.0",
     "alert": "^5.0.10",
     "assert": "^2.0.0",
-    "aws-sdk": "^2.1014.0",
+    "aws-sdk": "^2.1028.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "chai": "^4.3.4",

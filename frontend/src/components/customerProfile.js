@@ -184,6 +184,7 @@ export default function CustomerProfile() {
     const onUpload = async(e) => {
       e.preventDefault();
       const formData = new FormData();
+      console.log("file", file);
       formData.append("image", file);
       // const uploadConfig = {
       //     headers: {
@@ -195,14 +196,16 @@ export default function CustomerProfile() {
         "content-type": "multipart/form-data",
       };
       try {
-          const url =  `/customers/${customerProfile?._id}/upload/profile_pic`;
+          // const url =  `/customers/${customerProfile?._id}/upload/profile_pic`;
+          const url = `/image/customer/${customerProfile?._id}`;
           console.log("====url", url);
 
           const res = await axios.post(url,formData, {headers});
+          // console.log("res", res.data);
           setProfilePic(`${res.data}`);
-          console.log("response",res);
+          // console.log("response",res);
           // alert("Image uploaded successfully!");
-          // await dispatch(updateCustomerProfile(res.data))
+          await dispatch(updateCustomerProfile(res.data))
           // setTimeout(() => history.push("/"), 500);
           
       }catch(err){
@@ -229,7 +232,7 @@ export default function CustomerProfile() {
                  component="img"
                 //  height="140"
                  style={{borderRadius: 70, height: 140, width: 140}}
-                 src={`/customers/profile_pic/${profilePic}`}
+                 src={customerProfile?.profile_pic}
                  title="profile pic"
                  alt="loading"
                  />
