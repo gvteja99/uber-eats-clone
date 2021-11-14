@@ -100,7 +100,7 @@ export default function CustomersLanding() {
     const getAllRestaurantApi = async () => {
       const url =  `/restaurants?customer_city=${city}&search=${searchValue}`;
         const headers = { 
-          'x-access-token': token,
+          'Authorization': token,
         };
         try {
             const res = await axios.get(url, {headers});
@@ -116,7 +116,7 @@ export default function CustomersLanding() {
     const getFavouritesRestaurantApi = async () => {
       const url =  `/customers/${customer_id}/favourites/`;
         const headers = { 
-            'x-access-token': token,
+            'Authorization': token,
         };
         try {
             const res = await axios.get(url, {headers});
@@ -138,7 +138,7 @@ export default function CustomersLanding() {
       }
       const url =  `/customers/favourites/`;
       const headers = { 
-          'x-access-token': token,
+          'Authorization': token,
       };
       const body = {
         customer_id,

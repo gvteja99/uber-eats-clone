@@ -117,7 +117,7 @@ export default function CustomersLanding() {
       }
       const url =  `/customers/${customer_id}/favourites/${res_id}`;
       const headers = { 
-          'x-access-token': token,
+          'Authorization': token,
       };
       try {
           const res = await axios.delete(url, {headers});

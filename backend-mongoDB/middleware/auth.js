@@ -3,6 +3,7 @@ import config from "../utils/config.js";
 import alert from "alert"
 
 const verifyToken = (req, res, next) => {
+    // console.log("req.headers", req.headers);
     const token = 
     req.body.token || req.query.token || req.headers["x-access-token"] || req.headers["Authorization"];
 

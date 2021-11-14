@@ -87,7 +87,7 @@ export default function CustomerProfile() {
     const getCustomerProfileApi = async () => {
       const url =  `/customers/${customerProfile?._id}/profile`;
       const headers = { 
-          'x-access-token': token,
+          'Authorization': token,
       };
       try {
           const res = await axios.get(url, {headers});
@@ -126,7 +126,7 @@ export default function CustomerProfile() {
           isAddressUpdated: true
       };
       const headers = { 
-          'x-access-token': token,
+          'Authorization': token,
       };
       console.log("body", body);
       try {
@@ -192,7 +192,7 @@ export default function CustomerProfile() {
       //     }
       // };
       const headers = { 
-        'x-access-token': token,
+        'Authorization': token,
         "content-type": "multipart/form-data",
       };
       try {

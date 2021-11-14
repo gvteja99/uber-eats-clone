@@ -20,7 +20,7 @@ const __dirname = dirname(__filename);
 //get customer profile:
 // auth,
 router.get('/:id/profile',
-    //  passport.authenticate("jwt", { session: false }),
+    passport.authenticate("jwt", { session: false }),
     async (req, res) => {
     const reqObj = {
         query: req.query, params: req.params, body: req.body,

@@ -112,7 +112,7 @@ export default function CustomerCheckout(props) {
             delivery_address,
         } 
         const headers = { 
-            'x-access-token': token,
+            'Authorization': token,
         };
         try {
             const res = await axios.post(url, body, {headers});
@@ -168,9 +168,9 @@ export default function CustomerCheckout(props) {
             tip: 0,
         }
         const headers = { 
-            'x-access-token': token,
+            'Authorization': token,
         };
-        console.log("============body", body)
+        // console.log("============body", body)
         try {
             const res = await axios.post(url, body, {headers});
             console.log("response",res);

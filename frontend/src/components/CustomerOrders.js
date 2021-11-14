@@ -109,6 +109,7 @@ export default function CustomerOrders(props) {
 
     const getCustomersOrders = async (page, pageSize) => {
         const headers = { 
+            'Authorization': token,
             'x-access-token': token,
         };
         const url =  `/customers/${customer_id}/orders?page=${page || 1}&pageSize=${pageSize||5}`;
@@ -152,6 +153,7 @@ export default function CustomerOrders(props) {
         const res_id = order?.res_id;
         const url =  `/restaurants/order`;
         const headers = { 
+            'Authorization': token,
             'x-access-token': token,
         };
         const body = {

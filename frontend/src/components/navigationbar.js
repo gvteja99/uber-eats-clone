@@ -73,6 +73,7 @@ const Navigationbar = (props) => {
         const { resProfile, token, customerProfile } = mainReducer;
         const url = userType == "1" ? "/logout/customer" : "/logout/restaurant";
         const headers = { 
+            'Authorization': token,
             'x-access-token': token,
         };
         const body = {
