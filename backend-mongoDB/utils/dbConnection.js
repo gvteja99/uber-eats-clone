@@ -7,7 +7,7 @@ const { mongoDB } = config;
 //Mongo Connection
 const connectMongoDB = async () => {
     const options = {
-      poolSize: 100,
+      // poolSize: 500,
       useNewUrlParser: true,
     //   useCreateIndex: true,
       useUnifiedTopology: true,

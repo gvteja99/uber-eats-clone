@@ -12,16 +12,13 @@ const router = express.Router();
 // TODO: add auth
 router.get(`/`, async (req, res) => {
     try {
-        const reqObj = {
-            query: req.query, params: req.params, body: req.body,
-        }
-        kafka.make_request("getRestaurants", reqObj, function (err, results) {
-            if (err) {
-                console.log("err", err);
-            } else {
-              res.status(200).json(results);
-            }
-          });
+        const { customer_city, search } =  req.query;
+        let searchStringRegex = new RegExp(req.query.search, "i");
+        // TODO: Search and customer city sort option
+        const resList = await Restaurants.find({ $or: [ {name: searchStringRegex}, {'address.city': searchStringRegex},  {'dishes.dish_name': searchStringRegex},  ] });
+        const results = {data: resList}
+        // callback(null, res);
+        res.status(200).json(results);
     } catch(error) {
         console.log("error:", error);
         return res.status(500).json(error);
@@ -31,54 +28,78 @@ router.get(`/`, async (req, res) => {
 //Update restaurant profile:
 // TODO: auth
 router.put('/profile', auth, async (req, res) => {
-    // address_id
-    const reqObj = {
-        query: req.query, params: req.params, body: req.body,
-    }
-    kafka.make_request("updateRestaurantProfile", reqObj, function (err, results) {
-        if (err) {
-            console.log("err", err);
-            return res.status(500).json(err);
-        } else {
-            const {status_code, response} = results;
-            return res.status(status_code).json(response);
+    try {
+        const { res_id, name, delivery_option, phone_number, description, timing_open, timing_close, street_address,
+            apt_number, city,  state, country, zipcode} = req.body;
+        const update = {
+            name, delivery_option, phone_number,description, timing_open, timing_close,
+            address: {
+                street_address,
+                apt_number,
+                city,
+                state,
+                country,
+                zipcode,
+            }
         }
-    });
+        const result = await Restaurants.findByIdAndUpdate(res_id, update, { new:true });
+        return res.status(200).json(result);
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
 });
 
 // add a restaurant dish
 // auth
 router.post('/:id/dish', auth, async (req, res) => {
-
-    const reqObj = {
-        query: req.query, params: req.params, body: req.body,
+    try {
+        const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
+        const res_id = req.params.id;
+        const dishObj = new Dish({
+            dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type, res_id
+        });
+        const r = await Restaurants.findById(res_id);
+        r.dishes.push(dishObj);
+        await r.save();
+        return res.status(200).json({ data: r, dish: dishObj });
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
     }
-    kafka.make_request("addDish", reqObj, function (err, results) {
-        if (err) {
-            console.log("err", err);
-            return res.status(500).json(err);
-        } else {
-            const {status_code, response} = results;
-            return res.status(status_code).json(response);
-        }
-    });
 });
 
 
 // update a restaurant dish
 router.put('/:res_id/dish/:id', auth, async (req, res) => {
-    const reqObj = {
-        query: req.query, params: req.params, body: req.body,
-    }
-    kafka.make_request("updateDish", reqObj, function (err, results) {
-        if (err) {
-            console.log("err", err);
-            return res.status(500).json(err);
-        } else {
-            const {status_code, response} = results;
-            return res.status(status_code).json(response);
+    // const reqObj = {
+    //     query: req.query, params: req.params, body: req.body,
+    // }
+    // kafka.make_request("updateDish", reqObj, function (err, results) {
+    //     if (err) {
+    //         console.log("err", err);
+    //         return res.status(500).json(err);
+    //     } else {
+    //         const {status_code, response} = results;
+    //         return res.status(status_code).json(response);
+    //     }
+    // });
+    try {
+        const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
+        const res_id = req.params.res_id;
+        const dish_id = req.params.id;
+        const update = {
+            dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type
         }
-    });
+        const r = await Restaurants.findById(res_id);
+        let dish = r.dishes.id(mongoose.Types.ObjectId(dish_id));
+        dish.set({...update});
+        let result = await r.save();
+        return res.status(200).json({ data: result, dish});
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
 });
 
 
@@ -98,33 +119,29 @@ router.delete('/:res_id/dish/:id', auth, async (req, res) => {
 
 // Get orders;
 router.get('/:id/orders', auth, async (req, res) => {
-    const reqObj = {
-        query: req.query, params: req.params, body: req.body,
+    try {
+        const res_id = req.params.id;
+        const orders = await Orders.find({res_id});
+        return res.status(200).json({data: orders});
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
     }
-    kafka.make_request("getRestaurantOrders", reqObj, function (err, results) {
-        if (err) {
-            console.log("err", err);
-            return res.status(500).json(err);
-        } else {
-            const {status_code, response} = results;
-            return res.status(status_code).json(response);
-        }
-    });
 });
 
 router.put('/order', async (req, res) => {
-    const reqObj = {
-        query: req.query, params: req.params, body: req.body,
+    try {
+        const { order_id, delivery_status, res_id} = req.body;
+        // Single Rest to Order
+        let order = await Orders.findById(order_id);
+        order.delivery_status = delivery_status;
+        order = await order.save();
+        const updatedOrders = await Orders.find({res_id});
+        return res.status(200).json({data: updatedOrders});
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json(error);
     }
-    kafka.make_request("updateDeliveryStatus", reqObj, function (err, results) {
-        if (err) {
-            console.log("err", err);
-            return res.status(500).json(err);
-        } else {
-            const {status_code, response} = results;
-            return res.status(status_code).json(response);
-        }
-    });
 });
 
 

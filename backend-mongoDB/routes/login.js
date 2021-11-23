@@ -8,25 +8,32 @@ import usepassport from "../middleware/passport.js";
 import config from "../utils/config.js";
 import Customers from "../Models/customers.js"; 
 import Restaurants from "../Models/restaurants.js";
-import kafka from "../kafka/client.js";
+// import kafka from "../kafka/client.js";
 
 const router = express.Router();
 
 usepassport(passport);
 
 router.post('/customer', async (req, res) => {
-    const reqObj = {
-        query: req.query, params: req.params, body: req.body,
-    }
-    kafka.make_request("customerLogin", reqObj, function (err, results) {
-        if (err) {
-            console.log("err", err);
-            return res.status(500).json(err);
-        } else {
-            const {status_code, response} = results;
-            return res.status(status_code).json(response);
+    try {
+        const { email, password } = req.body;
+        const customer = await Customers.findOne({email})
+        if (!customer) {
+            return res.status(400).json({msg: "Invalid email"})
         }
-    });
+        const match = await bcrypt.compare(password, customer.password);
+        if (!match) {
+            return res.status(400).json({msg: "Invalid password"});            
+        }
+        const token = jwt.sign({ email}, 'jwt_ubereats', {expiresIn: "2h"});
+        customer.token = "Bearer "+ token;
+        await customer.save();
+        return res.status(200).json(customer);
+    } catch(error) {
+        console.log("======inside catch:");
+        console.log("error==", error);
+        return res.status(500).json({msg: error});
+    }
 });
 
 router.post('/restaurant', async (req, res) => {
@@ -43,7 +50,7 @@ router.post('/restaurant', async (req, res) => {
         const token = jwt.sign({ email}, config.token_key, {expiresIn: "2h"});
         restaurant.token = token;
         await restaurant.save();
-        res.status(200).json(restaurant);
+        return res.status(200).json(restaurant);
     } catch(error) {
         console.log("======inside catch:");
         console.log("error==", error);
