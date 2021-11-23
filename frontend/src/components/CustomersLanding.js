@@ -4,6 +4,14 @@ import React, {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  useLazyQuery,
+  gql
+} from "@apollo/client";
 import {makeStyles, withStyles } from '@material-ui/core/styles';
 import {
     Typography,
@@ -78,7 +86,8 @@ export default function CustomersLanding() {
   }
     console.log("======deliveryOption", deliveryOption);
     useEffect(() => {
-        getAllRestaurantApi();
+        // getRes();
+        // getAllRestaurantApi();
         getFavouritesRestaurantApi();
     }, [])
     useEffect(() => {
@@ -97,19 +106,69 @@ export default function CustomersLanding() {
     const customer_id = customerProfile?._id;
     console.log("customerProfile", customerProfile);
 
-    const getAllRestaurantApi = async () => {
-      const url =  `/restaurants?customer_city=${city}&search=${searchValue}`;
-        const headers = { 
-          'Authorization': token,
-        };
-        try {
-            const res = await axios.get(url, {headers});
-            console.log("response",res);
-            await dispatch(getAllResList(res.data?.data))
-            
-        }catch(err){
-            console.log(err)
+  const GET_ALL_RES = gql`
+    query getRestaurants($customer_city: String, $search: String ) {
+      getRestaurants(customer_city: $customer_city, search: $search) {
+        address {street_address apt_number city state country zipcode}
+        _id name email password delivery_option phone_number description timing_open timing_close token
+        dishes {
+          _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
         }
+      }
+   }
+  `; 
+
+
+
+  
+    const { loading, error, data} = useQuery(
+      GET_ALL_RES,
+      {
+        variables: { customer_city:city, search: searchValue}
+      }
+    );
+
+
+    if (!error && !loading ) {
+      console.log("DATA:", data);
+      const { getRestaurants } = data;
+      dispatch(getAllResList(getRestaurants))
+
+    }
+    // if (error) return `Error!: ${error}`;
+  
+    const getAllRestaurantApi = async () => {
+      console.log("data", data, "error", error)
+      const { loading, error, data} = useLazyQuery(
+        GET_ALL_RES,
+        {
+          variables: { customer_city:city, search: searchValue}
+        }
+      );
+  
+      // getRestaurants();
+  
+      if (!error && !loading ) {
+        console.log("DATA:", data);
+        const { getRestaurants } = data;
+        // getAllRestaurantApi(data, error);
+        dispatch(getAllResList(getRestaurants))
+  
+      }
+
+
+      // const url =  `/restaurants?customer_city=${city}&search=${searchValue}`;
+      //   const headers = { 
+      //     'Authorization': token,
+      //   };
+      //   try {
+      //       const res = await axios.get(url, {headers});
+      //       console.log("response",res);
+      //       await dispatch(getAllResList(res.data?.data))
+            
+      //   }catch(err){
+      //       console.log(err)
+      //   }
 
     }
 

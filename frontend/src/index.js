@@ -9,17 +9,32 @@ import store from './app/store'
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql
+} from "@apollo/client";
 
 let persistor = persistStore(store);
 
+const client = new ApolloClient({
+  uri: '/graphql',
+  cache: new InMemoryCache()
+});
+
 ReactDOM.render(
-  <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
-      <Router>
-        <App />
-      </Router>
-    </PersistGate>
-  </Provider>,
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <Router>
+            <App />
+          </Router>
+        </PersistGate>
+      </Provider>
+  </ApolloProvider>
+  ,
   document.getElementById('root')
 );
 
