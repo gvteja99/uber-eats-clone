@@ -18,7 +18,7 @@ router.get(`/`, async (req, res) => {
         const resList = await Restaurants.find({ $or: [ {name: searchStringRegex}, {'address.city': searchStringRegex},  {'dishes.dish_name': searchStringRegex},  ] });
         const results = {data: resList}
         // callback(null, res);
-        res.status(200).json(results);
+        return res.status(200).json(results);
     } catch(error) {
         console.log("error:", error);
         return res.status(500).json(error);
@@ -72,18 +72,6 @@ router.post('/:id/dish', auth, async (req, res) => {
 
 // update a restaurant dish
 router.put('/:res_id/dish/:id', auth, async (req, res) => {
-    // const reqObj = {
-    //     query: req.query, params: req.params, body: req.body,
-    // }
-    // kafka.make_request("updateDish", reqObj, function (err, results) {
-    //     if (err) {
-    //         console.log("err", err);
-    //         return res.status(500).json(err);
-    //     } else {
-    //         const {status_code, response} = results;
-    //         return res.status(status_code).json(response);
-    //     }
-    // });
     try {
         const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
         const res_id = req.params.res_id;
