@@ -3,8 +3,7 @@ import auth from "../middleware/auth.js";
 import Restaurants, {Dish} from "../Models/restaurants.js";
 import Orders from "../Models/orders.js";
 import mongoose from "mongoose";
-// import Orders from "../Models/orders.js";
-import kafka from "../kafka/client.js";
+
 const router = express.Router();
 
 
