@@ -135,7 +135,7 @@ export default function CustomersLanding() {
       dispatch(getAllResList(getRestaurants))
 
     }
-    // if (error) return `Error!: ${error}`;
+    if (error) return `Error!: ${error}`;
   
     const getAllRestaurantApi = async () => {
       console.log("data", data, "error", error)

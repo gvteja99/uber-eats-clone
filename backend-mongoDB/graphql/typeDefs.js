@@ -1,6 +1,22 @@
 import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
+    type Customer {
+        _id: ID!
+        first_name: String!
+        last_name: String!
+        email: String!
+        password: String!
+        phone_number: String
+        dob: String
+        nickname: String
+        profile_pic: String
+        about: String
+        token: String
+        address: Address
+        favourites: [Restaurant]
+        delivery_addresses:[Delivery_address]
+    }
     type Restaurant {
         _id: ID!
         name: String!
@@ -14,7 +30,10 @@ const typeDefs = gql`
         token: String
         address: Address
         dishes: [Dish!]!
-        }
+    }
+    type Delivery_address {
+        delivery_address: String!
+    }
     type Address {
         street_address: String
         apt_number: String
@@ -36,6 +55,7 @@ const typeDefs = gql`
     }
     type Query {
         getRestaurants(customer_city: String, search: String): [Restaurant]
+        getCustomerProfile(id: ID!): Customer!
     }
     
 `;

@@ -2,6 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Navigationbar from './navigationbar.js';
 import { useHistory } from 'react-router-dom';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  useLazyQuery,
+  gql
+} from "@apollo/client";
 import axios from 'axios';
 import { 
     Avatar, CssBaseline, Button, Container, FormControl, FormLabel, FormControlLabel,
@@ -60,7 +68,7 @@ export default function CustomerProfile() {
     // const [profileUrl, setProfileUrl] = useState("");
 
     useEffect(() => {
-      getCustomerProfileApi();
+      // getCustomerProfileApi();
     }, [profilePic])
 
     const countries = [
@@ -75,30 +83,52 @@ export default function CustomerProfile() {
       ];
     
 
-    // const [selectedFile, setSelectedFile]= useState();
-    // useEffect(() => {}, []);
-    // useEffect(() => {console.log("=====file", selectedFile)}, [selectedFile?.name])
     const dispatch = useDispatch()
     const classes = useStyles();
     const {register, handleSubmit, control} = useForm();
     const history = useHistory();
-    // console.log("token==", token);
-    // console.log("==customerProfileredux", customerProfile)
-    const getCustomerProfileApi = async () => {
-      const url =  `/customers/${customerProfile?._id}/profile`;
-      const headers = { 
-          'Authorization': token,
-      };
-      try {
-          const res = await axios.get(url, {headers});
-          console.log("response",res);
-          await dispatch(updateCustomerProfile(res.data))
-          
-      }catch(err){
-          console.log(err)
+
+    const GET_CUSTOMER_PROFILE = gql`
+    query getCustomerProfile($id: ID!) {
+      getCustomerProfile(id: $id) {
+        _id first_name last_name email password phone_number dob nickname profile_pic about token
+        address { street_address apt_number city state country zipcode }
       }
+   }
+  `; 
+
+
+    const { loading, error, data} = useQuery(
+      GET_CUSTOMER_PROFILE,
+      {
+        variables: { id: customerProfile?._id}
+      }
+    );
+
+
+    if (!error && !loading ) {
+      console.log("DATA:", data);
+      const { getCustomerProfile } = data;
+      dispatch(updateCustomerProfile(getCustomerProfile))
 
     }
+    if (error) return `Error!: ${error}`;
+
+    // const getCustomerProfileApi = async () => {
+    //   const url =  `/customers/${customerProfile?._id}/profile`;
+    //   const headers = { 
+    //       'Authorization': token,
+    //   };
+    //   try {
+    //       const res = await axios.get(url, {headers});
+    //       console.log("response",res);
+    //       await dispatch(updateCustomerProfile(res.data))
+          
+    //   }catch(err){
+    //       console.log(err)
+    //   }
+
+    // }
 
     const updateCustomerProfileApi = async () => {
       if(!validateInputs()) {
