@@ -10,8 +10,6 @@ import { fileURLToPath } from 'url';
 import  path, {dirname} from "path";
 import fs from 'fs';
 
-// import kafka from "../kafka/client.js";
-
 const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,7 +18,7 @@ const __dirname = dirname(__filename);
 //get customer profile:
 // auth,
 router.get('/:id/profile',
-    passport.authenticate("jwt", { session: false }),
+    // passport.authenticate("jwt", { session: false }),
     async (req, res) => {
     try {
         const customer_id = req.params.id;
@@ -34,7 +32,9 @@ router.get('/:id/profile',
 
 
 //Update customer profile:
-router.put('/profile', passport.authenticate("jwt", { session: false }), async (req, res) => {
+router.put('/profile',
+    // passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
     try {
         const { customer_id, address_id, email, first_name, last_name, phone_number, dob, nickname, profile_pic, about,
             street_address, apt_number, city,  state, country, zipcode } = req.body;    
@@ -58,7 +58,7 @@ router.put('/profile', passport.authenticate("jwt", { session: false }), async (
 });
 
 router.get('/:id/favourites',
-    passport.authenticate("jwt", { session: false }),
+    // passport.authenticate("jwt", { session: false }),
     async (req, res) => {
         const customer_id = req.params.id;
         // console.log("req====", req.user);
@@ -98,7 +98,9 @@ router.post('/favourites', async (req, res) => {
     }
 });
 
-router.delete('/:id/favourites/:res_id', passport.authenticate("jwt", { session: false }), async (req, res) => {
+router.delete('/:id/favourites/:res_id',
+    //  passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
     const customer_id = req.params.id;
     const res_id = req.params.res_id;
     try {
@@ -147,7 +149,9 @@ router.delete('/:id/favourites/:res_id', passport.authenticate("jwt", { session:
 // });
 
 // auth
-router.post('/delivery_address', passport.authenticate("jwt", { session: false }), async (req, res) => {
+router.post('/delivery_address',
+// passport.authenticate("jwt", { session: false }),
+ async (req, res) => {
     const  { customer_id, delivery_address } = req.body;
     try {
         let c = await Customers.findById(customer_id);
@@ -161,7 +165,9 @@ router.post('/delivery_address', passport.authenticate("jwt", { session: false }
 });
 
 //TODO:
-router.get('/:id/orders', passport.authenticate("jwt", { session: false }), async (req, res) => {
+router.get('/:id/orders',
+//  passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
     try {
         const customer_id = req.params.id;
         let page = req.query.page || 1;
@@ -181,19 +187,9 @@ router.get('/:id/orders', passport.authenticate("jwt", { session: false }), asyn
     }
 });
 
-router.post('/orders', passport.authenticate("jwt", { session: false }), async (req, res) => {
-    const reqObj = {
-        query: req.query, params: req.params, body: req.body,
-    }
-    kafka.make_request("placeorder", reqObj, function (err, results) {
-        if (err) {
-            console.log("err", err);
-            return res.status(500).json(err);
-        } else {
-            const {status_code, response} = results;
-            return res.status(status_code).json(response);
-        }
-    });
+router.post('/orders',
+    //  passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
     try {
         const { customer_id, first_name, last_name, cart, delivery_type, delivery_address, order_date_time, total_amount, delivery_fee, taxes, instruction, tip }= req.body;
         // For single Rest order place:

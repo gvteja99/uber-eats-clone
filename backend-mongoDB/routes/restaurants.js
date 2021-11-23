@@ -27,7 +27,7 @@ router.get(`/`, async (req, res) => {
 
 //Update restaurant profile:
 // TODO: auth
-router.put('/profile', auth, async (req, res) => {
+router.put('/profile', async (req, res) => {
     try {
         const { res_id, name, delivery_option, phone_number, description, timing_open, timing_close, street_address,
             apt_number, city,  state, country, zipcode} = req.body;
@@ -52,7 +52,7 @@ router.put('/profile', auth, async (req, res) => {
 
 // add a restaurant dish
 // auth
-router.post('/:id/dish', auth, async (req, res) => {
+router.post('/:id/dish', async (req, res) => {
     try {
         const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
         const res_id = req.params.id;
@@ -71,7 +71,7 @@ router.post('/:id/dish', auth, async (req, res) => {
 
 
 // update a restaurant dish
-router.put('/:res_id/dish/:id', auth, async (req, res) => {
+router.put('/:res_id/dish/:id', async (req, res) => {
     try {
         const { dish_name, dish_image, dish_price, description, main_ingredient, dish_category, food_type} = req.body;
         const res_id = req.params.res_id;
@@ -93,7 +93,7 @@ router.put('/:res_id/dish/:id', auth, async (req, res) => {
 
 // delete a restaurant dish
 // auth
-router.delete('/:res_id/dish/:id', auth, async (req, res) => {
+router.delete('/:res_id/dish/:id', async (req, res) => {
     const res_id = req.params.res_id;
     const dish_id = req.params.id;
     try {
@@ -106,7 +106,7 @@ router.delete('/:res_id/dish/:id', auth, async (req, res) => {
 });
 
 // Get orders;
-router.get('/:id/orders', auth, async (req, res) => {
+router.get('/:id/orders', async (req, res) => {
     try {
         const res_id = req.params.id;
         const orders = await Orders.find({res_id});
