@@ -5,6 +5,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import mongoose from "mongoose";
 import cors from 'cors';
+import {ApolloServer, gql} from 'apollo-server-express';
 import connectMongoDB from './utils/dbConnection.js';
 // import config from "./utils/config.js";
 import signup from "./routes/signup.js";
@@ -15,17 +16,40 @@ import logout from './routes/logout.js';
 import imageUpload from './routes/imageUpload.js';
 import passport from "passport";
 import usepassport from './middleware/passport.js';
+import typeDefs from "./graphql/typeDefs.js";
+import resolvers from "./graphql/resolvers/index.js";
+
+// Construct a schema, using GraphQL schema language
+// const typeDefs = gql`
+//   type Query {
+//     hello: String
+//   }
+// `;
+
+// Provide resolver functions for your schema fields
+// const resolvers = {
+//   Query: {
+//     hello: () => 'Hello world!',
+//     getRestaurants: () => {},
+//   },
+// };
+
+const server = new ApolloServer({
+    playground: true,
+    typeDefs, resolvers });
+
+// Added this line
+await server.start();
 
 const app = express();
 // const {mongoDB} = config
+server.applyMiddleware({app});
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
-// var kafka = require('./kafka/client');
-import kafka from "./kafka/client.js";
 
 app.use("/signup", signup);
 app.use("/restaurants", restaurants);
@@ -49,68 +73,14 @@ app.get('/', (req, res) => {
     res.send("Hello World")
 });
 
-// app.get('/test_api', async (req, res) => {
-//   await pool.query(`SELECT * from test_table`, async (error, results) => {
-//     if (error) {
-//       res.writeHead(200, {
-//         'Content-Type': 'text/plain',
-//       });
-//       res.end(error.code);
-//     } else {
-//       res.writeHead(200, {
-//         'Content-Type': 'text/plain'
-//       });
-//       res.end(JSON.stringify(results));
-//     }
-//   })
-// })
-// const options = {
-//     userNewUrlParser: true,
-//     userUnifiedTopology: true,
-//     poolsize: 500,
-//     bufferMaxEntries: 0,
-// }
-
-// mongoose.connect(mongoDB, options, (err, res) => {
-//     if (err) {
-//         console.log(err);
-//         console.log('Mongodb Connection Failed');
-//     } else {
-//         console.log('MongoDB Connected');
-//     }
-// })
-// mongoose.connect(mongoDB);
-// Mongodb connection
 connectMongoDB();
 
 const db = mongoose.connection;
 db.on('error', (error) => console.log(error))
 db.once('open', () => console.log('Connected to Database'));
 
-app.post('/book', function(req, res){
 
-  kafka.make_request('post_book',req.body, function(err,results){
-      console.log('in result');
-      console.log(results);
-      if (err){
-          console.log("Inside err");
-          res.json({
-              status:"error",
-              msg:"System Error, Try Again."
-          })
-      }else{
-          console.log("Inside else");
-              res.json({
-                  updatedList:results
-              });
-
-              res.end();
-          }
-      
-  });
-});
-
-// To listen to port 3001
+// To listen to port 3002
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`)
 });
