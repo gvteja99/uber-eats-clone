@@ -1,4 +1,5 @@
 import Customers from '../../Models/customers.js';
+import Orders from "../../Models/orders.js";
 
 const resolvers = {
     Query: {
@@ -11,6 +12,27 @@ const resolvers = {
             } catch(error) {
                 console.log(error);
                 throw new Error(error)
+                // return res.status(500).json(error);
+            }
+        },
+        async getCustomerOrders(_, {id}) {
+            try {
+                const customer_id = id;
+                // let page = req.query.page || 1;
+                // let pageSize = req.query.pageSize || 5;
+                let orders = await Orders.find({customer_id})
+                // let pageMax = Math.ceil(orders.length / pageSize);
+                //     if (page > pageMax) {
+                //         page = pageMax;
+                //     }
+                //     let start = (page - 1) * pageSize;
+                //     let end = page * pageSize;
+                //     orders = orders.slice(start,end);
+                // return res.status(200).json({data: orders, page, pageSize});
+                return orders;
+            } catch(error) {
+                console.log(error);
+                throw new Error(error);
                 // return res.status(500).json(error);
             }
         }
@@ -37,17 +59,10 @@ const resolvers = {
                 console.log(error);
                 throw new Error(error)
             }
-            // try {
-            //     const customer_id = id;
-            //     const c = await Customers.findById(customer_id);
-            //     return c;
-            //     // return res.status(200).json(c);
-            // } catch(error) {
-            //     console.log(error);
-            //     throw new Error(error)
-            //     // return res.status(500).json(error);
-            // }
-        }
+        },
+        // async placeOrder(_,  { cartInput }) {
+
+        // }
     }
 }
 

@@ -54,6 +54,38 @@ const typeDefs = gql`
         res_id: ID!
     }
 
+    type Order {
+        _id: ID!
+        res_id: ID!
+        res_name: String!,
+        customer_id: ID!,
+        first_name: String,
+        last_name: String,
+        order_date_time: String,
+        delivery_type: Int,
+        delivery_date_time: String,
+        delivery_address: String,
+        delivery_status: Int,
+        delivery_fee: Float,
+        taxes: Float,
+        tip: Float,
+        instruction: String,
+        total_amount: Float,
+        order_items: [OrderItem]
+    }
+
+    type OrderItem {
+        _id: ID,
+        res_id: ID,
+        res_menu_id: ID,
+        dish_name: String,
+        description: String,
+        quantity: Int,
+        dish_price: Float, 
+        dish_category: String,
+        food_type: Int
+    }
+
     input CustomerInput {
         customer_id: ID!
         email: String!
@@ -73,10 +105,16 @@ const typeDefs = gql`
         zipcode: Int
     }
 
+    // input CartInput {
+    //     cart: [CartItem]
+        
+    // }
+
 
     type Query {
         getRestaurants(customer_city: String, search: String): [Restaurant]
         getCustomerProfile(id: ID!): Customer!
+        getCustomerOrders(id: ID!): [Order]
     }
     type Mutation {
         updateCustomerProfile(customerInput: CustomerInput!): Customer!
