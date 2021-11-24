@@ -53,9 +53,33 @@ const typeDefs = gql`
         food_type: Int!
         res_id: ID!
     }
+
+    input CustomerInput {
+        customer_id: ID!
+        email: String!
+        first_name: String!
+        last_name: String!
+        phone_number: String
+        description: String
+        dob: String
+        nickname: String
+        profile_pic: String
+        about: String
+        street_address: String
+        apt_number: String
+        city: String
+        state: String
+        country: String
+        zipcode: Int
+    }
+
+
     type Query {
         getRestaurants(customer_city: String, search: String): [Restaurant]
         getCustomerProfile(id: ID!): Customer!
+    }
+    type Mutation {
+        updateCustomerProfile(customerInput: CustomerInput!): Customer!
     }
     
 `;

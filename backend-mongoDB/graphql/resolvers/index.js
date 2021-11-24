@@ -6,7 +6,9 @@ const resolvers = {
         ...restaurantsResolvers.Query,
         ...customersResolvers.Query,
     },
-    // Mutation: {},
+    Mutation: {
+        ...customersResolvers.Mutation,
+    },
 }
 
 export default resolvers;

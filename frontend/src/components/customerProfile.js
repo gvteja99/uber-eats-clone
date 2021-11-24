@@ -7,6 +7,7 @@ import {
   InMemoryCache,
   ApolloProvider,
   useQuery,
+  useMutation,
   useLazyQuery,
   gql
 } from "@apollo/client";
@@ -98,7 +99,7 @@ export default function CustomerProfile() {
   `; 
 
 
-    const { loading, error, data} = useQuery(
+    const { loading: getProfileLoading, error: getProfileError, data: getProfileData} = useQuery(
       GET_CUSTOMER_PROFILE,
       {
         variables: { id: customerProfile?._id}
@@ -106,13 +107,24 @@ export default function CustomerProfile() {
     );
 
 
-    if (!error && !loading ) {
-      console.log("DATA:", data);
-      const { getCustomerProfile } = data;
+    if (!getProfileError && !getProfileLoading ) {
+      console.log("GetprofileDATA:", getProfileData);
+      const { getCustomerProfile } = getProfileData;
       dispatch(updateCustomerProfile(getCustomerProfile))
 
     }
-    if (error) return `Error!: ${error}`;
+    if (getProfileError) return `Error!: ${getProfileError}`;
+
+    
+
+    // if (!error && !loading ) {
+    //   console.log("DATA:", data);
+    //   const { getCustomerProfile } = data;
+    //   dispatch(updateCustomerProfile(getCustomerProfile))
+
+    // }
+    // if (error) return `Error!: ${error}`;
+
 
     // const getCustomerProfileApi = async () => {
     //   const url =  `/customers/${customerProfile?._id}/profile`;
@@ -130,19 +142,45 @@ export default function CustomerProfile() {
 
     // }
 
+    const UPDATE_PROFILE = gql`
+      mutation updateCustomerProfile(
+        $customer_id: ID! $email: String! $first_name: String! $last_name: String! $phone_number: String
+        $description: String $dob: String $nickname: String $profile_pic: String $about: String
+        $street_address: String $apt_number: String $city: String $state: String $country: String $zipcode: Int
+      ) {
+        updateCustomerProfile(customerInput: {
+          customer_id: $customer_id email: $email first_name: $first_name last_name: $last_name phone_number: $phone_number
+          description: $description dob: $dob nickname: $nickname profile_pic: $profile_pic about: $about
+          street_address: $street_address apt_number: $apt_number city: $city state: $state country: $country zipcode: $zipcode
+        }) {
+          _id first_name last_name email password phone_number dob nickname profile_pic about token
+          address { street_address apt_number city state country zipcode }
+        }
+        }
+    `; 
+
+    const [updateProfile, {data: updateProfileData, error: updateProfileError, loading: updateProfileLoading}] = useMutation(UPDATE_PROFILE, {
+      onCompleted(res) {
+        console.log("da", res);
+        dispatch(updateCustomerProfile(res.updateCustomerProfile))
+        setTimeout(() => history.push("/"), 100);
+      }
+    });
+
     const updateCustomerProfileApi = async () => {
       if(!validateInputs()) {
         return false;
       }
-      const url =  "/customers/profile";
-      const body = {
+      updateProfile({
+        variables: {
+          // customerInput: {
           customer_id: customerProfile?._id,
           first_name: firstName,
           last_name: lastName,
           address_id: customerProfile?.customer_address_id,
           email: customerProfile?.email,
           phone_number: phone,
-          description: `${firstName} is a good customer`,
+          description: `${firstName} is ${lastName} a good customer`,
           dob,
           nickname: nickName,
           about: about,
@@ -152,22 +190,52 @@ export default function CustomerProfile() {
           city: city,
           state: state,
           country: country,
-          zipcode: zipcode,
-          isAddressUpdated: true
-      };
-      const headers = { 
-          'Authorization': token,
-      };
-      console.log("body", body);
-      try {
-          const res = await axios.put(url,body, {headers});
-          console.log("response",res);
-          await dispatch(updateCustomerProfile(res.data))
-          setTimeout(() => history.push("/"), 100);
+          zipcode: parseInt(zipcode),
+        // } 
+      }});
+      // console.log("updateProfileData", updateProfileData.updateCustomerProfile);
+      // if (!updateProfileLoading &&  !updateProfileError && updateProfileData) {
+      //   console.log("Calling dispatch", updateProfileData)
+      //   dispatch(updateCustomerProfile(updateProfileData.updateCustomerProfile))
+      //   setTimeout(() => history.push("/"), 100);
+      // }
+      // if (updateProfileError) {
+      //   console.log("Error:", updateProfileError);
+      // }
+      // const url =  "/customers/profile";
+      // const body = {
+      //     customer_id: customerProfile?._id,
+      //     first_name: firstName,
+      //     last_name: lastName,
+      //     address_id: customerProfile?.customer_address_id,
+      //     email: customerProfile?.email,
+      //     phone_number: phone,
+      //     description: `${firstName} is a good customer`,
+      //     dob,
+      //     nickname: nickName,
+      //     about: about,
+      //     profile_pic: profilePic,
+      //     street_address: streetAddress,
+      //     apt_number: aptNumber,
+      //     city: city,
+      //     state: state,
+      //     country: country,
+      //     zipcode: zipcode,
+      //     // isAddressUpdated: true
+      // };
+      // const headers = { 
+      //     'Authorization': token,
+      // };
+      // console.log("body", body);
+      // try {
+      //     const res = await axios.put(url,body, {headers});
+      //     console.log("response",res);
+      //     await dispatch(updateCustomerProfile(res.data))
+      //     setTimeout(() => history.push("/"), 100);
           
-      }catch(err){
-          console.log(err)
-      }
+      // }catch(err){
+      //     console.log(err)
+      // }
 
     }
 
