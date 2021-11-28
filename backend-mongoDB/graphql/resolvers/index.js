@@ -8,6 +8,7 @@ const resolvers = {
     },
     Mutation: {
         ...customersResolvers.Mutation,
+        ...restaurantsResolvers.Mutation,
     },
 }
 

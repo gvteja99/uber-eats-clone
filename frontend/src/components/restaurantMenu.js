@@ -13,6 +13,15 @@ import {
     CardActionArea,
     CardContent,
 } from '@material-ui/core';
+import {
+    ApolloClient,
+    InMemoryCache,
+    ApolloProvider,
+    useQuery,
+    useMutation,
+    useLazyQuery,
+    gql
+  } from "@apollo/client";
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -181,12 +190,44 @@ const RestaurantMenu = () => {
         handleClickOpen(true);
     }
 
+    const POST_DISH = gql`
+    mutation postDish(
+        $dish_name: String!
+        $dish_image: String
+        $dish_price: Float!
+        $description: String
+        $main_ingredient: String
+        $dish_category: String!
+        $food_type: Int!
+        $res_id: ID!
+    ) {
+        postDish(dish: {
+            dish_name: $dish_name dish_image: $dish_image dish_price: $dish_price description: $description main_ingredient: $main_ingredient
+            dish_category: $dish_category food_type: $food_type res_id: $res_id
+    }) { 
+        address {street_address apt_number city state country zipcode}
+        _id name email password delivery_option phone_number description timing_open timing_close token
+        dishes {
+          _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
+        }
+    }}
+`;
+const [postDish] = useMutation(POST_DISH, {
+    onCompleted(res) {
+        console.log("da", res);
+        dispatch(updateResProfile(res.postDish))
+    },
+    onError(e) {
+        console.log("--dfd", e);
+    }
+  });
+
     const addDishToMenu = async (dish) => {
-        const url =  `/restaurants/${res_id}/dish`;
+        // const url =  `/restaurants/${res_id}/dish`;
         const {dish_name, dish_image="", dish_price=5, description="Nice restaurant", main_ingredient="", dish_category="desserts", food_type=1} = dish;
-        const headers = { 
-            'x-access-token': token,
-        };
+        // const headers = { 
+        //     'x-access-token': token,
+        // };
         // console.log("=========url", url);
         const body = {
             dish_name: dish_name,
@@ -196,26 +237,58 @@ const RestaurantMenu = () => {
             main_ingredient: main_ingredient,
             dish_category: dish_category,
             food_type,
+            res_id,
         }
-        try {
-            const res = await axios.post(url, body, {headers});
-            console.log("response",res);
-            await dispatch(updateResProfile(res.data?.data))
-            // await dispatch(getResMenu(res.data?.data))
-            
+        try {            
+            postDish({
+                variables: { ...body }
+            });
         }catch(err){
             console.log(err)
+            alert(err)
         }
     }
 
+    const UPDATE_DISH = gql`
+    mutation updateDish(
+        $_id: ID!
+        $dish_name: String!
+        $dish_image: String
+        $dish_price: Float!
+        $description: String
+        $main_ingredient: String
+        $dish_category: String!
+        $food_type: Int!
+        $res_id: ID!
+    ) {
+        updateDish(dish: {
+            _id: $_id dish_name: $dish_name dish_image: $dish_image dish_price: $dish_price description: $description main_ingredient: $main_ingredient
+            dish_category: $dish_category food_type: $food_type res_id: $res_id
+    }) { 
+        address {street_address apt_number city state country zipcode}
+        _id name email password delivery_option phone_number description timing_open timing_close token
+        dishes {
+          _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
+        }
+    }}
+`;
+const [updateDish] = useMutation(UPDATE_DISH, {
+    onCompleted(res) {
+        console.log("da", res);
+        dispatch(updateResProfile(res.updateDish))
+    },
+    onError(e) {
+        console.log("--dfd", e);
+    }
+  });
+
+
     const editDishToMenu = async (dish) => {
-        const url =  `/restaurants/${res_id}/dish/${dish._id}`;
-        const {dish_name, dish_image="", dish_price=5, description="Nice restaurant", main_ingredient="", dish_category="desserts", food_type=1} = dish;
-        const headers = { 
-            'x-access-token': token,
-        };
-        // console.log("====Dish", dish);
-        // console.log("=========url", url);
+        // const url =  `/restaurants/${res_id}/dish/${dish._id}`;
+        const {_id, dish_name, dish_image="", dish_price=5, description="Nice restaurant", main_ingredient="", dish_category="desserts", food_type=1} = dish;
+        // const headers = { 
+        //     'x-access-token': token,
+        // };
         const body = {
             dish_name: dish_name,
             dish_image: dish_image,
@@ -224,14 +297,16 @@ const RestaurantMenu = () => {
             main_ingredient: main_ingredient,
             dish_category: dish_category,
             food_type,
+            _id,
+            res_id,
         }
-        try {
-            const res = await axios.put(url, body, {headers});
-            console.log("response",res);
-            await dispatch(updateResProfile(res.data?.data))
-            
+        try {            
+            updateDish({
+                variables: { ...body }
+            });
         }catch(err){
             console.log(err)
+            alert(err)
         }
     }
 

@@ -156,6 +156,19 @@ const typeDefs = gql`
         _id: ID!,
         quantity: Int!
     }
+
+    input CreateDishInput {
+        _id: ID
+        dish_name: String!
+        dish_image: String
+        dish_price: Float!
+        description: String
+        main_ingredient: String
+        dish_category: String!
+        food_type: Int!
+        res_id: ID!
+    }
+
     type OrderOutputWithPage {
         data:[Order], page: Int, pageSize: Int
     }
@@ -167,6 +180,8 @@ const typeDefs = gql`
     type Mutation {
         updateCustomerProfile(customerInput: CustomerInput!): Customer!
         placeOrder(placeOrderInput: PlaceOrderInput!): Order!
+        postDish(dish: CreateDishInput!): Restaurant!
+        updateDish(dish: CreateDishInput!): Restaurant!
     }
     
 `;
