@@ -191,52 +191,7 @@ export default function CustomerProfile() {
           state: state,
           country: country,
           zipcode: parseInt(zipcode),
-        // } 
       }});
-      // console.log("updateProfileData", updateProfileData.updateCustomerProfile);
-      // if (!updateProfileLoading &&  !updateProfileError && updateProfileData) {
-      //   console.log("Calling dispatch", updateProfileData)
-      //   dispatch(updateCustomerProfile(updateProfileData.updateCustomerProfile))
-      //   setTimeout(() => history.push("/"), 100);
-      // }
-      // if (updateProfileError) {
-      //   console.log("Error:", updateProfileError);
-      // }
-      // const url =  "/customers/profile";
-      // const body = {
-      //     customer_id: customerProfile?._id,
-      //     first_name: firstName,
-      //     last_name: lastName,
-      //     address_id: customerProfile?.customer_address_id,
-      //     email: customerProfile?.email,
-      //     phone_number: phone,
-      //     description: `${firstName} is a good customer`,
-      //     dob,
-      //     nickname: nickName,
-      //     about: about,
-      //     profile_pic: profilePic,
-      //     street_address: streetAddress,
-      //     apt_number: aptNumber,
-      //     city: city,
-      //     state: state,
-      //     country: country,
-      //     zipcode: zipcode,
-      //     // isAddressUpdated: true
-      // };
-      // const headers = { 
-      //     'Authorization': token,
-      // };
-      // console.log("body", body);
-      // try {
-      //     const res = await axios.put(url,body, {headers});
-      //     console.log("response",res);
-      //     await dispatch(updateCustomerProfile(res.data))
-      //     setTimeout(() => history.push("/"), 100);
-          
-      // }catch(err){
-      //     console.log(err)
-      // }
-
     }
 
     const validateInputs = () =>  {

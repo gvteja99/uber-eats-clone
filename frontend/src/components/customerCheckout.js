@@ -4,6 +4,15 @@
 import React, {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import {
+    ApolloClient,
+    InMemoryCache,
+    ApolloProvider,
+    useQuery,
+    useMutation,
+    useLazyQuery,
+    gql
+  } from "@apollo/client";
 import axios from 'axios';
 import {makeStyles, withStyles } from '@material-ui/core/styles';
 import {
@@ -146,13 +155,40 @@ export default function CustomerCheckout(props) {
     // console.log("===profile curstomer:", customerProfile);
     const { street_address, zipcode, city, state, country} = customerProfile;
     const customer_id = customerProfile?._id;
+
+    const PLACE_ORDER = gql`
+        mutation placeOrder(
+            $customer_id: ID! $first_name: String $last_name: String $delivery_type: Int! $delivery_address: String
+            $order_date_time: String! $total_amount: Float $delivery_fee: Float $taxes: Float $instruction: String $tip: Float
+            $cart: [ CartInput ]
+        ) {
+        placeOrder(placeOrderInput: {
+            customer_id: $customer_id first_name: $first_name last_name: $last_name delivery_type: $delivery_type delivery_address: $delivery_address
+            order_date_time: $order_date_time total_amount: $total_amount delivery_fee: $delivery_fee taxes: $taxes instruction: $instruction tip: $tip
+            cart: $cart
+        }) { 
+            _id res_id res_name customer_id first_name last_name order_date_time delivery_address total_amount
+            order_items {  _id  dish_name  dish_price }
+            delivery_type delivery_date_time delivery_status delivery_fee taxes tip instruction
+        }}
+    `;
+    const [placeOrder, {data: placeOrderData, error: placeOrderError, loading: placeOrderLoading}] = useMutation(PLACE_ORDER, {
+        onCompleted(res) {
+            console.log("da", res);
+            handleClose();
+            alert("Your order is placed successfully");
+            dispatch(clearCart())
+            history.push('/')
+        },
+        onError(e) {
+            console.log("--dfd", e);
+        }
+      });
     const onCreateOrder = async () => {
         if (!isPickupOnlyRes && !selectedAddress) {
             alert("Select a delivery address");
             return
         }
-        // console.log("======calling create order")
-        const url =  `/customers/orders`;
         const body = {
             cart: cart,
             customer_id,
@@ -161,7 +197,7 @@ export default function CustomerCheckout(props) {
             delivery_type: isPickupOnlyRes ? 2 : 1,
             delivery_address: selectedAddress || `${street_address}, ${zipcode}, ${city}, ${state}, ${country}`,
             order_date_time: new Date().toISOString(),
-            total_amount: totalAmount.toFixed(2),
+            total_amount: parseFloat(totalAmount.toFixed(2)),
             delivery_fee: deliveryFee,
             taxes: 0,
             instruction: cart[0]?.instruction,
@@ -170,24 +206,16 @@ export default function CustomerCheckout(props) {
         const headers = { 
             'Authorization': token,
         };
-        // console.log("============body", body)
-        try {
-            const res = await axios.post(url, body, {headers});
-            console.log("response",res);
-            handleClose();
-            alert("Your order is placed successfully");
-            await dispatch(clearCart())
-            history.push('/')
-            
+        try {            
+            placeOrder({
+                variables: { ...body }
+            });
         }catch(err){
             console.log(err)
             alert(err)
         }
 
     }
-
-    // console.log("==cart", cart);
-    console.log("===list", deliveryAddressList);
     return (
     <>
         <h1 style={{textAlign: 'center', marginTop: 20}}>Checkout Page</h1>
