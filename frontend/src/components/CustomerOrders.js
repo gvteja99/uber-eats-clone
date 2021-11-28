@@ -8,6 +8,15 @@ import axios from 'axios';
 import {makeStyles, withStyles } from '@material-ui/core/styles';
 import moment from "moment";
 import {
+    ApolloClient,
+    InMemoryCache,
+    ApolloProvider,
+    useQuery,
+    useMutation,
+    useLazyQuery,
+    gql
+  } from "@apollo/client";
+import {
     Typography,
     Box,
     Grid,
@@ -69,12 +78,12 @@ export default function CustomerOrders(props) {
 
     const dispatch = useDispatch()
     useEffect(() => {
-      getCustomersOrders();
+    //   getCustomersOrders();
     }, [dispatch])
 
     useEffect(() => {
         let allowedStatus = parseInt(orderFilter )=== 0 ? [1,2,3,4,5,6,7] : (parseInt(orderFilter ) === 1 ? [1,2,3,5] : [4,6,7])
-        setListOnDisplay(customerOrders.filter((order)=>  allowedStatus.includes(order.delivery_status))
+        setListOnDisplay(customerOrders?.filter((order)=>  allowedStatus.includes(order.delivery_status))
     )}, [customerOrders, orderFilter]);
     const history = useHistory();
     const classes = useStyles();
@@ -82,23 +91,9 @@ export default function CustomerOrders(props) {
         setOpen(true);
     };
 
-    // const onClickViewReciept = async(order) => {
     const onClickViewReciept = (order) => {
         setSelectedOrder(order);
-        // const url =  `/customers/order/${order._id}`;
-        // const headers = { 
-        //     'x-access-token': token,
-        // };
-        // try {
-            // const res = await axios.get(url, {headers});
-            // console.log("response",order?.order_items);
-            setSelectedOrderDetails(order?.order_items)
-            // await dispatch(updateCustomerOrders(res.data?.data));
-            
-        // }catch(err){
-        //     console.log(err)
-        // }
-
+        setSelectedOrderDetails(order?.order_items);
         handleClickOpen();
     }
 
@@ -106,24 +101,66 @@ export default function CustomerOrders(props) {
         setOpen(false);
     };
 
+    const GET_CUSTOMER_ORDERS = gql`
+    query getCustomerOrders($id: ID!, $page: Int, $pageSize: Int) {
+        getCustomerOrders(id: $id, page: $page, pageSize: $pageSize) {
+        data {
+            _id
+            res_id
+            res_name
+            customer_id
+            first_name
+            last_name
+            order_date_time
+            delivery_type
+            delivery_date_time
+            delivery_address
+            delivery_status
+            delivery_fee
+            taxes
+            tip
+            instruction
+            total_amount
+            order_items {  _id res_id res_menu_id dish_name description quantity dish_price dish_category food_type }
+            },
+        page, pageSize
+        
+      }
+   }
+  `; 
+
+const { loading: getOrdersLoading, error: getOrdersError, data: getOrdersData, refetch} = useQuery(
+    GET_CUSTOMER_ORDERS,
+    {
+      variables: { id: customerProfile?._id, page: page|| 1, pageSize: pageSize|| 5},
+      onCompleted(res) {
+            console.log("res", res);
+            dispatch(updateCustomerOrders(res.getCustomerOrders?.data));
+            setPage(parseInt(res.getCustomerOrders.page));
+            setPageSize(parseInt(res.getCustomerOrders.pageSize));
+      },
+      onError(e) {console.log("GQError:", e)}
+    }
+  );
 
     const getCustomersOrders = async (page, pageSize) => {
-        const headers = { 
-            'Authorization': token,
-            'x-access-token': token,
-        };
-        const url =  `/customers/${customer_id}/orders?page=${page || 1}&pageSize=${pageSize||5}`;
-        try {
-            const res = await axios.get(url, {headers});
-            console.log("response",res);
-            await dispatch(updateCustomerOrders(res.data?.data));
-            setPage(parseInt(res.data.page));
-            setPageSize(parseInt(res.data.pageSize));
+        await refetch({id: customerProfile?._id, page: page||1, pageSize: pageSize||5})
+        // const headers = { 
+        //     'Authorization': token,
+        //     'x-access-token': token,
+        // };
+        // // const url =  `/customers/${customer_id}/orders?page=${page || 1}&pageSize=${pageSize||5}`;
+        // try {
+        //     const res = await axios.get(url, {headers});
+        //     console.log("response",res);
+        //     await dispatch(updateCustomerOrders(res.data?.data));
+        //     setPage(parseInt(res.data.page));
+        //     setPageSize(parseInt(res.data.pageSize));
             
             
-        }catch(err){
-            console.log(err)
-        }
+        // }catch(err){
+        //     console.log(err)
+        // }
 
     }
 

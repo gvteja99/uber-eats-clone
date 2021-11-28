@@ -105,19 +105,68 @@ const typeDefs = gql`
         zipcode: Int
     }
 
-    // input CartInput {
-    //     cart: [CartItem]
-        
-    // }
+    input PlaceOrderInput {
+        customer_id: ID!,
+        first_name: String,
+        last_name: String,
+        delivery_type: Int!,
+        delivery_address: String,
+        order_date_time: String!,
+        total_amount: Float,
+        delivery_fee: Float,
+        taxes: Float,
+        instruction: String,
+        tip: Float,
+        cart: [CartInput],
+    }
 
+    input CartInput {
+        address: AddressInput,
+        _id: ID!,
+        name: String,
+        email: String,
+        password: String,
+        delivery_option: Int,
+        phone_number: String,
+        description: String,
+        timing_open: String,
+        timing_close: String,
+        instruction: String,
+        token: String,
+        dishes: [dishCartInput]
+    }
+    input AddressInput {
+        street_address: String,
+        apt_number: String,
+        city: String,
+        state: String,
+        country: String,
+        zipcode: Int,
+    }
 
+    input dishCartInput {
+        dish_name: String!,
+        dish_image: String,
+        dish_price: Float!,
+        description: String,
+        main_ingredient: String,
+        dish_category: String!,
+        food_type: Int!,
+        res_id: ID!,
+        _id: ID!,
+        quantity: Int!
+    }
+    type OrderOutputWithPage {
+        data:[Order], page: Int, pageSize: Int
+    }
     type Query {
         getRestaurants(customer_city: String, search: String): [Restaurant]
         getCustomerProfile(id: ID!): Customer!
-        getCustomerOrders(id: ID!): [Order]
+        getCustomerOrders(id: ID!, page: Int, pageSize: Int): OrderOutputWithPage
     }
     type Mutation {
         updateCustomerProfile(customerInput: CustomerInput!): Customer!
+        placeOrder(placeOrderInput: PlaceOrderInput!): Order!
     }
     
 `;
