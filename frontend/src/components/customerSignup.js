@@ -3,6 +3,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import NavigationBar from './navigationbar.js';
 import axios from 'axios';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  useMutation,
+  useLazyQuery,
+  gql,
+} from "@apollo/client";
 import { 
     Avatar, CssBaseline, Button, Container, FormControl, FormLabel, FormControlLabel,
     makeStyles, Link, Grid, Checkbox, Typography, TextField, Radio, RadioGroup, MenuItem,
@@ -50,26 +59,45 @@ export default function ResProfile() {
     const {register, handleSubmit, control} = useForm()
     const history = useHistory();
     const url =  "/signup/customer";
+
+    const CUSTOMER_SIGNUP = gql`
+    mutation customerSignup($email: String!, $password: String!, $first_name: String!, $last_name: String!) {
+      customerSignup(customerSignupInput: { email: $email, password: $password, first_name: $first_name, last_name: $last_name }) 
+    }`;
+
+    const [customerSignup] = useMutation(
+      CUSTOMER_SIGNUP,
+      {
+        onCompleted(res) {
+          console.log("da", res);
+          // dispatch(onCustomerSignup())
+          history.push("/login");
+        },
+        onError(e) {
+          alert(JSON.parse(JSON.stringify(e))?.message);
+          console.log("--dfd", JSON.parse(JSON.stringify(e)));
+        },
+      }
+    );
+     
     const customerSignupApi = async () => {
       if ( !validateInputs()) {
         return
       }
-        const body = {
-            email,
-            password,
-            first_name: firstName,
-            last_name: lastName,
-        };
-        console.log("body", body);
-        try {
-            const res = await axios.post(url,body);
-            console.log("response",res);
-            dispatch(onCustomerSignup(res.data))
-            history.push("/login");
-            
-        }catch(err){
-            console.log(err)
-        }
+      const body = {
+        email,
+        password,
+        first_name: firstName,
+        last_name: lastName,
+      };
+      console.log("body", body);
+      try {
+        customerSignup({
+          variables: { ...body },
+        });
+      }catch(err){
+          console.log(err)
+      }
     }
     const onClickSubmit = (data) => {
         console.log("calling")

@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import NavigationBar from './navigationbar.js';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  useMutation,
+  useLazyQuery,
+  gql,
+} from "@apollo/client";
 import axios from 'axios';
 import { 
     Avatar, CssBaseline, Button, Container, FormControl, FormLabel, FormControlLabel,
@@ -67,6 +76,46 @@ export default function ResSignup() {
     const {register, handleSubmit, control} = useForm()
     const history = useHistory();
     const url =  "/signup/restaurant";
+    const RESTAURANT_SIGNUP = gql`
+    mutation restaurantSignup(
+      $email: String!,
+      $password: String!,
+      $name: String!,
+      $street_address: String,
+      $apt_number: String,
+      $city: String!,
+      $state: String,
+      $country: String!,
+      $zipcode: Int!,
+    ) {
+      restaurantSignup(restaurantSignupInput: {
+        email: $email,
+        password: $password,
+        name: $name,
+        street_address: $street_address,
+        apt_number: $apt_number
+        city: $city,
+        state: $state,
+        country: $country,
+        zipcode: $zipcode,
+      }) 
+    }`;
+
+    const [restaurantSignup] = useMutation(
+      RESTAURANT_SIGNUP,
+      {
+        onCompleted(res) {
+          console.log("da", res);
+          dispatch(onResSignup())
+          history.push("/login");
+        },
+        onError(e) {
+          alert(JSON.parse(JSON.stringify(e))?.message);
+          console.log("--dfd", JSON.parse(JSON.stringify(e)));
+        },
+      }
+    );
+
     const restaurantSignupApi = async () => {
       if (!validateInputs()) {
         return
@@ -80,14 +129,13 @@ export default function ResSignup() {
             city,
             state,
             country,
-            zipcode,
+            zipcode: parseInt(zipcode),
         };
         console.log("body", body);
         try {
-            const res = await axios.post(url,body);
-            await dispatch(onResSignup(res.data))
-            console.log("response",res);
-            history.push("/login");
+          restaurantSignup({
+            variables: { ...body },
+          });
             
         }catch(err){
             console.log(err)

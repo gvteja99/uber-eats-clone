@@ -169,9 +169,34 @@ const typeDefs = gql`
         res_id: ID!
     }
 
+    input LoginInput {
+        email: String!
+        password: String!
+    }
+    input LogoutInput {
+        email: String!
+    }
+    input CustomerSignupInput {
+        email: String!
+        password: String!
+        first_name: String!
+        last_name: String!
+    }
+    input RestaurantSignupInput {
+        email: String!
+        password: String!
+        name: String!
+        street_address: String
+        apt_number: String
+        city: String!
+        state: String
+        country: String!
+        zipcode: Int!
+    }
     type OrderOutputWithPage {
         data:[Order], page: Int, pageSize: Int
     }
+
     type Query {
         getRestaurants(customer_city: String, search: String): [Restaurant]
         getCustomerProfile(id: ID!): Customer!
@@ -182,6 +207,12 @@ const typeDefs = gql`
         placeOrder(placeOrderInput: PlaceOrderInput!): Order!
         postDish(dish: CreateDishInput!): Restaurant!
         updateDish(dish: CreateDishInput!): Restaurant!
+        customerLogin(loginInput: LoginInput!): Customer!
+        restaurantLogin(loginInput: LoginInput!): Restaurant!
+        customerLogout(logoutInput: LogoutInput!): Boolean
+        restaurantLogout(logoutInput: LogoutInput!): Boolean
+        customerSignup(customerSignupInput: CustomerSignupInput): Boolean
+        restaurantSignup(restaurantSignupInput: RestaurantSignupInput): Boolean
     }
     
 `;

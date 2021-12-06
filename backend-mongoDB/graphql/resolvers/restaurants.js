@@ -1,5 +1,8 @@
 import Restaurants, {Dish} from '../../Models/restaurants.js';
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import bcrypt from 'bcrypt';
+import config from "../../utils/config.js";
 
 const resolvers = {
     Query: {
@@ -49,6 +52,75 @@ const resolvers = {
                 throw new Error(error);
             }
         },
+        async restaurantLogin(_, { loginInput }) {
+            const { email, password } = loginInput;
+            try {
+                const restaurant = await Restaurants.findOne({email})
+                if (!restaurant) {
+                    throw new Error("Invalid email");
+                }
+                const match = await bcrypt.compare(password, restaurant.password);
+                if (!match) {
+                    throw new Error("Invalid password");
+                }
+                const token = jwt.sign({ email}, config.token_key, {expiresIn: "2h"});
+                restaurant.token = token;
+                await restaurant.save();
+                return restaurant;
+            } catch(error) {
+                console.log("======inside catch:");
+                console.log("error==", error);
+                throw new Error(error);
+            }
+        },
+        async restaurantLogout(_, { logoutInput }) {
+            const { email } = logoutInput;
+            try {
+                await Restaurants.updateOne({email}, {token: ''});
+                return;
+            } catch(error) {
+                console.log("error==", error);
+                throw new Error(error);
+            }
+        },
+        async restaurantSignup(_, { restaurantSignupInput }) {
+            try {
+                const { 
+                    email, password, name, city, street_address='', apt_number='', state, country, zipcode=null
+                } = restaurantSignupInput;
+        
+                const existingUser =  await Restaurants.findOne({email: email});
+                if (existingUser) {
+                    throw new Error("Restaurant with given email already exist")
+                }
+                await bcrypt.hash(password, 10, async function(err, hash) {
+                    const resBody = new Restaurants({
+                        name,
+                        email,
+                        password: hash,
+                        phone_number: '',
+                        description: '',
+                        timing_open: '',
+                        timing_close: '',
+                        token: '',
+                        address: {
+                            street_address,
+                            apt_number,
+                            city,
+                            state,
+                            country,
+                            zipcode,
+                        },
+                        dishes: []
+                    });
+                    const r = await resBody.save();
+                    // return;
+                });
+            } catch(error) {
+                console.log("error==", error);
+                throw new Error(error);
+            }
+        }
     },
 }
 
