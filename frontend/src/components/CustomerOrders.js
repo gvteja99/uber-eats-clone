@@ -47,6 +47,7 @@ import { capsStrFirstChar, getOrderStatus } from "../utility";
 // import "./styles.css";
 import ResDishCard from './ResDishCard';
 import CartDialog from './CartDialog';
+import { GET_CUSTOMER_ORDERS } from '../graphql/queries';
 
 const useStyles = makeStyles({
   gridContainer: {
@@ -101,33 +102,33 @@ export default function CustomerOrders(props) {
         setOpen(false);
     };
 
-    const GET_CUSTOMER_ORDERS = gql`
-    query getCustomerOrders($id: ID!, $page: Int, $pageSize: Int) {
-        getCustomerOrders(id: $id, page: $page, pageSize: $pageSize) {
-        data {
-            _id
-            res_id
-            res_name
-            customer_id
-            first_name
-            last_name
-            order_date_time
-            delivery_type
-            delivery_date_time
-            delivery_address
-            delivery_status
-            delivery_fee
-            taxes
-            tip
-            instruction
-            total_amount
-            order_items {  _id res_id res_menu_id dish_name description quantity dish_price dish_category food_type }
-            },
-        page, pageSize
+//     const GET_CUSTOMER_ORDERS = gql`
+//     query getCustomerOrders($id: ID!, $page: Int, $pageSize: Int) {
+//         getCustomerOrders(id: $id, page: $page, pageSize: $pageSize) {
+//         data {
+//             _id
+//             res_id
+//             res_name
+//             customer_id
+//             first_name
+//             last_name
+//             order_date_time
+//             delivery_type
+//             delivery_date_time
+//             delivery_address
+//             delivery_status
+//             delivery_fee
+//             taxes
+//             tip
+//             instruction
+//             total_amount
+//             order_items {  _id res_id res_menu_id dish_name description quantity dish_price dish_category food_type }
+//             },
+//         page, pageSize
         
-      }
-   }
-  `; 
+//       }
+//    }
+//   `; 
 
 const { loading: getOrdersLoading, error: getOrdersError, data: getOrdersData, refetch} = useQuery(
     GET_CUSTOMER_ORDERS,

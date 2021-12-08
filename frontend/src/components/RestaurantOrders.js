@@ -8,6 +8,15 @@ import axios from 'axios';
 import {makeStyles, withStyles } from '@material-ui/core/styles';
 import moment from "moment";
 import {
+    ApolloClient,
+    InMemoryCache,
+    ApolloProvider,
+    useQuery,
+    useMutation,
+    useLazyQuery,
+    gql,
+  } from "@apollo/client";
+import {
     Typography,
     Box,
     Grid,
@@ -36,6 +45,7 @@ import { capsStrFirstChar, getOrderStatus } from "../utility";
 // import "./styles.css";
 import ResDishCard from './ResDishCard';
 import CartDialog from './CartDialog';
+import { UPDATE_ORDER_STATUS } from "../graphql/mutation.js";
 
 const useStyles = makeStyles({
   gridContainer: {
@@ -124,6 +134,50 @@ export default function CustomerOrders(props) {
 
     }
 
+    // const UPDATE_ORDER_STATUS = gql`
+    //     mutation updateResOrderStatus(
+    //         $res_id: String!, $order_id: String!, $delivery_status: Int!
+    //     ) {
+    //         updateResOrderStatus(
+    //             res_id: $res_id, order_id: $order_id, delivery_status: $delivery_status
+    //     ) {
+    //         _id
+    //         res_id
+    //         res_name
+    //         customer_id
+    //         first_name
+    //         last_name
+    //         order_date_time
+    //         delivery_address
+    //         total_amount
+    //         order_items {
+    //         _id
+    //         dish_name
+    //         dish_price
+    //         }
+    //         delivery_type
+    //         delivery_date_time
+    //         delivery_status
+    //         delivery_fee
+    //         taxes
+    //         tip
+    //         instruction
+    //     }
+    //     }
+    // `;
+
+const [ updateResOrderStatus ] = useMutation(UPDATE_ORDER_STATUS, {
+    onCompleted(res) {
+      console.log("da", res);
+      dispatch(updateResOrders(res.updateResOrderStatus));
+    },
+    onError(e) {
+        alert(JSON.parse(JSON.stringify(e))?.message);
+        console.log("--dfd", JSON.parse(JSON.stringify(e)));
+    },
+  });
+
+
     const updateOrderStatusApi = async (order_id, delivery_status, delivery_type) => {
         if (parseInt(delivery_status) === 7) {
             return 
@@ -157,9 +211,12 @@ export default function CustomerOrders(props) {
         }
 
         try {
-            const res = await axios.put(url, body, {headers});
-            console.log("response",res);
-            await dispatch(updateResOrders(res.data?.data));
+            updateResOrderStatus({
+                variables: { ...body },
+              })
+            // const res = await axios.put(url, body, {headers});
+            // console.log("response",res);
+            // await dispatch(updateResOrders(res.data?.data));
             
         }catch(err){
             console.log(err)

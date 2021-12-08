@@ -36,6 +36,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { useForm, Controller } from "react-hook-form";
 import { onResLogin, onCustomerLogin } from "../app/reducers/mainSlice";
 import { isValidEmail } from "../utility.js";
+import { CUSTOMER_LOGIN, RESTAURANT_LOGIN } from "../graphql/mutation.js";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -72,67 +73,67 @@ export default function SignIn() {
   const { register, handleSubmit, control } = useForm();
   const history = useHistory();
 
-  const CUSTOMER_LOGIN = gql`
-    mutation customerLogin($email: String!, $password: String!) {
-      customerLogin(loginInput: { email: $email, password: $password }) {
-        _id
-        first_name
-        last_name
-        email
-        password
-        phone_number
-        dob
-        nickname
-        profile_pic
-        about
-        token
-        address {
-          street_address
-          apt_number
-          city
-          state
-          country
-          zipcode
-        }
-      }
-    }
-  `;
+  // const CUSTOMER_LOGIN = gql`
+  //   mutation customerLogin($email: String!, $password: String!) {
+  //     customerLogin(loginInput: { email: $email, password: $password }) {
+  //       _id
+  //       first_name
+  //       last_name
+  //       email
+  //       password
+  //       phone_number
+  //       dob
+  //       nickname
+  //       profile_pic
+  //       about
+  //       token
+  //       address {
+  //         street_address
+  //         apt_number
+  //         city
+  //         state
+  //         country
+  //         zipcode
+  //       }
+  //     }
+  //   }
+  // `;
 
-  const RESTAURANT_LOGIN = gql`
-    mutation restaurantLogin($email: String!, $password: String!) {
-      restaurantLogin(loginInput: { email: $email, password: $password }) {
-        dishes {
-          food_type
-          dish_category
-          res_id
-          main_ingredient
-          description
-          dish_price
-          dish_image
-          dish_name
-          _id
-        }
-        address {
-          zipcode
-          country
-          state
-          city
-          apt_number
-          street_address
-        }
-        _id
-        name
-        email
-        password
-        delivery_option
-        phone_number
-        description
-        timing_open
-        timing_close
-        token
-      }
-    }
-  `;
+  // const RESTAURANT_LOGIN = gql`
+  //   mutation restaurantLogin($email: String!, $password: String!) {
+  //     restaurantLogin(loginInput: { email: $email, password: $password }) {
+  //       dishes {
+  //         food_type
+  //         dish_category
+  //         res_id
+  //         main_ingredient
+  //         description
+  //         dish_price
+  //         dish_image
+  //         dish_name
+  //         _id
+  //       }
+  //       address {
+  //         zipcode
+  //         country
+  //         state
+  //         city
+  //         apt_number
+  //         street_address
+  //       }
+  //       _id
+  //       name
+  //       email
+  //       password
+  //       delivery_option
+  //       phone_number
+  //       description
+  //       timing_open
+  //       timing_close
+  //       token
+  //     }
+  //   }
+  // `;
 
   const [customerLogin] = useMutation(
     CUSTOMER_LOGIN,

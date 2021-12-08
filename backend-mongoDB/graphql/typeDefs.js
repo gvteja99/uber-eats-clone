@@ -193,6 +193,13 @@ const typeDefs = gql`
         country: String!
         zipcode: Int!
     }
+
+    # input RestaurantorderInput {
+    #     res_id: String!
+    #     order_id: String!
+    #     delivery_status: Int!
+    # }
+
     type OrderOutputWithPage {
         data:[Order], page: Int, pageSize: Int
     }
@@ -213,6 +220,7 @@ const typeDefs = gql`
         restaurantLogout(logoutInput: LogoutInput!): Boolean
         customerSignup(customerSignupInput: CustomerSignupInput): Boolean
         restaurantSignup(restaurantSignupInput: RestaurantSignupInput): Boolean
+        updateResOrderStatus(res_id: String!, order_id: String!, delivery_status: Int!): [Order]
     }
     
 `;

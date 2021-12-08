@@ -30,6 +30,7 @@ import avatar from "../images/dish_icon.jpeg";
 import app_logo from "../images/logo_appbar.svg";
 import { onResLogout, onCustomerLogout } from "../app/reducers/mainSlice";
 import axios from "axios";
+import { CUSTOMER_LOGOUT, RESTAURANT_LOGOUT } from "../graphql/mutation";
 
 // CSS styles
 const useStyles = makeStyles((theme) => ({
@@ -68,17 +69,17 @@ const Navigationbar = (props) => {
     setState({ ...state, [slider]: open });
   };
 
-  const CUSTOMER_LOGOUT = gql`
-    mutation customerLogout($email: String!) {
-      customerLogout(logoutInput: { email: $email })
-    }
-  `;
+  // const CUSTOMER_LOGOUT = gql`
+  //   mutation customerLogout($email: String!) {
+  //     customerLogout(logoutInput: { email: $email })
+  //   }
+  // `;
 
-  const RESTAURANT_LOGOUT = gql`
-    mutation restaurantLogout($email: String!) {
-      restaurantLogout(logoutInput: { email: $email })
-    }
-  `;
+  // const RESTAURANT_LOGOUT = gql`
+  //   mutation restaurantLogout($email: String!) {
+  //     restaurantLogout(logoutInput: { email: $email })
+  //   }
+  // `;
 
   const [customerLogout] = useMutation(CUSTOMER_LOGOUT, {
     onCompleted(res) {

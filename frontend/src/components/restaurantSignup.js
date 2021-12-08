@@ -21,6 +21,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {useForm, Controller} from 'react-hook-form'
 import { onResSignup } from '../app/reducers/mainSlice';
 import { isValidEmail } from '../utility.js';
+import { RESTAURANT_SIGNUP } from '../graphql/mutation.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -76,30 +77,30 @@ export default function ResSignup() {
     const {register, handleSubmit, control} = useForm()
     const history = useHistory();
     const url =  "/signup/restaurant";
-    const RESTAURANT_SIGNUP = gql`
-    mutation restaurantSignup(
-      $email: String!,
-      $password: String!,
-      $name: String!,
-      $street_address: String,
-      $apt_number: String,
-      $city: String!,
-      $state: String,
-      $country: String!,
-      $zipcode: Int!,
-    ) {
-      restaurantSignup(restaurantSignupInput: {
-        email: $email,
-        password: $password,
-        name: $name,
-        street_address: $street_address,
-        apt_number: $apt_number
-        city: $city,
-        state: $state,
-        country: $country,
-        zipcode: $zipcode,
-      }) 
-    }`;
+    // const RESTAURANT_SIGNUP = gql`
+    // mutation restaurantSignup(
+    //   $email: String!,
+    //   $password: String!,
+    //   $name: String!,
+    //   $street_address: String,
+    //   $apt_number: String,
+    //   $city: String!,
+    //   $state: String,
+    //   $country: String!,
+    //   $zipcode: Int!,
+    // ) {
+    //   restaurantSignup(restaurantSignupInput: {
+    //     email: $email,
+    //     password: $password,
+    //     name: $name,
+    //     street_address: $street_address,
+    //     apt_number: $apt_number
+    //     city: $city,
+    //     state: $state,
+    //     country: $country,
+    //     zipcode: $zipcode,
+    //   }) 
+    // }`;
 
     const [restaurantSignup] = useMutation(
       RESTAURANT_SIGNUP,

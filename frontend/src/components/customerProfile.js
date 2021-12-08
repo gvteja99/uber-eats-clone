@@ -22,6 +22,8 @@ import { AccountCircle} from '@material-ui/icons';
 import {useForm, Controller} from 'react-hook-form'
 import { updateCustomerProfile } from '../app/reducers/mainSlice';
 import { isValidEmail } from '../utility.js';
+import { UPDATE_PROFILE } from '../graphql/mutation.js';
+import { GET_CUSTOMER_PROFILE } from '../graphql/queries.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -81,6 +83,15 @@ export default function CustomerProfile() {
           value: 'india',
           label: 'India',
         },
+        {
+          value: 'canada',
+          label: 'Canada',
+        },
+        {
+          value: 'germany',
+          label: 'Germany',
+        },
+
       ];
     
 
@@ -89,14 +100,14 @@ export default function CustomerProfile() {
     const {register, handleSubmit, control} = useForm();
     const history = useHistory();
 
-    const GET_CUSTOMER_PROFILE = gql`
-    query getCustomerProfile($id: ID!) {
-      getCustomerProfile(id: $id) {
-        _id first_name last_name email password phone_number dob nickname profile_pic about token
-        address { street_address apt_number city state country zipcode }
-      }
-   }
-  `; 
+  //   const GET_CUSTOMER_PROFILE = gql`
+  //   query getCustomerProfile($id: ID!) {
+  //     getCustomerProfile(id: $id) {
+  //       _id first_name last_name email password phone_number dob nickname profile_pic about token
+  //       address { street_address apt_number city state country zipcode }
+  //     }
+  //  }
+  // `; 
 
 
     const { loading: getProfileLoading, error: getProfileError, data: getProfileData} = useQuery(
@@ -142,22 +153,22 @@ export default function CustomerProfile() {
 
     // }
 
-    const UPDATE_PROFILE = gql`
-      mutation updateCustomerProfile(
-        $customer_id: ID! $email: String! $first_name: String! $last_name: String! $phone_number: String
-        $description: String $dob: String $nickname: String $profile_pic: String $about: String
-        $street_address: String $apt_number: String $city: String $state: String $country: String $zipcode: Int
-      ) {
-        updateCustomerProfile(customerInput: {
-          customer_id: $customer_id email: $email first_name: $first_name last_name: $last_name phone_number: $phone_number
-          description: $description dob: $dob nickname: $nickname profile_pic: $profile_pic about: $about
-          street_address: $street_address apt_number: $apt_number city: $city state: $state country: $country zipcode: $zipcode
-        }) {
-          _id first_name last_name email password phone_number dob nickname profile_pic about token
-          address { street_address apt_number city state country zipcode }
-        }
-        }
-    `; 
+    // const UPDATE_PROFILE = gql`
+    //   mutation updateCustomerProfile(
+    //     $customer_id: ID! $email: String! $first_name: String! $last_name: String! $phone_number: String
+    //     $description: String $dob: String $nickname: String $profile_pic: String $about: String
+    //     $street_address: String $apt_number: String $city: String $state: String $country: String $zipcode: Int
+    //   ) {
+    //     updateCustomerProfile(customerInput: {
+    //       customer_id: $customer_id email: $email first_name: $first_name last_name: $last_name phone_number: $phone_number
+    //       description: $description dob: $dob nickname: $nickname profile_pic: $profile_pic about: $about
+    //       street_address: $street_address apt_number: $apt_number city: $city state: $state country: $country zipcode: $zipcode
+    //     }) {
+    //       _id first_name last_name email password phone_number dob nickname profile_pic about token
+    //       address { street_address apt_number city state country zipcode }
+    //     }
+    //     }
+    // `; 
 
     const [updateProfile, {data: updateProfileData, error: updateProfileError, loading: updateProfileLoading}] = useMutation(UPDATE_PROFILE, {
       onCompleted(res) {
@@ -439,6 +450,16 @@ export default function CustomerProfile() {
                   select
                   label="country"
                   value={country}
+                  fullWidth
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left"
+                      },
+                      getContentAnchorEl: null
+                    }
+                  }}
                   onChange={e => setCountry(e.target.value)}
               >
                   {countries.map((option) => (

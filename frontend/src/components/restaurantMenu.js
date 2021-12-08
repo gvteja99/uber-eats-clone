@@ -40,6 +40,7 @@ import Navigationbar from './navigationbar';
 import Dish1 from "../images/dish1.jpeg";
 import { getResMenu, updateResProfile } from '../app/reducers/mainSlice';
 import AddEditDishDialog from './AddEditDishDialog';
+import { POST_DISH, UPDATE_DISH } from '../graphql/mutation';
 
 // CSS styles
 const useStyles = makeStyles(theme=>({
@@ -190,28 +191,28 @@ const RestaurantMenu = () => {
         handleClickOpen(true);
     }
 
-    const POST_DISH = gql`
-    mutation postDish(
-        $dish_name: String!
-        $dish_image: String
-        $dish_price: Float!
-        $description: String
-        $main_ingredient: String
-        $dish_category: String!
-        $food_type: Int!
-        $res_id: ID!
-    ) {
-        postDish(dish: {
-            dish_name: $dish_name dish_image: $dish_image dish_price: $dish_price description: $description main_ingredient: $main_ingredient
-            dish_category: $dish_category food_type: $food_type res_id: $res_id
-    }) { 
-        address {street_address apt_number city state country zipcode}
-        _id name email password delivery_option phone_number description timing_open timing_close token
-        dishes {
-          _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
-        }
-    }}
-`;
+//     const POST_DISH = gql`
+//     mutation postDish(
+//         $dish_name: String!
+//         $dish_image: String
+//         $dish_price: Float!
+//         $description: String
+//         $main_ingredient: String
+//         $dish_category: String!
+//         $food_type: Int!
+//         $res_id: ID!
+//     ) {
+//         postDish(dish: {
+//             dish_name: $dish_name dish_image: $dish_image dish_price: $dish_price description: $description main_ingredient: $main_ingredient
+//             dish_category: $dish_category food_type: $food_type res_id: $res_id
+//     }) { 
+//         address {street_address apt_number city state country zipcode}
+//         _id name email password delivery_option phone_number description timing_open timing_close token
+//         dishes {
+//           _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
+//         }
+//     }}
+// `;
 const [postDish] = useMutation(POST_DISH, {
     onCompleted(res) {
         console.log("da", res);
@@ -249,29 +250,29 @@ const [postDish] = useMutation(POST_DISH, {
         }
     }
 
-    const UPDATE_DISH = gql`
-    mutation updateDish(
-        $_id: ID!
-        $dish_name: String!
-        $dish_image: String
-        $dish_price: Float!
-        $description: String
-        $main_ingredient: String
-        $dish_category: String!
-        $food_type: Int!
-        $res_id: ID!
-    ) {
-        updateDish(dish: {
-            _id: $_id dish_name: $dish_name dish_image: $dish_image dish_price: $dish_price description: $description main_ingredient: $main_ingredient
-            dish_category: $dish_category food_type: $food_type res_id: $res_id
-    }) { 
-        address {street_address apt_number city state country zipcode}
-        _id name email password delivery_option phone_number description timing_open timing_close token
-        dishes {
-          _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
-        }
-    }}
-`;
+//     const UPDATE_DISH = gql`
+//     mutation updateDish(
+//         $_id: ID!
+//         $dish_name: String!
+//         $dish_image: String
+//         $dish_price: Float!
+//         $description: String
+//         $main_ingredient: String
+//         $dish_category: String!
+//         $food_type: Int!
+//         $res_id: ID!
+//     ) {
+//         updateDish(dish: {
+//             _id: $_id dish_name: $dish_name dish_image: $dish_image dish_price: $dish_price description: $description main_ingredient: $main_ingredient
+//             dish_category: $dish_category food_type: $food_type res_id: $res_id
+//     }) { 
+//         address {street_address apt_number city state country zipcode}
+//         _id name email password delivery_option phone_number description timing_open timing_close token
+//         dishes {
+//           _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
+//         }
+//     }}
+// `;
 const [updateDish] = useMutation(UPDATE_DISH, {
     onCompleted(res) {
         console.log("da", res);

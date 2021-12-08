@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
 import config from "../../utils/config.js";
+import Orders from "../../Models/orders.js";
 
 const resolvers = {
     Query: {
@@ -47,6 +48,19 @@ const resolvers = {
                 dish.set({...update});
                 let result = await r.save();
                 return result
+            } catch(error) {
+                console.log(error);
+                throw new Error(error);
+            }
+        },
+        async updateResOrderStatus(parent, args) {
+            try {
+                const { res_id, order_id, delivery_status } = args;
+                let order = await Orders.findById(order_id);
+                order.delivery_status = delivery_status;
+                order = await order.save();
+                const updatedOrders = await Orders.find({res_id});
+                return updatedOrders;
             } catch(error) {
                 console.log(error);
                 throw new Error(error);

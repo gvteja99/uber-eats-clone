@@ -48,6 +48,7 @@ import { capsStrFirstChar } from "../utility";
 // import "./styles.css";
 import ResDishCard from "./ResDishCard";
 import CartDialog from "./CartDialog";
+import { PLACE_ORDER } from "../graphql/mutation";
 
 const useStyles = makeStyles({
   //   gridContainer: {
@@ -161,61 +162,61 @@ export default function CustomerCheckout(props) {
   const { street_address, zipcode, city, state, country } = customerProfile;
   const customer_id = customerProfile?._id;
 
-  const PLACE_ORDER = gql`
-    mutation placeOrder(
-      $customer_id: ID!
-      $first_name: String
-      $last_name: String
-      $delivery_type: Int!
-      $delivery_address: String
-      $order_date_time: String!
-      $total_amount: Float
-      $delivery_fee: Float
-      $taxes: Float
-      $instruction: String
-      $tip: Float
-      $cart: [CartInput]
-    ) {
-      placeOrder(
-        placeOrderInput: {
-          customer_id: $customer_id
-          first_name: $first_name
-          last_name: $last_name
-          delivery_type: $delivery_type
-          delivery_address: $delivery_address
-          order_date_time: $order_date_time
-          total_amount: $total_amount
-          delivery_fee: $delivery_fee
-          taxes: $taxes
-          instruction: $instruction
-          tip: $tip
-          cart: $cart
-        }
-      ) {
-        _id
-        res_id
-        res_name
-        customer_id
-        first_name
-        last_name
-        order_date_time
-        delivery_address
-        total_amount
-        order_items {
-          _id
-          dish_name
-          dish_price
-        }
-        delivery_type
-        delivery_date_time
-        delivery_status
-        delivery_fee
-        taxes
-        tip
-        instruction
-      }
-    }
-  `;
+  // const PLACE_ORDER = gql`
+  //   mutation placeOrder(
+  //     $customer_id: ID!
+  //     $first_name: String
+  //     $last_name: String
+  //     $delivery_type: Int!
+  //     $delivery_address: String
+  //     $order_date_time: String!
+  //     $total_amount: Float
+  //     $delivery_fee: Float
+  //     $taxes: Float
+  //     $instruction: String
+  //     $tip: Float
+  //     $cart: [CartInput]
+  //   ) {
+  //     placeOrder(
+  //       placeOrderInput: {
+  //         customer_id: $customer_id
+  //         first_name: $first_name
+  //         last_name: $last_name
+  //         delivery_type: $delivery_type
+  //         delivery_address: $delivery_address
+  //         order_date_time: $order_date_time
+  //         total_amount: $total_amount
+  //         delivery_fee: $delivery_fee
+  //         taxes: $taxes
+  //         instruction: $instruction
+  //         tip: $tip
+  //         cart: $cart
+  //       }
+  //     ) {
+  //       _id
+  //       res_id
+  //       res_name
+  //       customer_id
+  //       first_name
+  //       last_name
+  //       order_date_time
+  //       delivery_address
+  //       total_amount
+  //       order_items {
+  //         _id
+  //         dish_name
+  //         dish_price
+  //       }
+  //       delivery_type
+  //       delivery_date_time
+  //       delivery_status
+  //       delivery_fee
+  //       taxes
+  //       tip
+  //       instruction
+  //     }
+  //   }
+  // `;
   const [ placeOrder ] = useMutation(PLACE_ORDER, {
     onCompleted(res) {
       console.log("da", res);

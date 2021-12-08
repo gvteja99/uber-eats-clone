@@ -21,6 +21,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {useForm, Controller} from 'react-hook-form'
 import { onResLogin, onCustomerLogin, updateResProfile, onCustomerSignup } from '../app/reducers/mainSlice';
 import { isValidEmail } from '../utility.js';
+import { CUSTOMER_SIGNUP } from '../graphql/mutation.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -60,10 +61,10 @@ export default function ResProfile() {
     const history = useHistory();
     const url =  "/signup/customer";
 
-    const CUSTOMER_SIGNUP = gql`
-    mutation customerSignup($email: String!, $password: String!, $first_name: String!, $last_name: String!) {
-      customerSignup(customerSignupInput: { email: $email, password: $password, first_name: $first_name, last_name: $last_name }) 
-    }`;
+    // const CUSTOMER_SIGNUP = gql`
+    // mutation customerSignup($email: String!, $password: String!, $first_name: String!, $last_name: String!) {
+    //   customerSignup(customerSignupInput: { email: $email, password: $password, first_name: $first_name, last_name: $last_name }) 
+    // }`;
 
     const [customerSignup] = useMutation(
       CUSTOMER_SIGNUP,

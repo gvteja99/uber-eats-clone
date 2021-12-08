@@ -46,6 +46,7 @@ import { getAllResList, getFavResList, getResMenu } from '../app/reducers/mainSl
 // import "./styles.css";
 import RestaurantCard from './RestaurantCard';
 import CartDialog from './CartDialog';
+import { GET_ALL_RES } from '../graphql/queries';
 
 const useStyles = makeStyles({
   gridContainer: {
@@ -106,20 +107,17 @@ export default function CustomersLanding() {
     const customer_id = customerProfile?._id;
     console.log("customerProfile", customerProfile);
 
-  const GET_ALL_RES = gql`
-    query getRestaurants($customer_city: String, $search: String ) {
-      getRestaurants(customer_city: $customer_city, search: $search) {
-        address {street_address apt_number city state country zipcode}
-        _id name email password delivery_option phone_number description timing_open timing_close token
-        dishes {
-          _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
-        }
-      }
-   }
-  `; 
-
-
-
+  // const GET_ALL_RES = gql`
+  //   query getRestaurants($customer_city: String, $search: String ) {
+  //     getRestaurants(customer_city: $customer_city, search: $search) {
+  //       address {street_address apt_number city state country zipcode}
+  //       _id name email password delivery_option phone_number description timing_open timing_close token
+  //       dishes {
+  //         _id, description, dish_name, dish_image, dish_price, description, main_ingredient, dish_category,food_type, res_id
+  //       }
+  //     }
+  //  }
+  // `; 
   
     const { loading, error, data} = useQuery(
       GET_ALL_RES,
