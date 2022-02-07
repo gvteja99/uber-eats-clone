@@ -4,3 +4,4 @@ backend-mysql/node_modules/
 backend-mongoDB/node_modules/
 kafka-backend/node_modules/
 kafka_2.12-3.0.0/logs
+backend-mongoDB/.env
